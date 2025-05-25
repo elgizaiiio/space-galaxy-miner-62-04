@@ -140,9 +140,7 @@ const MiningPage: React.FC<MiningPageProps> = ({
           {!isWalletConnected ? 'Connect Wallet to Mine' : miningActive ? 'Stop Mining' : 'Start Mining'}
         </Button>
 
-        <Button onClick={handleUpgradeClick} variant="outline" className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20" size="lg">
-          ⚡ Upgrade Mining Speed
-        </Button>
+        <Button onClick={handleUpgradeClick} variant="outline" className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20" size="lg"> Upgrade Mining Speed</Button>
       </div>
 
       {/* Upgrade Modal */}
