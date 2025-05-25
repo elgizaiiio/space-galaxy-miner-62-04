@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +13,7 @@ import WalletPage from './components/WalletPage';
 import ReferralPage from './components/ReferralPage';
 import { Button } from '@/components/ui/button';
 import { Home, CheckSquare, Wallet, Users } from 'lucide-react';
+import { getStoredLanguage, getTranslation } from './utils/language';
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,12 @@ type Page = 'mining' | 'tasks' | 'wallet' | 'referral';
 const App = () => {
   const [appState, setAppState] = useState<AppState>('splash');
   const [currentPage, setCurrentPage] = useState<Page>('mining');
+  const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
+
+  useEffect(() => {
+    // Update language when it changes
+    setCurrentLanguage(getStoredLanguage());
+  }, []);
 
   const handleSplashComplete = () => {
     const onboardingCompleted = localStorage.getItem('space-onboarding-completed');
@@ -33,11 +40,13 @@ const App = () => {
     setAppState('main');
   };
 
+  const t = (key: string) => getTranslation(key, currentLanguage.code);
+
   const navigationItems = [
-    { id: 'mining', label: 'التعدين', icon: Home },
-    { id: 'tasks', label: 'المهام', icon: CheckSquare },
-    { id: 'wallet', label: 'المحفظة', icon: Wallet },
-    { id: 'referral', label: 'الأصدقاء', icon: Users },
+    { id: 'mining', label: t('mining'), icon: Home },
+    { id: 'tasks', label: t('tasks'), icon: CheckSquare },
+    { id: 'wallet', label: t('wallet'), icon: Wallet },
+    { id: 'referral', label: t('friends'), icon: Users },
   ];
 
   const renderCurrentPage = () => {

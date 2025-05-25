@@ -1,4 +1,3 @@
-
 export interface Language {
   code: string;
   name: string;
@@ -23,12 +22,22 @@ export const SUPPORTED_LANGUAGES: Language[] = [
 
 export const TRANSLATIONS = {
   en: {
+    // Navigation
+    mining: 'Mining',
+    tasks: 'Tasks',
+    wallet: 'Wallet',
+    friends: 'Friends',
+    
+    // Wallet Page
     smartWallet: 'Smart Wallet',
     walletDescription: 'Manage your balances and transactions safely and easily',
     mainCurrency: 'Main Currency',
     connectWallet: 'Connect Wallet',
     disconnectWallet: 'Disconnect',
     connecting: 'Connecting...',
+    walletConnected: 'Wallet Connected',
+    connectWalletToAccess: 'Connect your TON wallet to access all features',
+    walletAddress: 'Wallet Address',
     openConnectionWindow: 'Opening connection window',
     pleaseSelectWallet: 'Please select a TON wallet to connect',
     connectionError: 'Connection Error',
@@ -61,12 +70,22 @@ export const TRANSLATIONS = {
     clickToView: 'Click to view'
   },
   ar: {
+    // Navigation
+    mining: 'التعدين',
+    tasks: 'المهام',
+    wallet: 'المحفظة',
+    friends: 'الأصدقاء',
+    
+    // Wallet Page
     smartWallet: 'المحفظة الذكية',
     walletDescription: 'إدارة أرصدتك ومعاملاتك بأمان وسهولة',
     mainCurrency: 'العملة الرئيسية',
     connectWallet: 'ربط المحفظة',
     disconnectWallet: 'قطع الاتصال',
     connecting: 'جاري الاتصال...',
+    walletConnected: 'تم ربط المحفظة',
+    connectWalletToAccess: 'اربط محفظة TON للوصول لجميع الميزات',
+    walletAddress: 'عنوان المحفظة',
     openConnectionWindow: 'فتح نافذة الاتصال',
     pleaseSelectWallet: 'يرجى اختيار محفظة TON للاتصال',
     connectionError: 'خطأ في الاتصال',
@@ -98,14 +117,23 @@ export const TRANSLATIONS = {
     fee: 'رسوم',
     clickToView: 'انقر للعرض'
   },
-  // Adding other languages with basic translations
   ru: {
+    // Navigation
+    mining: 'Майнинг',
+    tasks: 'Задачи',
+    wallet: 'Кошелек',
+    friends: 'Друзья',
+    
+    // Wallet Page
     smartWallet: 'Умный кошелек',
     walletDescription: 'Управляйте балансами и транзакциями безопасно и легко',
     mainCurrency: 'Основная валюта',
     connectWallet: 'Подключить кошелек',
     disconnectWallet: 'Отключить',
     connecting: 'Подключение...',
+    walletConnected: 'Кошелек подключен',
+    connectWalletToAccess: 'Подключите кошелек TON для доступа ко всем функциям',
+    walletAddress: 'Адрес кошелька',
     openConnectionWindow: 'Открытие окна подключения',
     pleaseSelectWallet: 'Выберите кошелек TON для подключения',
     connectionError: 'Ошибка подключения',
@@ -138,12 +166,19 @@ export const TRANSLATIONS = {
     clickToView: 'Нажмите для просмотра'
   },
   zh: {
+    mining: '挖矿',
+    tasks: '任务',
+    wallet: '钱包',
+    friends: '朋友',
     smartWallet: '智能钱包',
     walletDescription: '安全轻松地管理您的余额和交易',
     mainCurrency: '主要货币',
     connectWallet: '连接钱包',
     disconnectWallet: '断开连接',
     connecting: '连接中...',
+    walletConnected: '钱包已连接',
+    connectWalletToAccess: '连接您的TON钱包以访问所有功能',
+    walletAddress: '钱包地址',
     openConnectionWindow: '打开连接窗口',
     pleaseSelectWallet: '请选择TON钱包连接',
     connectionError: '连接错误',
@@ -176,12 +211,19 @@ export const TRANSLATIONS = {
     clickToView: '点击查看'
   },
   hi: {
+    mining: 'माइनिंग',
+    tasks: 'कार्य',
+    wallet: 'वॉलेट',
+    friends: 'दोस्त',
     smartWallet: 'स्मार्ट वॉलेट',
     walletDescription: 'अपने बैलेंस और लेन-देन को सुरक्षित और आसानी से प्रबंधित करें',
     mainCurrency: 'मुख्य मुद्रा',
     connectWallet: 'वॉलेट कनेक्ट करें',
     disconnectWallet: 'डिस्कनेक्ट करें',
     connecting: 'कनेक्ट हो रहा है...',
+    walletConnected: 'वॉलेट कनेक्ट हो गया',
+    connectWalletToAccess: 'सभी सुविधाओं तक पहुंचने के लिए अपना TON वॉलेट कनेक्ट करें',
+    walletAddress: 'वॉलेट पता',
     openConnectionWindow: 'कनेक्शन विंडो खोली जा रही है',
     pleaseSelectWallet: 'कृपया कनेक्ट करने के लिए TON वॉलेट चुनें',
     connectionError: 'कनेक्शन त्रुटि',
@@ -214,12 +256,19 @@ export const TRANSLATIONS = {
     clickToView: 'देखने के लिए क्लिक करें'
   },
   es: {
+    mining: 'Minería',
+    tasks: 'Tareas',
+    wallet: 'Cartera',
+    friends: 'Amigos',
     smartWallet: 'Cartera Inteligente',
     walletDescription: 'Gestiona tus saldos y transacciones de forma segura y fácil',
     mainCurrency: 'Moneda Principal',
     connectWallet: 'Conectar Cartera',
     disconnectWallet: 'Desconectar',
     connecting: 'Conectando...',
+    walletConnected: 'Cartera Conectada',
+    connectWalletToAccess: 'Conecta tu cartera TON para acceder a todas las funciones',
+    walletAddress: 'Dirección de Cartera',
     openConnectionWindow: 'Abriendo ventana de conexión',
     pleaseSelectWallet: 'Por favor selecciona una cartera TON para conectar',
     connectionError: 'Error de Conexión',
@@ -252,12 +301,19 @@ export const TRANSLATIONS = {
     clickToView: 'Clic para ver'
   },
   fr: {
+    mining: 'Minage',
+    tasks: 'Tâches',
+    wallet: 'Portefeuille',
+    friends: 'Amis',
     smartWallet: 'Portefeuille Intelligent',
     walletDescription: 'Gérez vos soldes et transactions en toute sécurité et facilement',
     mainCurrency: 'Devise Principale',
     connectWallet: 'Connecter Portefeuille',
     disconnectWallet: 'Déconnecter',
     connecting: 'Connexion...',
+    walletConnected: 'Portefeuille Connecté',
+    connectWalletToAccess: 'Connectez votre portefeuille TON pour accéder à toutes les fonctionnalités',
+    walletAddress: 'Adresse du Portefeuille',
     openConnectionWindow: 'Ouverture de la fenêtre de connexion',
     pleaseSelectWallet: 'Veuillez sélectionner un portefeuille TON à connecter',
     connectionError: 'Erreur de Connexion',
@@ -290,12 +346,19 @@ export const TRANSLATIONS = {
     clickToView: 'Cliquer pour voir'
   },
   de: {
+    mining: 'Mining',
+    tasks: 'Aufgaben',
+    wallet: 'Wallet',
+    friends: 'Freunde',
     smartWallet: 'Smart Wallet',
     walletDescription: 'Verwalten Sie Ihre Guthaben und Transaktionen sicher und einfach',
     mainCurrency: 'Hauptwährung',
     connectWallet: 'Wallet Verbinden',
     disconnectWallet: 'Trennen',
     connecting: 'Verbinde...',
+    walletConnected: 'Wallet Verbunden',
+    connectWalletToAccess: 'Verbinden Sie Ihr TON-Wallet, um auf alle Funktionen zuzugreifen',
+    walletAddress: 'Wallet-Adresse',
     openConnectionWindow: 'Verbindungsfenster öffnen',
     pleaseSelectWallet: 'Bitte wählen Sie eine TON-Wallet zum Verbinden',
     connectionError: 'Verbindungsfehler',
@@ -328,12 +391,19 @@ export const TRANSLATIONS = {
     clickToView: 'Klicken zum Anzeigen'
   },
   ja: {
+    mining: 'マイニング',
+    tasks: 'タスク',
+    wallet: 'ウォレット',
+    friends: '友達',
     smartWallet: 'スマートウォレット',
     walletDescription: '残高と取引を安全かつ簡単に管理',
     mainCurrency: 'メイン通貨',
     connectWallet: 'ウォレット接続',
     disconnectWallet: '切断',
     connecting: '接続中...',
+    walletConnected: 'ウォレット接続済み',
+    connectWalletToAccess: 'すべての機能にアクセスするためにTONウォレットを接続してください',
+    walletAddress: 'ウォレットアドレス',
     openConnectionWindow: '接続ウィンドウを開いています',
     pleaseSelectWallet: 'TONウォレットを選択して接続してください',
     connectionError: '接続エラー',
@@ -366,12 +436,19 @@ export const TRANSLATIONS = {
     clickToView: 'クリックして表示'
   },
   tr: {
+    mining: 'Madencilik',
+    tasks: 'Görevler',
+    wallet: 'Cüzdan',
+    friends: 'Arkadaşlar',
     smartWallet: 'Akıllı Cüzdan',
     walletDescription: 'Bakiyelerinizi ve işlemlerinizi güvenli ve kolay bir şekilde yönetin',
     mainCurrency: 'Ana Para Birimi',
     connectWallet: 'Cüzdan Bağla',
     disconnectWallet: 'Bağlantıyı Kes',
     connecting: 'Bağlanıyor...',
+    walletConnected: 'Cüzdan Bağlandı',
+    connectWalletToAccess: 'Tüm özelliklere erişmek için TON cüzdanınızı bağlayın',
+    walletAddress: 'Cüzdan Adresi',
     openConnectionWindow: 'Bağlantı penceresi açılıyor',
     pleaseSelectWallet: 'Lütfen bağlanmak için bir TON cüzdanı seçin',
     connectionError: 'Bağlantı Hatası',
@@ -404,12 +481,19 @@ export const TRANSLATIONS = {
     clickToView: 'Görüntülemek için tıklayın'
   },
   pt: {
+    mining: 'Mineração',
+    tasks: 'Tarefas',
+    wallet: 'Carteira',
+    friends: 'Amigos',
     smartWallet: 'Carteira Inteligente',
     walletDescription: 'Gerencie seus saldos e transações com segurança e facilidade',
     mainCurrency: 'Moeda Principal',
     connectWallet: 'Conectar Carteira',
     disconnectWallet: 'Desconectar',
     connecting: 'Conectando...',
+    walletConnected: 'Carteira Conectada',
+    connectWalletToAccess: 'Conecte sua carteira TON para acessar todos os recursos',
+    walletAddress: 'Endereço da Carteira',
     openConnectionWindow: 'Abrindo janela de conexão',
     pleaseSelectWallet: 'Por favor, selecione uma carteira TON para conectar',
     connectionError: 'Erro de Conexão',
@@ -442,12 +526,19 @@ export const TRANSLATIONS = {
     clickToView: 'Clique para ver'
   },
   uk: {
+    mining: 'Майнінг',
+    tasks: 'Завдання',
+    wallet: 'Гаманець',
+    friends: 'Друзі',
     smartWallet: 'Розумний гаманець',
     walletDescription: 'Керуйте своїми балансами та транзакціями безпечно та легко',
     mainCurrency: 'Основна валюта',
     connectWallet: 'Підключити гаманець',
     disconnectWallet: 'Відключити',
     connecting: 'Підключення...',
+    walletConnected: 'Гаманець підключено',
+    connectWalletToAccess: 'Підключіть ваш гаманець TON для доступу до всіх функцій',
+    walletAddress: 'Адреса гаманця',
     openConnectionWindow: 'Відкриття вікна підключення',
     pleaseSelectWallet: 'Будь ласка, оберіть гаманець TON для підключення',
     connectionError: 'Помилка підключення',

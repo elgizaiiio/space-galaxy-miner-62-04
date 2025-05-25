@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ const WalletPage = () => {
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [showBalance, setShowBalance] = useState(true);
   const [spaceBalance] = useState(15420.5);
-  const [tonBalance, setTonBalance] = useState(2.45);
+  const [tonBalance, setTonBalance] = useState(0);
   const [transactions, setTransactions] = useState<TONTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -25,15 +26,11 @@ const WalletPage = () => {
   const [showSendModal, setShowSendModal] = useState(false);
   const [showReceiveModal, setShowReceiveModal] = useState(false);
   
-  const fallbackAddress = "UQAqPFXgVhDpXe-WbJgfwVd_ETkmPMqEjLaNKLtDTKxVAJgk";
-  
   // Get translation function for current language
   const t = (key: string) => getTranslation(key, currentLanguage.code);
 
   useEffect(() => {
     checkWalletConnection();
-    // Always load fallback data to show content
-    loadWalletData(fallbackAddress);
     
     const unsubscribe = tonConnectUI.onStatusChange(wallet => {
       console.log('TON Connect UI wallet status changed:', wallet);
@@ -42,8 +39,8 @@ const WalletPage = () => {
         loadWalletData(wallet.account.address);
       } else {
         setConnectedAddress(null);
-        // Keep showing transactions even when disconnected
-        loadWalletData(fallbackAddress);
+        setTonBalance(0);
+        setTransactions([]);
       }
     });
     return () => {
@@ -86,8 +83,8 @@ const WalletPage = () => {
     try {
       await tonConnectUI.disconnect();
       setConnectedAddress(null);
-      // Keep showing fallback data after disconnect
-      loadWalletData(fallbackAddress);
+      setTonBalance(0);
+      setTransactions([]);
       toast({
         title: t('disconnected'),
         description: t('tonWalletDisconnected')
@@ -131,8 +128,59 @@ const WalletPage = () => {
     window.open(`https://tonscan.org/tx/${hash}`, '_blank');
   };
 
-  const currentAddress = connectedAddress || fallbackAddress;
   const isWalletConnected = !!tonConnectUI.wallet;
+
+  // If no wallet connected, show connection screen
+  if (!isWalletConnected) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-4 pb-24">
+        <div className="max-w-md mx-auto space-y-6">
+          {/* Header */}
+          <div className="text-center mb-8 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-xl"></div>
+            <div className="relative">
+              {/* Language Switcher */}
+              <div className="absolute top-0 right-0">
+                <LanguageSwitcher onLanguageChange={() => setCurrentLanguage(getStoredLanguage())} />
+              </div>
+              
+              <div className="flex items-center justify-center mb-4">
+                <div className="p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-2xl animate-pulse-glow">
+                  <Wallet className="w-8 h-8 text-white" />
+                </div>
+              </div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-3">
+                {t('smartWallet')}
+              </h1>
+              <p className="text-gray-300 text-base leading-relaxed">{t('walletDescription')}</p>
+            </div>
+          </div>
+
+          {/* Connection Card */}
+          <Card className="bg-gradient-to-br from-purple-500/15 to-pink-500/15 backdrop-blur-xl border-2 border-purple-500/40 rounded-3xl overflow-hidden">
+            <CardContent className="p-8 text-center">
+              <div className="mb-6">
+                <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Wallet className="w-10 h-10 text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-2">{t('connectWallet')}</h2>
+                <p className="text-gray-300">{t('connectWalletToAccess')}</p>
+              </div>
+              
+              <Button 
+                onClick={connectWallet} 
+                disabled={isConnecting} 
+                className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 h-14 text-base font-semibold rounded-2xl w-full"
+              >
+                <LogIn className="w-5 h-5 mr-2" />
+                {isConnecting ? t('connecting') : t('connectWallet')}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-4 pb-24">
@@ -160,35 +208,21 @@ const WalletPage = () => {
 
         {/* Wallet Connection Status */}
         <Card className="bg-gradient-to-br from-green-500/15 to-emerald-500/15 backdrop-blur-xl border-2 border-green-500/40 rounded-3xl overflow-hidden">
-          <CardContent className="p-6 py-[10px] px-[76px] bg-pink-600">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {/* Content removed for space */}
+                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-green-200 font-medium">{t('walletConnected')}</span>
               </div>
-              <div className="flex gap-2">
-                {isWalletConnected ? (
-                  <Button 
-                    onClick={disconnectWallet} 
-                    variant="outline" 
-                    size="sm" 
-                    className="bg-red-500/20 border-red-500/50 text-red-200 hover:bg-red-500/30"
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    {t('disconnectWallet')}
-                  </Button>
-                ) : (
-                  <Button 
-                    onClick={connectWallet} 
-                    disabled={isConnecting} 
-                    variant="outline" 
-                    size="sm" 
-                    className="border-green-500/50 text-green-200 my-0 mx-[24px] bg-pink-600 hover:bg-pink-500"
-                  >
-                    <LogIn className="w-4 h-4 mr-2" />
-                    {isConnecting ? t('connecting') : t('connectWallet')}
-                  </Button>
-                )}
-              </div>
+              <Button 
+                onClick={disconnectWallet} 
+                variant="outline" 
+                size="sm" 
+                className="bg-red-500/20 border-red-500/50 text-red-200 hover:bg-red-500/30"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                {t('disconnectWallet')}
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -216,7 +250,7 @@ const WalletPage = () => {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="pt-0 relative my-0">
+            <CardContent className="pt-0 relative">
               <p className="font-bold text-white mb-3 text-2xl">
                 {showBalance ? spaceBalance.toLocaleString() : '••••••'}
               </p>
@@ -236,7 +270,7 @@ const WalletPage = () => {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  onClick={() => loadWalletData(currentAddress)} 
+                  onClick={() => loadWalletData(connectedAddress!)} 
                   disabled={isLoading} 
                   className="text-purple-300 hover:text-white hover:bg-purple-500/20 h-10 w-10 p-0 rounded-xl"
                 >
@@ -244,7 +278,7 @@ const WalletPage = () => {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="pt-0 relative rounded-full">
+            <CardContent className="pt-0 relative">
               <p className="font-bold text-white mb-3 text-2xl">
                 {showBalance ? tonBalance.toFixed(4) : '••••'}
               </p>
@@ -275,15 +309,15 @@ const WalletPage = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex-1 min-w-0 mr-3">
-                <p className="text-sm text-gray-400 mb-1">Wallet Address</p>
+                <p className="text-sm text-gray-400 mb-1">{t('walletAddress')}</p>
                 <code className="text-xs text-gray-200 break-all font-mono leading-relaxed">
-                  {currentAddress}
+                  {connectedAddress}
                 </code>
               </div>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => copyToClipboard(currentAddress)}
+                onClick={() => copyToClipboard(connectedAddress!)}
                 className="text-gray-400 hover:text-white hover:bg-white/10 h-10 w-10 p-0 rounded-xl flex-shrink-0"
               >
                 <Copy className="w-4 h-4" />
@@ -302,7 +336,7 @@ const WalletPage = () => {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                onClick={() => loadWalletData(currentAddress)} 
+                onClick={() => loadWalletData(connectedAddress!)} 
                 disabled={isLoading} 
                 className="text-indigo-300 hover:text-white hover:bg-indigo-500/20 h-10 w-10 p-0 rounded-xl"
               >
@@ -349,7 +383,7 @@ const WalletPage = () => {
       <ReceiveModal 
         isOpen={showReceiveModal} 
         onClose={() => setShowReceiveModal(false)} 
-        address={currentAddress} 
+        address={connectedAddress!} 
       />
     </div>
   );
