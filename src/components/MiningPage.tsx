@@ -147,7 +147,7 @@ const MiningPage: React.FC<MiningPageProps> = ({
       <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
         <DialogContent className="glass-card border-white/20 text-white max-w-md bg-indigo-700">
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold text-transparent bg-clip-text bg-space-gradient">
+            <DialogTitle className="text-center text-2xl font-bold bg-clip-text bg-space-gradient text-gray-50">
               Upgrade Mining Speed
             </DialogTitle>
           </DialogHeader>
@@ -175,11 +175,7 @@ const MiningPage: React.FC<MiningPageProps> = ({
               </motion.div>)}
           </div>
 
-          <div className="mt-4 p-4 bg-yellow-500/20 rounded-lg border border-yellow-500/30">
-            <p className="text-sm text-center text-yellow-200">
-              💳 Payments are processed via real TON blockchain transactions
-            </p>
-          </div>
+          
         </DialogContent>
       </Dialog>
     </div>;
