@@ -11,23 +11,48 @@ import MiningPage from './components/MiningPage';
 import TasksPage from './components/TasksPage';
 import WalletPage from './components/WalletPage';
 import ReferralPage from './components/ReferralPage';
+import TaskAdminPage from './components/TaskAdminPage';
 import { Button } from '@/components/ui/button';
-import { Home, CheckSquare, Wallet, Users } from 'lucide-react';
+import { Home, CheckSquare, Wallet, Users, Settings } from 'lucide-react';
 import { getStoredLanguage, getTranslation } from './utils/language';
 
 const queryClient = new QueryClient();
 
 type AppState = 'splash' | 'onboarding' | 'main';
-type Page = 'mining' | 'tasks' | 'wallet' | 'referral';
+type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'admin';
 
 const App = () => {
   const [appState, setAppState] = useState<AppState>('splash');
   const [currentPage, setCurrentPage] = useState<Page>('mining');
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
+  const [showAdminAccess, setShowAdminAccess] = useState(false);
 
   useEffect(() => {
     // Update language when it changes
     setCurrentLanguage(getStoredLanguage());
+    
+    // Check for admin access (hidden feature - triple click on logo)
+    let clickCount = 0;
+    const handleLogoClick = () => {
+      clickCount++;
+      if (clickCount === 3) {
+        setShowAdminAccess(true);
+        clickCount = 0;
+      }
+      setTimeout(() => { clickCount = 0; }, 2000);
+    };
+    
+    // Add event listener for admin access
+    const logoElement = document.querySelector('.admin-access-trigger');
+    if (logoElement) {
+      logoElement.addEventListener('click', handleLogoClick);
+    }
+    
+    return () => {
+      if (logoElement) {
+        logoElement.removeEventListener('click', handleLogoClick);
+      }
+    };
   }, []);
 
   const handleSplashComplete = () => {
@@ -49,6 +74,11 @@ const App = () => {
     { id: 'referral', label: t('friends'), icon: Users },
   ];
 
+  // Add admin option if access is granted
+  if (showAdminAccess) {
+    navigationItems.push({ id: 'admin', label: 'Admin', icon: Settings });
+  }
+
   const renderCurrentPage = () => {
     switch (currentPage) {
       case 'mining':
@@ -59,6 +89,8 @@ const App = () => {
         return <WalletPage />;
       case 'referral':
         return <ReferralPage />;
+      case 'admin':
+        return showAdminAccess ? <TaskAdminPage /> : <MiningPage />;
       default:
         return <MiningPage />;
     }
@@ -89,7 +121,7 @@ const App = () => {
               {/* Bottom Navigation */}
               <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/20 p-4 z-50">
                 <div className="max-w-md mx-auto">
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className={`grid gap-2 ${showAdminAccess ? 'grid-cols-5' : 'grid-cols-4'}`}>
                     {navigationItems.map((item) => {
                       const Icon = item.icon;
                       return (
