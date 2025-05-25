@@ -267,7 +267,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_mining_rewards: {
+        Args: { session_uuid: string }
+        Returns: number
+      }
+      start_mining_session: {
+        Args: { user_uuid: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
