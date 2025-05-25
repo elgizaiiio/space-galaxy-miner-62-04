@@ -66,6 +66,22 @@ const MiningPage: React.FC = () => {
   // Get phrases for current language
   const currentPhrases = MINING_PHRASES[currentLanguage.code as keyof typeof MINING_PHRASES] || MINING_PHRASES.en;
 
+  // Helper function to format $SPACE text with special styling
+  const formatSpaceText = (text: string) => {
+    const parts = text.split('$SPACE');
+    if (parts.length === 1) return text;
+    
+    return (
+      <>
+        {parts[0]}
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 font-extrabold animate-pulse">
+          $SPACE
+        </span>
+        {parts[1]}
+      </>
+    );
+  };
+
   // Update language when it changes
   useEffect(() => {
     setCurrentLanguage(getStoredLanguage());
@@ -412,7 +428,7 @@ const MiningPage: React.FC = () => {
         )}
       </motion.div>
 
-      {/* Dynamic Phrases */}
+      {/* Dynamic Phrases with enhanced $SPACE formatting */}
       <div className="text-center h-16 flex items-center">
         <AnimatePresence mode="wait">
           <motion.h1 
@@ -421,25 +437,32 @@ const MiningPage: React.FC = () => {
             animate={{ y: 0, opacity: 1 }} 
             exit={{ y: -50, opacity: 0 }} 
             transition={{ duration: 0.8, ease: "easeOut" }} 
-            className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-space-gradient"
+            className="text-3xl md:text-4xl font-bold text-white"
           >
-            {currentPhrases[currentPhrase]}
+            {formatSpaceText(currentPhrases[currentPhrase])}
           </motion.h1>
         </AnimatePresence>
       </div>
 
-      {/* Mining Stats */}
+      {/* Mining Stats with enhanced $SPACE display */}
       <Card className="glass-card p-6 w-full max-w-md bg-blue-900">
         <div className="text-center space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-white/80">{t('spaceBalance') || '$SPACE Balance'}:</span>
+            <span className="text-white/80">
+              {formatSpaceText(t('spaceBalance') || '$SPACE Balance')}:
+            </span>
             <motion.span 
               key={spaceCoins} 
               initial={{ scale: 1.2, color: '#ec4899' }} 
               animate={{ scale: 1, color: '#ffffff' }} 
-              className="text-xl font-bold"
+              className="text-xl font-bold flex items-center gap-1"
             >
-              {spaceCoins.toLocaleString()}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+                {spaceCoins.toLocaleString()}
+              </span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-sm font-extrabold">
+                $SPACE
+              </span>
             </motion.span>
           </div>
           
