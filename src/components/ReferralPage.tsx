@@ -131,32 +131,8 @@ const ReferralPage = () => {
 
         {/* Enhanced Reward Milestones */}
         <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-3xl overflow-hidden">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-white text-xl font-bold flex items-center gap-2">
-              <Zap className="w-6 h-6 text-yellow-400" />
-              معالم المكافآت
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0 space-y-4">
-            {rewards.map((reward, index) => <div key={index} className="">
-                <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold transition-all duration-300 ${reward.claimed ? 'bg-green-500 text-white shadow-lg' : referredUsers >= reward.milestone ? 'bg-yellow-500 text-black shadow-lg' : 'bg-gray-600 text-gray-300'}`}>
-                    {reward.claimed ? '✓' : reward.milestone}
-                  </div>
-                  <div>
-                    <p className="text-white font-bold text-base">
-                      {reward.milestone} أصدقاء
-                    </p>
-                    <p className="text-gray-300 text-sm">
-                      +{reward.reward.toLocaleString()} $SPACE
-                    </p>
-                  </div>
-                </div>
-                <Button disabled={referredUsers < reward.milestone || reward.claimed} className={`h-10 px-6 text-sm font-bold rounded-xl transition-all duration-300 ${reward.claimed ? 'bg-green-600 hover:bg-green-600 text-white' : referredUsers >= reward.milestone ? 'bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-black shadow-lg' : 'bg-gray-600 hover:bg-gray-600 text-gray-300'}`}>
-                  {reward.claimed ? 'مُستلمة' : referredUsers >= reward.milestone ? 'استلام' : 'مقفلة'}
-                </Button>
-              </div>)}
-          </CardContent>
+          
+          
         </Card>
 
         {/* Enhanced Leaderboard */}
