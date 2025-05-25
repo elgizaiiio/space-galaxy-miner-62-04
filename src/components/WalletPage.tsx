@@ -1,52 +1,50 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Wallet, Send, ArrowDownToLine, ArrowUpFromLine, Eye, EyeOff, Copy, ExternalLink, TrendingUp } from 'lucide-react';
+import { Wallet, Send, ArrowDownToLine, ArrowUpFromLine, Eye, EyeOff, Copy, ExternalLink, TrendingUp, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { tonService, type TONTransaction } from '../services/tonService';
 
 const WalletPage = () => {
   const { toast } = useToast();
   const [showBalance, setShowBalance] = useState(true);
   const [spaceBalance] = useState(15420.5);
-  const [tonBalance] = useState(2.45);
+  const [tonBalance, setTonBalance] = useState(2.45);
+  const [transactions, setTransactions] = useState<TONTransaction[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   
   const walletAddress = "UQAqPFXgVhDpXe-WbJgfwVd_ETkmPMqEjLaNKLtDTKxVAJgk";
 
-  const transactions = [
-    {
-      id: '1',
-      type: 'mining',
-      amount: '+250 $SPACE',
-      description: 'مكافأة التعدين',
-      time: 'منذ 5 دقائق',
-      status: 'completed'
-    },
-    {
-      id: '2',
-      type: 'upgrade',
-      amount: '-0.5 TON',
-      description: 'ترقية سرعة التعدين x5',
-      time: 'منذ ساعة',
-      status: 'completed'
-    },
-    {
-      id: '3',
-      type: 'task',
-      amount: '+500 $SPACE',
-      description: 'مكافأة مهمة يومية',
-      time: 'منذ 3 ساعات',
-      status: 'completed'
-    },
-    {
-      id: '4',
-      type: 'referral',
-      amount: '+1000 $SPACE',
-      description: 'مكافأة دعوة صديق',
-      time: 'أمس',
-      status: 'completed'
+  useEffect(() => {
+    loadWalletData();
+  }, []);
+
+  const loadWalletData = async () => {
+    setIsLoading(true);
+    try {
+      console.log('Loading TON wallet data...');
+      
+      // Load balance
+      const balanceData = await tonService.getBalance(walletAddress);
+      setTonBalance(parseFloat(balanceData.balance));
+      
+      // Load transactions
+      const txData = await tonService.getTransactions(walletAddress, 6);
+      setTransactions(txData);
+      
+      console.log('TON data loaded:', { balance: balanceData, transactions: txData });
+    } catch (error) {
+      console.error('Error loading wallet data:', error);
+      toast({
+        title: "خطأ في تحميل البيانات",
+        description: "فشل في تحميل بيانات المحفظة من شبكة TON",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -56,14 +54,21 @@ const WalletPage = () => {
     });
   };
 
-  const getTransactionIcon = (type: string) => {
-    switch (type) {
-      case 'mining': return '⛏️';
-      case 'upgrade': return '🚀';
-      case 'task': return '✅';
-      case 'referral': return '👥';
-      default: return '💎';
-    }
+  const getTransactionIcon = (tx: TONTransaction) => {
+    if (tx.type === 'in') return '📥';
+    if (tx.type === 'out') return '📤';
+    return '💎';
+  };
+
+  const getTransactionDescription = (tx: TONTransaction) => {
+    if (tx.comment) return tx.comment;
+    if (tx.type === 'in') return 'استقبال TON';
+    return 'إرسال TON';
+  };
+
+  const openTxExplorer = (hash: string) => {
+    if (hash.startsWith('fallback_')) return;
+    window.open(`https://tonscan.org/tx/${hash}`, '_blank');
   };
 
   return (
@@ -126,19 +131,30 @@ const WalletPage = () => {
           <Card className="bg-gradient-to-br from-purple-500/15 to-pink-500/15 backdrop-blur-xl border-2 border-purple-500/40 rounded-3xl overflow-hidden relative group hover:scale-[1.02] transition-all duration-300">
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10"></div>
             <CardHeader className="pb-3 relative">
-              <CardTitle className="text-white flex items-center gap-3 text-xl">
-                <div className="p-2 bg-purple-500/30 rounded-xl">
-                  <span className="text-2xl">💎</span>
-                </div>
-                <div>
-                  <span className="block">TON</span>
-                  <span className="text-sm text-purple-300 font-normal">عملة الشبكة</span>
-                </div>
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-white flex items-center gap-3 text-xl">
+                  <div className="p-2 bg-purple-500/30 rounded-xl">
+                    <span className="text-2xl">💎</span>
+                  </div>
+                  <div>
+                    <span className="block">TON</span>
+                    <span className="text-sm text-purple-300 font-normal">عملة الشبكة</span>
+                  </div>
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={loadWalletData}
+                  disabled={isLoading}
+                  className="text-purple-300 hover:text-white hover:bg-purple-500/20 h-10 w-10 p-0 rounded-xl"
+                >
+                  <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="pt-0 relative">
               <p className="text-3xl font-bold text-white mb-2">
-                {showBalance ? tonBalance.toFixed(2) : '••••'}
+                {showBalance ? tonBalance.toFixed(4) : '••••'}
               </p>
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-green-400" />
@@ -187,6 +203,7 @@ const WalletPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
+                  onClick={() => window.open(`https://tonscan.org/address/${walletAddress}`, '_blank')}
                   className="text-gray-400 hover:text-white hover:bg-gray-500/20 h-10 w-10 p-0 rounded-xl"
                 >
                   <ExternalLink className="w-4 h-4" />
@@ -199,31 +216,65 @@ const WalletPage = () => {
         {/* Enhanced Transaction History */}
         <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-3xl overflow-hidden">
           <CardHeader className="pb-4">
-            <CardTitle className="text-white text-xl flex items-center gap-3">
-              <div className="p-2 bg-indigo-500/30 rounded-xl">
-                <span className="text-lg">📊</span>
-              </div>
-              سجل المعاملات
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-white text-xl flex items-center gap-3">
+                <div className="p-2 bg-indigo-500/30 rounded-xl">
+                  <span className="text-lg">📊</span>
+                </div>
+                سجل المعاملات
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={loadWalletData}
+                disabled={isLoading}
+                className="text-indigo-300 hover:text-white hover:bg-indigo-500/20 h-10 w-10 p-0 rounded-xl"
+              >
+                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="pt-0 space-y-3">
-            {transactions.map((tx) => (
-              <div key={tx.id} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300">
-                <div className="flex items-center gap-4">
-                  <div className="text-2xl p-2 bg-white/10 rounded-xl">{getTransactionIcon(tx.type)}</div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-white font-semibold text-base truncate">{tx.description}</p>
-                    <p className="text-gray-300 text-sm">{tx.time}</p>
+            {isLoading ? (
+              <div className="text-center text-gray-400 py-8">
+                <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-2" />
+                <p>جاري تحميل المعاملات...</p>
+              </div>
+            ) : transactions.length === 0 ? (
+              <div className="text-center text-gray-400 py-8">
+                <p>لا توجد معاملات</p>
+              </div>
+            ) : (
+              transactions.map((tx) => (
+                <div 
+                  key={tx.hash} 
+                  className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 cursor-pointer"
+                  onClick={() => openTxExplorer(tx.hash)}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="text-2xl p-2 bg-white/10 rounded-xl">{getTransactionIcon(tx)}</div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-white font-semibold text-base truncate">{getTransactionDescription(tx)}</p>
+                      <p className="text-gray-300 text-sm">
+                        {tonService.formatTimeAgo(tx.timestamp)}
+                      </p>
+                      <p className="text-gray-400 text-xs">
+                        {tx.type === 'in' ? 'من' : 'إلى'}: {tonService.formatAddress(tx.type === 'in' ? tx.from : tx.to)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right ml-3">
+                    <p className={`font-bold text-base ${tx.type === 'in' ? 'text-green-400' : 'text-red-400'}`}>
+                      {tx.type === 'in' ? '+' : '-'}{tx.value} TON
+                    </p>
+                    <p className="text-gray-400 text-sm">رسوم: {tx.fee} TON</p>
+                    {!tx.hash.startsWith('fallback_') && (
+                      <p className="text-blue-400 text-xs">انقر للعرض</p>
+                    )}
                   </div>
                 </div>
-                <div className="text-right ml-3">
-                  <p className={`font-bold text-base ${tx.amount.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>
-                    {tx.amount}
-                  </p>
-                  <p className="text-gray-400 text-sm">{tx.status === 'completed' ? 'مكتملة' : 'قيد المعالجة'}</p>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </CardContent>
         </Card>
       </div>
