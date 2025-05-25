@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { useToast } from '@/hooks/use-toast';
 import SpaceLogo3D from './SpaceLogo3D';
 import LanguageSwitcher from './LanguageSwitcher';
-import MiningStatsCard from './MiningStatsCard';
-import MiningActionButtons from './MiningActionButtons';
-import { UPGRADE_OPTIONS, formatTON, type UpgradeOption } from '../utils/ton';
+import { UPGRADE_OPTIONS, formatTON, textToBase64, type UpgradeOption } from '../utils/ton';
 import { hapticFeedback } from '../utils/telegram';
 import { getStoredLanguage, getTranslation } from '../utils/language';
-import { Palette, Crown, Timer } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Palette, Crown, Zap, Timer } from 'lucide-react';
 
 const MINING_PHRASES = {
   en: ['Mine $SPACE Coin', 'Start Earning Now', 'Explore the Galaxy of Rewards', 'Begin Your Space Mining Journey', 'Collect Cosmic Treasures', 'Unlock Universal Wealth'],
@@ -422,7 +421,7 @@ const MiningPage: React.FC = () => {
             animate={{ y: 0, opacity: 1 }} 
             exit={{ y: -50, opacity: 0 }} 
             transition={{ duration: 0.8, ease: "easeOut" }} 
-            className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-space-gradient arabic-text"
+            className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-space-gradient"
           >
             {currentPhrases[currentPhrase]}
           </motion.h1>
@@ -430,29 +429,99 @@ const MiningPage: React.FC = () => {
       </div>
 
       {/* Mining Stats */}
-      <MiningStatsCard 
-        spaceCoins={spaceCoins}
-        miningSpeed={miningSpeed}
-        autoMiningActive={autoMiningActive}
-        autoMiningRemainingTime={autoMiningRemainingTime}
-        miningActive={miningActive}
-        remainingTime={remainingTime}
-        currentLanguage={currentLanguage}
-        formatTime={formatTime}
-      />
+      <Card className="glass-card p-6 w-full max-w-md bg-blue-900">
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-white/80">{t('spaceBalance') || '$SPACE Balance'}:</span>
+            <motion.span 
+              key={spaceCoins} 
+              initial={{ scale: 1.2, color: '#ec4899' }} 
+              animate={{ scale: 1, color: '#ffffff' }} 
+              className="text-xl font-bold"
+            >
+              {spaceCoins.toLocaleString()}
+            </motion.span>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <span className="text-white/80">{t('miningSpeed') || 'Mining Speed'}:</span>
+            <span className="text-xl font-bold text-amber-200">
+              {miningSpeed}x
+            </span>
+          </div>
+
+          {autoMiningActive && (
+            <div className="flex items-center justify-between">
+              <span className="text-white/80">{t('autoMining') || 'Auto Mining'}:</span>
+              <span className="text-xl font-bold text-green-400">
+                {formatTime(autoMiningRemainingTime)}
+              </span>
+            </div>
+          )}
+
+          {miningActive && remainingTime > 0 && (
+            <div className="flex items-center justify-between">
+              <span className="text-white/80">{t('timeRemaining') || 'Time Remaining'}:</span>
+              <span className="text-xl font-bold text-green-400">
+                {formatTime(remainingTime)}
+              </span>
+            </div>
+          )}
+        </div>
+      </Card>
 
       {/* Action Buttons */}
-      <MiningActionButtons 
-        handleStartMining={handleStartMining}
-        autoMiningActive={autoMiningActive}
-        miningActive={miningActive}
-        remainingTime={remainingTime}
-        setShowUpgradeModal={setShowUpgradeModal}
-        setShowAutoMiningModal={setShowAutoMiningModal}
-        setShowBackgroundModal={setShowBackgroundModal}
-        currentLanguage={currentLanguage}
-        formatTime={formatTime}
-      />
+      <div className="space-y-4 w-full max-w-md">
+        <Button 
+          onClick={handleStartMining} 
+          disabled={autoMiningActive}
+          className={`w-full space-button ${miningActive ? 'animate-pulse-glow' : ''}`} 
+          size="lg"
+        >
+          {autoMiningActive
+            ? `${t('autoMiningActive') || 'Auto Mining Active'} ⚡`
+            : miningActive 
+            ? `${t('stopMining') || 'Stop Mining'} (${formatTime(remainingTime)})` 
+            : t('startMining') || 'Start Mining'
+          }
+        </Button>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Button 
+            onClick={() => setShowUpgradeModal(true)} 
+            variant="outline" 
+            className="bg-white/10 border-white/30 text-white hover:bg-white/20" 
+            size="lg"
+          >
+            <Zap className="w-4 h-4 mr-2" />
+            {t('upgrade') || 'Upgrade'}
+          </Button>
+
+          <Button 
+            onClick={() => setShowAutoMiningModal(true)} 
+            variant="outline" 
+            className="bg-green/10 border-green/30 text-white hover:bg-green/20" 
+            size="lg"
+            disabled={autoMiningActive}
+          >
+            <Crown className="w-4 h-4 mr-2" />
+            {autoMiningActive 
+              ? t('autoActive') || 'Auto Active'
+              : t('autoMining') || 'Auto Mining'
+            }
+          </Button>
+        </div>
+
+        <Button 
+          onClick={() => setShowBackgroundModal(true)} 
+          variant="outline" 
+          className="w-full bg-purple/10 border-purple/30 text-white hover:bg-purple/20" 
+          size="lg"
+        >
+          <Palette className="w-4 h-4 mr-2" />
+          {t('changeTheme') || 'Change Theme'}
+        </Button>
+      </div>
 
       {/* Upgrade Modal */}
       <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
