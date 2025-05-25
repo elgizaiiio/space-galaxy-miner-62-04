@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -219,10 +218,49 @@ const MiningPage: React.FC = () => {
     }
   };
 
-  const handlePurchaseUpgrade = (upgrade: UpgradeOption) => {
-    setMiningSpeed(upgrade.multiplier);
-    setShowUpgradeModal(false);
-    hapticFeedback('success');
+  const handlePurchaseUpgrade = async (upgrade: UpgradeOption) => {
+    if (!tonConnectUI.wallet) {
+      toast({
+        title: t('walletRequired') || 'Wallet Required',
+        description: t('connectWalletFirst') || 'Please connect your TON wallet first',
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 300,
+        messages: [
+          {
+            address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
+            amount: (upgrade.price * 1e9).toString(),
+            payload: `Mining Speed Upgrade: ${upgrade.label}`
+          }
+        ]
+      };
+
+      await tonConnectUI.sendTransaction(transaction);
+      
+      setMiningSpeed(upgrade.multiplier);
+      setShowUpgradeModal(false);
+      hapticFeedback('success');
+      
+      toast({
+        title: t('upgradeSuccess') || 'Upgrade Successful',
+        description: t('miningSpeedIncreased') || `Mining speed increased to ${upgrade.label}!`
+      });
+    } catch (error) {
+      console.error('Mining upgrade purchase failed:', error);
+      toast({
+        title: t('paymentFailed') || 'Payment Failed',
+        description: t('upgradePaymentError') || 'Failed to purchase mining upgrade',
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handlePurchaseAutoMining = async () => {
@@ -241,7 +279,7 @@ const MiningPage: React.FC = () => {
         validUntil: Math.floor(Date.now() / 1000) + 300,
         messages: [
           {
-            address: 'UQAqPFXgVhDpXe-WbJgfwVd_ETkmPMqEjLaNKLtDTKxVAJgk',
+            address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
             amount: (0.5 * 1e9).toString(),
             payload: 'Auto Mining - 3 Days'
           }
@@ -304,7 +342,7 @@ const MiningPage: React.FC = () => {
         validUntil: Math.floor(Date.now() / 1000) + 300,
         messages: [
           {
-            address: 'UQAqPFXgVhDpXe-WbJgfwVd_ETkmPMqEjLaNKLtDTKxVAJgk',
+            address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
             amount: (background.price * 1e9).toString(),
             payload: `Background: ${background.name}`
           }

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,20 +19,6 @@ const SubscriptionPage = () => {
   const t = (key: string) => getTranslation(key, currentLanguage.code);
 
   const plans = [
-    {
-      id: 'free',
-      name: t('freePlan') || 'Free',
-      price: 0,
-      period: t('forever') || 'Forever',
-      icon: Star,
-      color: 'gray',
-      features: [
-        t('basicMining') || 'Basic mining',
-        t('standardSpeed') || 'Standard speed (1x)',
-        t('basicTasks') || 'Basic tasks',
-        t('communitySupport') || 'Community support'
-      ]
-    },
     {
       id: 'premium',
       name: t('premiumPlan') || 'Premium',
@@ -73,15 +58,6 @@ const SubscriptionPage = () => {
   ];
 
   const handleSubscribe = async (planId: string, price: number) => {
-    if (price === 0) {
-      setCurrentPlan(planId);
-      toast({
-        title: t('planActivated') || 'Plan Activated',
-        description: t('freePlanActivated') || 'Free plan activated successfully'
-      });
-      return;
-    }
-
     if (!tonConnectUI.wallet) {
       toast({
         title: t('walletRequired') || 'Wallet Required',
@@ -97,7 +73,7 @@ const SubscriptionPage = () => {
         validUntil: Math.floor(Date.now() / 1000) + 300,
         messages: [
           {
-            address: 'UQAqPFXgVhDpXe-WbJgfwVd_ETkmPMqEjLaNKLtDTKxVAJgk',
+            address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
             amount: (price * 1e9).toString(),
             payload: `Premium subscription: ${planId}`
           }
@@ -152,7 +128,7 @@ const SubscriptionPage = () => {
         </div>
 
         {/* Subscription Plans */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 gap-6">
           {plans.map((plan) => {
             const Icon = plan.icon;
             const isCurrentPlan = currentPlan === plan.id;
@@ -203,7 +179,7 @@ const SubscriptionPage = () => {
                   </CardTitle>
                   <div className="text-center">
                     <span className="text-3xl font-bold text-white">
-                      {plan.price === 0 ? t('free') || 'Free' : formatTON(plan.price)}
+                      {formatTON(plan.price)}
                     </span>
                     <span className="text-gray-300 text-sm ml-2">
                       {plan.period}
@@ -238,8 +214,6 @@ const SubscriptionPage = () => {
                       ? t('processing') || 'Processing...'
                       : isCurrentPlan
                       ? t('currentPlan') || 'Current Plan'
-                      : plan.price === 0
-                      ? t('selectPlan') || 'Select Plan'
                       : t('subscribeNow') || 'Subscribe Now'
                     }
                   </Button>
