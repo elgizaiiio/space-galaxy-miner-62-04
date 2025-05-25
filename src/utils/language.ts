@@ -2,22 +2,31 @@ export interface Language {
   code: string;
   name: string;
   flag: string;
+  greeting: string;
 }
 
-export const languages: Language[] = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'ar', name: 'العربية', flag: '🇸🇦' },
-  { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-  { code: 'zh', name: '中文', flag: '🇨🇳' },
-  { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'ja', name: '日本語', flag: '🇯🇵' },
-  { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
-  { code: 'pt', name: 'Português', flag: '🇵🇹' },
-  { code: 'uk', name: 'Українська', flag: '🇺🇦' },
+export const SUPPORTED_LANGUAGES: Language[] = [
+  { code: 'en', name: 'English', flag: '🇺🇸', greeting: 'Welcome' },
+  { code: 'ar', name: 'العربية', flag: '🇸🇦', greeting: 'أهلاً وسهلاً' },
+  { code: 'ru', name: 'Русский', flag: '🇷🇺', greeting: 'Добро пожаловать' },
+  { code: 'zh', name: '中文', flag: '🇨🇳', greeting: '欢迎' },
+  { code: 'hi', name: 'हिन्दी', flag: '🇮🇳', greeting: 'स्वागत है' },
+  { code: 'es', name: 'Español', flag: '🇪🇸', greeting: 'Bienvenido' },
+  { code: 'fr', name: 'Français', flag: '🇫🇷', greeting: 'Bienvenue' },
+  { code: 'de', name: 'Deutsch', flag: '🇩🇪', greeting: 'Willkommen' },
+  { code: 'ja', name: '日本語', flag: '🇯🇵', greeting: 'ようこそ' },
+  { code: 'tr', name: 'Türkçe', flag: '🇹🇷', greeting: 'Hoş geldiniz' },
+  { code: 'pt', name: 'Português', flag: '🇵🇹', greeting: 'Bem-vindo' },
+  { code: 'uk', name: 'Українська', flag: '🇺🇦', greeting: 'Ласкаво просимо' },
 ];
+
+// Keep the old export for backward compatibility
+export const languages: Language[] = SUPPORTED_LANGUAGES;
+
+export const detectLanguage = (): Language => {
+  const browserLang = navigator.language.split('-')[0];
+  return SUPPORTED_LANGUAGES.find(lang => lang.code === browserLang) || SUPPORTED_LANGUAGES[0];
+};
 
 const translations: Record<string, Record<string, string>> = {
   en: {
