@@ -1,4 +1,5 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -44,7 +45,7 @@
 
   body {
     @apply bg-space-dark text-white;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     background: linear-gradient(135deg, #0c0a1f 0%, #1e3a8a 50%, #ec4899 100%);
     background-attachment: fixed;
     min-height: 100vh;
