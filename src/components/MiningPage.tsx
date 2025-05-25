@@ -145,7 +145,7 @@ const MiningPage: React.FC<MiningPageProps> = ({
 
       {/* Upgrade Modal */}
       <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
-        <DialogContent className="glass-card border-white/20 text-white max-w-md">
+        <DialogContent className="glass-card border-white/20 text-white max-w-md bg-indigo-700">
           <DialogHeader>
             <DialogTitle className="text-center text-2xl font-bold text-transparent bg-clip-text bg-space-gradient">
               Upgrade Mining Speed
@@ -166,10 +166,10 @@ const MiningPage: React.FC<MiningPageProps> = ({
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-bold text-space-pink">
+                    <div className="font-bold text-space-pink bg-transparent">
                       {formatTON(upgrade.price)}
                     </div>
-                    <div className="text-xs text-white/50">Real TON</div>
+                    
                   </div>
                 </Button>
               </motion.div>)}
