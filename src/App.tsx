@@ -8,16 +8,23 @@ import { TonConnectUIProvider } from '@tonconnect/ui-react';
 import SplashScreen from './components/SplashScreen';
 import OnboardingTutorial from './components/OnboardingTutorial';
 import MiningPage from './components/MiningPage';
+import TasksPage from './components/TasksPage';
+import WalletPage from './components/WalletPage';
+import ReferralPage from './components/ReferralPage';
 import { initTelegramWebApp, getTelegramUser } from './utils/telegram';
 import { createTonConnector, type UpgradeOption } from './utils/ton';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Home, CheckSquare, Wallet, Users, Menu } from 'lucide-react';
 
 const queryClient = new QueryClient();
 
 type AppState = 'splash' | 'onboarding' | 'main';
+type Page = 'mining' | 'tasks' | 'wallet' | 'referral';
 
 const App = () => {
   const [appState, setAppState] = useState<AppState>('splash');
+  const [currentPage, setCurrentPage] = useState<Page>('mining');
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const { toast } = useToast();
 
@@ -48,14 +55,14 @@ const App = () => {
     try {
       // In a real implementation, this would use TON Connect
       toast({
-        title: "Wallet Connection",
-        description: "TON Connect integration will be implemented with proper manifest",
+        title: "اتصال المحفظة",
+        description: "سيتم تطبيق TON Connect مع الملف الصحيح",
       });
       setIsWalletConnected(true);
     } catch (error) {
       toast({
-        title: "Connection Failed",
-        description: "Failed to connect wallet. Please try again.",
+        title: "فشل الاتصال",
+        description: "فشل في الاتصال بالمحفظة. حاول مرة أخرى.",
         variant: "destructive",
       });
     }
@@ -64,23 +71,57 @@ const App = () => {
   const handlePurchaseUpgrade = async (upgrade: UpgradeOption) => {
     try {
       toast({
-        title: "Processing Payment",
-        description: `Purchasing ${upgrade.label} for ${upgrade.price} TON...`,
+        title: "معالجة الدفع",
+        description: `شراء ${upgrade.label} مقابل ${upgrade.price} TON...`,
       });
       
       // In a real implementation, this would process the TON payment
       setTimeout(() => {
         toast({
-          title: "Upgrade Successful!",
-          description: `Your mining speed is now ${upgrade.multiplier}x faster!`,
+          title: "ترقية ناجحة!",
+          description: `سرعة التعدين الآن ${upgrade.multiplier}x أسرع!`,
         });
       }, 2000);
     } catch (error) {
       toast({
-        title: "Payment Failed",
-        description: "Failed to process payment. Please try again.",
+        title: "فشل الدفع",
+        description: "فشل في معالجة الدفع. حاول مرة أخرى.",
         variant: "destructive",
       });
+    }
+  };
+
+  const navigationItems = [
+    { id: 'mining', label: 'التعدين', icon: Home },
+    { id: 'tasks', label: 'المهام', icon: CheckSquare },
+    { id: 'wallet', label: 'المحفظة', icon: Wallet },
+    { id: 'referral', label: 'الأصدقاء', icon: Users },
+  ];
+
+  const renderCurrentPage = () => {
+    switch (currentPage) {
+      case 'mining':
+        return (
+          <MiningPage
+            isWalletConnected={isWalletConnected}
+            onConnectWallet={handleConnectWallet}
+            onPurchaseUpgrade={handlePurchaseUpgrade}
+          />
+        );
+      case 'tasks':
+        return <TasksPage />;
+      case 'wallet':
+        return <WalletPage />;
+      case 'referral':
+        return <ReferralPage />;
+      default:
+        return (
+          <MiningPage
+            isWalletConnected={isWalletConnected}
+            onConnectWallet={handleConnectWallet}
+            onPurchaseUpgrade={handlePurchaseUpgrade}
+          />
+        );
     }
   };
 
@@ -100,11 +141,38 @@ const App = () => {
           )}
           
           {appState === 'main' && (
-            <MiningPage
-              isWalletConnected={isWalletConnected}
-              onConnectWallet={handleConnectWallet}
-              onPurchaseUpgrade={handlePurchaseUpgrade}
-            />
+            <div className="min-h-screen flex flex-col">
+              {/* Main Content */}
+              <div className="flex-1 pb-20">
+                {renderCurrentPage()}
+              </div>
+
+              {/* Bottom Navigation */}
+              <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/20 p-4 z-50">
+                <div className="max-w-md mx-auto">
+                  <div className="grid grid-cols-4 gap-2">
+                    {navigationItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Button
+                          key={item.id}
+                          variant="ghost"
+                          onClick={() => setCurrentPage(item.id as Page)}
+                          className={`flex flex-col items-center gap-1 h-auto py-2 px-2 text-xs ${
+                            currentPage === item.id
+                              ? 'text-pink-400 bg-pink-400/20'
+                              : 'text-gray-400 hover:text-white hover:bg-white/10'
+                          }`}
+                        >
+                          <Icon className="w-6 h-6" />
+                          <span>{item.label}</span>
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </TooltipProvider>
       </QueryClientProvider>
