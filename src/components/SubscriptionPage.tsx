@@ -4,13 +4,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Crown, Star, Zap, CheckCircle, Rocket, Settings } from 'lucide-react';
+import { useTonConnectUI } from '@tonconnect/ui-react';
+import { useToast } from '@/hooks/use-toast';
 import LanguageSwitcher from './LanguageSwitcher';
 import { getStoredLanguage, getTranslation } from '../utils/language';
-import { formatTON } from '../utils/ton';
+import { formatTON, sendTONPayment } from '../utils/ton';
 
 const SubscriptionPage = () => {
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [currentPlan, setCurrentPlan] = useState('free');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [tonConnectUI] = useTonConnectUI();
+  const { toast } = useToast();
 
   const t = (key: string) => getTranslation(key, currentLanguage.code);
 
@@ -32,24 +37,25 @@ const SubscriptionPage = () => {
     {
       id: 'premium',
       name: t('premiumPlan') || 'Premium',
-      price: 0.5,
+      price: 1.5,
       period: t('perMonth') || 'per month',
       icon: Crown,
       color: 'yellow',
       popular: true,
       features: [
-        t('autoMining') || 'Auto mining',
+        t('autoMining') || 'Auto mining (3+ days)',
         t('fastSpeed') || 'Fast speed (5x)',
-        t('premiumTasks') || 'Premium tasks',
-        t('backgroundChange') || 'Background customization',
-        t('prioritySupport') || 'Priority support',
-        t('earlyAccess') || 'Early access to features'
+        t('bonusPoints') || '+25% bonus points on tasks',
+        t('exclusiveBackgrounds') || 'Exclusive backgrounds',
+        t('priorityEvents') || 'Priority access to events',
+        t('vipBadge') || 'VIP badge on profile',
+        t('prioritySupport') || 'Priority support'
       ]
     },
     {
       id: 'vip',
       name: t('vipPlan') || 'VIP',
-      price: 1.0,
+      price: 3.0,
       period: t('perMonth') || 'per month',
       icon: Rocket,
       color: 'purple',
@@ -57,24 +63,67 @@ const SubscriptionPage = () => {
         t('ultraFastMining') || 'Ultra-fast mining (10x)',
         t('unlimitedAutoMining') || 'Unlimited auto mining',
         t('exclusiveTasks') || 'Exclusive VIP tasks',
-        t('customBackgrounds') || 'Custom backgrounds',
+        t('allBackgrounds') || 'All backgrounds unlocked',
         t('vipSupport') || '24/7 VIP support',
         t('specialRewards') || 'Special rewards & bonuses',
-        t('exclusiveFeatures') || 'Exclusive features'
+        t('exclusiveFeatures') || 'Exclusive features',
+        t('earlyAccess') || 'Early access to new features'
       ]
     }
   ];
 
-  const handleSubscribe = (planId: string, price: number) => {
+  const handleSubscribe = async (planId: string, price: number) => {
     if (price === 0) {
       setCurrentPlan(planId);
+      toast({
+        title: t('planActivated') || 'Plan Activated',
+        description: t('freePlanActivated') || 'Free plan activated successfully'
+      });
       return;
     }
-    
-    // Here you would integrate with TON payment
-    console.log(`Subscribing to ${planId} plan for ${formatTON(price)}`);
-    // For now, just simulate subscription
-    setCurrentPlan(planId);
+
+    if (!tonConnectUI.wallet) {
+      toast({
+        title: t('walletRequired') || 'Wallet Required',
+        description: t('connectWalletFirst') || 'Please connect your TON wallet first',
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 300,
+        messages: [
+          {
+            address: 'UQAqPFXgVhDpXe-WbJgfwVd_ETkmPMqEjLaNKLtDTKxVAJgk',
+            amount: (price * 1e9).toString(),
+            payload: `Premium subscription: ${planId}`
+          }
+        ]
+      };
+
+      await tonConnectUI.sendTransaction(transaction);
+      
+      setCurrentPlan(planId);
+      localStorage.setItem('premiumPlan', planId);
+      localStorage.setItem('premiumExpiry', (Date.now() + 30 * 24 * 60 * 60 * 1000).toString());
+      
+      toast({
+        title: t('subscriptionSuccess') || 'Subscription Successful',
+        description: t('premiumActivated') || `${planId.toUpperCase()} plan activated successfully!`
+      });
+    } catch (error) {
+      console.error('Subscription payment failed:', error);
+      toast({
+        title: t('paymentFailed') || 'Payment Failed',
+        description: t('subscriptionError') || 'Failed to process subscription payment',
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -94,7 +143,7 @@ const SubscriptionPage = () => {
               </div>
             </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent mb-3">
-              {t('subscriptions') || 'Subscriptions'}
+              {t('premium') || 'Premium'}
             </h1>
             <p className="text-gray-300 text-base leading-relaxed">
               {t('unlockPremiumFeatures') || 'Unlock premium features and boost your mining'}
@@ -174,7 +223,7 @@ const SubscriptionPage = () => {
 
                   <Button
                     onClick={() => handleSubscribe(plan.id, plan.price)}
-                    disabled={isCurrentPlan}
+                    disabled={isCurrentPlan || isProcessing}
                     className={`w-full mt-6 ${
                       isCurrentPlan
                         ? 'bg-green-600 hover:bg-green-600 cursor-default'
@@ -185,11 +234,13 @@ const SubscriptionPage = () => {
                         : 'bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800'
                     } rounded-2xl font-bold py-3`}
                   >
-                    {isCurrentPlan
+                    {isProcessing
+                      ? t('processing') || 'Processing...'
+                      : isCurrentPlan
                       ? t('currentPlan') || 'Current Plan'
                       : plan.price === 0
                       ? t('selectPlan') || 'Select Plan'
-                      : t('subscribe') || 'Subscribe'
+                      : t('subscribeNow') || 'Subscribe Now'
                     }
                   </Button>
                 </CardContent>
@@ -198,38 +249,49 @@ const SubscriptionPage = () => {
           })}
         </div>
 
-        {/* Features Comparison */}
+        {/* Premium Benefits */}
         <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-3xl overflow-hidden mt-8">
           <CardHeader>
             <CardTitle className="text-white text-2xl text-center flex items-center justify-center gap-2">
-              <Settings className="w-6 h-6" />
-              {t('featureComparison') || 'Feature Comparison'}
+              <Zap className="w-6 h-6" />
+              {t('premiumBenefits') || 'Premium Benefits'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-              <div className="space-y-2">
-                <h3 className="text-white font-bold">{t('miningSpeed') || 'Mining Speed'}</h3>
-                <div className="text-gray-300 text-sm space-y-1">
-                  <div>Free: 1x</div>
-                  <div>Premium: 5x</div>
-                  <div>VIP: 10x</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Crown className="w-6 h-6 text-yellow-400" />
+                  <div>
+                    <h3 className="text-white font-bold">{t('autoMining') || 'Auto Mining'}</h3>
+                    <p className="text-gray-300 text-sm">{t('autoMiningDesc') || 'Automatic mining for 3+ days'}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <Zap className="w-6 h-6 text-blue-400" />
+                  <div>
+                    <h3 className="text-white font-bold">{t('bonusPoints') || 'Bonus Points'}</h3>
+                    <p className="text-gray-300 text-sm">{t('bonusPointsDesc') || '+25% extra points on all tasks'}</p>
+                  </div>
                 </div>
               </div>
-              <div className="space-y-2">
-                <h3 className="text-white font-bold">{t('autoMining') || 'Auto Mining'}</h3>
-                <div className="text-gray-300 text-sm space-y-1">
-                  <div>Free: ❌</div>
-                  <div>Premium: ✅</div>
-                  <div>VIP: ✅ Unlimited</div>
+              
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Settings className="w-6 h-6 text-purple-400" />
+                  <div>
+                    <h3 className="text-white font-bold">{t('exclusiveBackgrounds') || 'Exclusive Backgrounds'}</h3>
+                    <p className="text-gray-300 text-sm">{t('exclusiveBackgroundsDesc') || 'Premium-only visual themes'}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-white font-bold">{t('customization') || 'Customization'}</h3>
-                <div className="text-gray-300 text-sm space-y-1">
-                  <div>Free: ❌</div>
-                  <div>Premium: ✅ Basic</div>
-                  <div>VIP: ✅ Advanced</div>
+                
+                <div className="flex items-center gap-3">
+                  <Star className="w-6 h-6 text-green-400" />
+                  <div>
+                    <h3 className="text-white font-bold">{t('vipBadge') || 'VIP Badge'}</h3>
+                    <p className="text-gray-300 text-sm">{t('vipBadgeDesc') || 'Show your premium status'}</p>
+                  </div>
                 </div>
               </div>
             </div>
