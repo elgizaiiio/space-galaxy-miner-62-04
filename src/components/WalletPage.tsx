@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Wallet, Send, ArrowDownToLine, ArrowUpFromLine, Eye, EyeOff, Copy, ExternalLink, TrendingUp, RefreshCw } from 'lucide-react';
+import { Wallet, Send, ArrowDownToLine, ArrowUpFromLine, Eye, EyeOff, Copy, ExternalLink, TrendingUp, RefreshCw, LogIn, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { tonService, type TONTransaction } from '../services/tonService';
 
@@ -13,24 +13,90 @@ const WalletPage = () => {
   const [tonBalance, setTonBalance] = useState(2.45);
   const [transactions, setTransactions] = useState<TONTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
   
-  const walletAddress = "UQAqPFXgVhDpXe-WbJgfwVd_ETkmPMqEjLaNKLtDTKxVAJgk";
+  const fallbackAddress = "UQAqPFXgVhDpXe-WbJgfwVd_ETkmPMqEjLaNKLtDTKxVAJgk";
 
   useEffect(() => {
-    loadWalletData();
+    checkWalletConnection();
   }, []);
 
-  const loadWalletData = async () => {
+  const checkWalletConnection = () => {
+    const isConnected = tonService.isWalletConnected();
+    if (isConnected) {
+      const address = tonService.getConnectedWallet();
+      setConnectedAddress(address);
+      if (address) {
+        loadWalletData(address);
+      }
+    } else {
+      // Use fallback address for demo
+      setConnectedAddress(fallbackAddress);
+      loadWalletData(fallbackAddress);
+    }
+  };
+
+  const connectWallet = async () => {
+    setIsConnecting(true);
+    try {
+      console.log('Attempting to connect TON wallet...');
+      const address = await tonService.connectWallet();
+      
+      if (address) {
+        setConnectedAddress(address);
+        await loadWalletData(address);
+        
+        toast({
+          title: "تم الاتصال بنجاح!",
+          description: "تم ربط محفظة TON بنجاح",
+        });
+      } else {
+        toast({
+          title: "فشل الاتصال",
+          description: "لم يتم العثور على محفظة متاحة",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+      toast({
+        title: "خطأ في الاتصال",
+        description: "فشل في ربط المحفظة. تأكد من تثبيت محفظة TON",
+        variant: "destructive",
+      });
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnectWallet = async () => {
+    try {
+      await tonService.disconnectWallet();
+      setConnectedAddress(null);
+      setTransactions([]);
+      setTonBalance(0);
+      
+      toast({
+        title: "تم قطع الاتصال",
+        description: "تم قطع الاتصال بمحفظة TON",
+      });
+    } catch (error) {
+      console.error('Error disconnecting wallet:', error);
+    }
+  };
+
+  const loadWalletData = async (address: string) => {
     setIsLoading(true);
     try {
-      console.log('Loading TON wallet data...');
+      console.log('Loading TON wallet data for address:', address);
       
       // Load balance
-      const balanceData = await tonService.getBalance(walletAddress);
+      const balanceData = await tonService.getBalance(address);
       setTonBalance(parseFloat(balanceData.balance));
       
       // Load transactions
-      const txData = await tonService.getTransactions(walletAddress, 6);
+      const txData = await tonService.getTransactions(address, 6);
       setTransactions(txData);
       
       console.log('TON data loaded:', { balance: balanceData, transactions: txData });
@@ -71,6 +137,8 @@ const WalletPage = () => {
     window.open(`https://tonscan.org/tx/${hash}`, '_blank');
   };
 
+  const currentAddress = connectedAddress || fallbackAddress;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-4 pb-24">
       <div className="max-w-md mx-auto space-y-6">
@@ -89,6 +157,44 @@ const WalletPage = () => {
             <p className="text-gray-300 text-base leading-relaxed">إدارة أرصدتك ومعاملاتك بسهولة</p>
           </div>
         </div>
+
+        {/* Wallet Connection Status */}
+        <Card className="bg-gradient-to-br from-green-500/15 to-emerald-500/15 backdrop-blur-xl border-2 border-green-500/40 rounded-3xl overflow-hidden">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`w-3 h-3 rounded-full ${tonService.isWalletConnected() ? 'bg-green-400' : 'bg-yellow-400'}`}></div>
+                <span className="text-white font-semibold">
+                  {tonService.isWalletConnected() ? 'محفظة متصلة' : 'وضع العرض التجريبي'}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                {tonService.isWalletConnected() ? (
+                  <Button
+                    onClick={disconnectWallet}
+                    variant="outline"
+                    size="sm"
+                    className="bg-red-500/20 border-red-500/50 text-red-200 hover:bg-red-500/30"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    قطع الاتصال
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={connectWallet}
+                    disabled={isConnecting}
+                    variant="outline"
+                    size="sm"
+                    className="bg-green-500/20 border-green-500/50 text-green-200 hover:bg-green-500/30"
+                  >
+                    <LogIn className="w-4 h-4 mr-2" />
+                    {isConnecting ? 'جاري الاتصال...' : 'ربط المحفظة'}
+                  </Button>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Enhanced Balance Cards */}
         <div className="space-y-4">
@@ -144,7 +250,7 @@ const WalletPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={loadWalletData}
+                  onClick={() => loadWalletData(currentAddress)}
                   disabled={isLoading}
                   className="text-purple-300 hover:text-white hover:bg-purple-500/20 h-10 w-10 p-0 rounded-xl"
                 >
@@ -166,7 +272,10 @@ const WalletPage = () => {
 
         {/* Enhanced Action Buttons */}
         <div className="grid grid-cols-2 gap-4 my-8">
-          <Button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 h-16 text-base font-semibold rounded-2xl shadow-xl border-0 hover:scale-105 transition-all duration-300">
+          <Button 
+            disabled={!tonService.isWalletConnected()}
+            className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 h-16 text-base font-semibold rounded-2xl shadow-xl border-0 hover:scale-105 transition-all duration-300 disabled:opacity-50"
+          >
             <ArrowUpFromLine className="w-5 h-5 mr-2" />
             إرسال
           </Button>
@@ -184,18 +293,23 @@ const WalletPage = () => {
                 <Wallet className="w-5 h-5" />
               </div>
               عنوان المحفظة
+              {!tonService.isWalletConnected() && (
+                <span className="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full">
+                  تجريبي
+                </span>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <div className="flex items-center gap-3 p-4 bg-black/30 rounded-2xl border border-white/10">
               <code className="text-xs text-gray-200 flex-1 break-all leading-relaxed font-mono">
-                {walletAddress}
+                {currentAddress}
               </code>
               <div className="flex gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => copyToClipboard(walletAddress)}
+                  onClick={() => copyToClipboard(currentAddress)}
                   className="text-gray-400 hover:text-white hover:bg-gray-500/20 h-10 w-10 p-0 rounded-xl"
                 >
                   <Copy className="w-4 h-4" />
@@ -203,7 +317,7 @@ const WalletPage = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => window.open(`https://tonscan.org/address/${walletAddress}`, '_blank')}
+                  onClick={() => window.open(`https://tonscan.org/address/${currentAddress}`, '_blank')}
                   className="text-gray-400 hover:text-white hover:bg-gray-500/20 h-10 w-10 p-0 rounded-xl"
                 >
                   <ExternalLink className="w-4 h-4" />
@@ -226,7 +340,7 @@ const WalletPage = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={loadWalletData}
+                onClick={() => loadWalletData(currentAddress)}
                 disabled={isLoading}
                 className="text-indigo-300 hover:text-white hover:bg-indigo-500/20 h-10 w-10 p-0 rounded-xl"
               >
