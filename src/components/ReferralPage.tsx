@@ -2,44 +2,20 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Gift, Copy, Share2, UserPlus, TrendingUp } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Users, Gift, MessageSquare, TrendingUp, Star, ArrowRight } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { getStoredLanguage, getTranslation } from '../utils/language';
 
 const ReferralPage = () => {
-  const { toast } = useToast();
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
-  const [referralCode] = useState('SPACE2024');
   const [referredUsers] = useState(12);
   const [totalEarned] = useState(2400);
 
   // Get translation function for current language
   const t = (key: string) => getTranslation(key, currentLanguage.code);
 
-  const copyReferralLink = () => {
-    const referralLink = `https://space-mining-app.com/ref/${referralCode}`;
-    navigator.clipboard.writeText(referralLink);
-    toast({
-      title: t('copied') || 'Copied!',
-      description: t('referralLinkCopied') || 'Referral link copied to clipboard'
-    });
-  };
-
-  const shareReferralLink = () => {
-    const referralLink = `https://space-mining-app.com/ref/${referralCode}`;
-    const shareText = t('shareText') || `Join me on Space Mining App and start earning $SPACE coins! Use my referral code: ${referralCode}`;
-    
-    if (navigator.share) {
-      navigator.share({
-        title: t('shareTitleApp') || 'Space Mining App',
-        text: shareText,
-        url: referralLink
-      });
-    } else {
-      // Fallback for browsers that don't support Web Share API
-      copyReferralLink();
-    }
+  const openTelegramBot = () => {
+    window.open('https://t.me/Spacelbot', '_blank');
   };
 
   const referralStats = [
@@ -56,17 +32,11 @@ const ReferralPage = () => {
       color: 'green'
     },
     {
-      icon: TrendingUp,
-      label: t('earningsPerReferral') || 'Per Referral',
-      value: '200 $SPACE',
+      icon: Star,
+      label: t('airdropBonus') || 'Airdrop Bonus',
+      value: '50%',
       color: 'purple'
     }
-  ];
-
-  const recentReferrals = [
-    { name: t('user') + ' #1', joined: t('today') || 'Today', earned: 200 },
-    { name: t('user') + ' #2', joined: t('yesterday') || 'Yesterday', earned: 200 },
-    { name: t('user') + ' #3', joined: '2 ' + (t('daysAgo') || 'days ago'), earned: 200 }
   ];
 
   return (
@@ -126,34 +96,57 @@ const ReferralPage = () => {
           })}
         </div>
 
-        {/* Referral Code Card */}
+        {/* Get Referral Link Instructions */}
         <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-3xl overflow-hidden">
           <CardHeader>
-            <CardTitle className="text-white text-xl text-center">
-              {t('yourReferralCode') || 'Your Referral Code'}
+            <CardTitle className="text-white text-xl text-center flex items-center justify-center gap-2">
+              <MessageSquare className="w-6 h-6" />
+              {t('getReferralLink') || 'Get Your Referral Link'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="bg-white/10 rounded-2xl p-4 text-center">
-              <code className="text-2xl font-bold text-white tracking-wider">{referralCode}</code>
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-0.5">1</div>
+                <p className="text-gray-300">{t('goToBot') || 'Go to'} @Spacelbot {t('onTelegram') || 'on Telegram'}</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-0.5">2</div>
+                <p className="text-gray-300">{t('sendCommand') || 'Send the command'}: <code className="bg-white/10 px-2 py-1 rounded text-white">/Referral</code></p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-0.5">3</div>
+                <p className="text-gray-300">{t('receiveLink') || 'You will receive your personal referral link'}</p>
+              </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-3">
-              <Button 
-                onClick={copyReferralLink}
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-2xl"
-              >
-                <Copy className="w-4 h-4 mr-2" />
-                {t('copy') || 'Copy'}
-              </Button>
-              
-              <Button 
-                onClick={shareReferralLink}
-                className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 rounded-2xl"
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                {t('share') || 'Share'}
-              </Button>
+            <Button 
+              onClick={openTelegramBot}
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-2xl flex items-center justify-center gap-2"
+            >
+              <MessageSquare className="w-4 h-4" />
+              {t('openBot') || 'Open @Spacelbot'}
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Airdrop Bonus Info */}
+        <Card className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-xl border-2 border-yellow-500/30 rounded-3xl overflow-hidden">
+          <CardContent className="p-6">
+            <div className="text-center space-y-3">
+              <div className="flex items-center justify-center">
+                <div className="p-3 bg-yellow-500/20 rounded-full">
+                  <Star className="w-8 h-8 text-yellow-400" />
+                </div>
+              </div>
+              <h3 className="text-white text-xl font-bold">{t('airdropBonus') || 'Airdrop Bonus'}</h3>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                {t('airdropBonusDesc') || 'Users will receive 50% bonus rewards during the airdrop event!'}
+              </p>
+              <div className="bg-yellow-500/20 rounded-2xl p-3">
+                <p className="text-yellow-300 font-bold text-lg">50% {t('bonusRewards') || 'Bonus Rewards'}</p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -162,7 +155,7 @@ const ReferralPage = () => {
         <Card className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-xl border-2 border-green-500/30 rounded-3xl overflow-hidden">
           <CardHeader>
             <CardTitle className="text-white text-xl text-center flex items-center justify-center gap-2">
-              <UserPlus className="w-6 h-6" />
+              <TrendingUp className="w-6 h-6" />
               {t('howItWorks') || 'How It Works'}
             </CardTitle>
           </CardHeader>
@@ -170,37 +163,17 @@ const ReferralPage = () => {
             <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-0.5">1</div>
-                <p className="text-gray-300">{t('step1') || 'Share your referral code with friends'}</p>
+                <p className="text-gray-300">{t('step1') || 'Share your referral link with friends'}</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-0.5">2</div>
-                <p className="text-gray-300">{t('step2') || 'They join using your code'}</p>
+                <p className="text-gray-300">{t('step2') || 'They join using your link'}</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-0.5">3</div>
-                <p className="text-gray-300">{t('step3') || 'You both earn 200 $SPACE coins!'}</p>
+                <p className="text-gray-300">{t('step3') || 'You both earn $SPACE coins + 50% airdrop bonus!'}</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Recent Referrals */}
-        <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-xl border-2 border-purple-500/30 rounded-3xl overflow-hidden">
-          <CardHeader>
-            <CardTitle className="text-white text-xl">{t('recentReferrals') || 'Recent Referrals'}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {recentReferrals.map((referral, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
-                <div>
-                  <p className="text-white font-medium">{referral.name}</p>
-                  <p className="text-gray-400 text-sm">{t('joined') || 'Joined'} {referral.joined}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-green-400 font-bold">+{referral.earned} $SPACE</p>
-                </div>
-              </div>
-            ))}
           </CardContent>
         </Card>
       </div>
