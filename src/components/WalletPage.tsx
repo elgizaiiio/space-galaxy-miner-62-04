@@ -172,9 +172,7 @@ const WalletPage = () => {
             <CardHeader className="pb-3 relative">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-white flex items-center gap-3 text-xl">
-                  <div className="p-2 bg-blue-500/30 rounded-xl">
-                    <span className="text-2xl">💎</span>
-                  </div>
+                  
                   <div>
                     <span className="block">$SPACE</span>
                     <span className="text-sm text-blue-300 font-normal">العملة الرئيسية</span>
@@ -185,20 +183,11 @@ const WalletPage = () => {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="pt-0 relative">
-              <p className="text-4xl font-bold text-white mb-3">
+            <CardContent className="pt-0 relative my-0">
+              <p className="font-bold text-white mb-3 text-2xl">
                 {showBalance ? spaceBalance.toLocaleString() : '••••••'}
               </p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-green-400" />
-                  <p className="text-blue-300 text-sm">≈ ${(spaceBalance * 0.001).toFixed(2)} USD</p>
-                </div>
-                <Button size="sm" className="bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50">
-                  <Plus className="w-4 h-4 mr-1" />
-                  شراء
-                </Button>
-              </div>
+              
             </CardContent>
           </Card>
 
@@ -208,12 +197,10 @@ const WalletPage = () => {
             <CardHeader className="pb-3 relative">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-white flex items-center gap-3 text-xl">
-                  <div className="p-2 bg-purple-500/30 rounded-xl">
-                    <span className="text-2xl">💎</span>
-                  </div>
+                  
                   <div>
                     <span className="block">TON</span>
-                    <span className="text-sm text-purple-300 font-normal">عملة الشبكة</span>
+                    
                   </div>
                 </CardTitle>
                 <Button variant="ghost" size="sm" onClick={() => loadWalletData(currentAddress)} disabled={isLoading} className="text-purple-300 hover:text-white hover:bg-purple-500/20 h-10 w-10 p-0 rounded-xl">
@@ -221,74 +208,30 @@ const WalletPage = () => {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="pt-0 relative">
-              <p className="text-4xl font-bold text-white mb-3">
+            <CardContent className="pt-0 relative rounded-full">
+              <p className="font-bold text-white mb-3 text-2xl">
                 {showBalance ? tonBalance.toFixed(4) : '••••'}
               </p>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-green-400" />
-                  <p className="text-purple-300 text-sm">≈ ${(tonBalance * 2.1).toFixed(2)} USD</p>
-                </div>
-                <Button size="sm" className="bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50">
-                  <Plus className="w-4 h-4 mr-1" />
-                  شراء
-                </Button>
+                
+                
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Enhanced Action Buttons */}
-        <div className="grid grid-cols-2 gap-4 my-8">
-          <Button disabled={!isWalletConnected} className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 h-16 text-base font-semibold rounded-2xl shadow-xl border-0 hover:scale-105 transition-all duration-300 disabled:opacity-50">
-            <ArrowUpFromLine className="w-5 h-5 mr-2" />
-            إرسال
-          </Button>
-          <Button className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 h-16 text-base font-semibold rounded-2xl shadow-xl border-0 hover:scale-105 transition-all duration-300">
-            <ArrowDownToLine className="w-5 h-5 mr-2" />
-            استقبال
-          </Button>
-        </div>
+        
 
         {/* Enhanced Wallet Address */}
-        <Card className="bg-gradient-to-br from-gray-500/10 to-slate-500/10 backdrop-blur-xl border border-gray-500/30 rounded-3xl overflow-hidden">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-white flex items-center gap-3 text-lg">
-              <div className="p-2 bg-gray-500/30 rounded-xl">
-                <Wallet className="w-5 h-5" />
-              </div>
-              عنوان المحفظة
-              {!isWalletConnected && <span className="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full">
-                  تجريبي
-                </span>}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="flex items-center gap-3 p-4 bg-black/30 rounded-2xl border border-white/10">
-              <code className="text-xs text-gray-200 flex-1 break-all leading-relaxed font-mono">
-                {currentAddress}
-              </code>
-              <div className="flex gap-2">
-                <Button variant="ghost" size="sm" onClick={() => copyToClipboard(currentAddress)} className="text-gray-400 hover:text-white hover:bg-gray-500/20 h-10 w-10 p-0 rounded-xl">
-                  <Copy className="w-4 h-4" />
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => window.open(`https://tonscan.org/address/${currentAddress}`, '_blank')} className="text-gray-400 hover:text-white hover:bg-gray-500/20 h-10 w-10 p-0 rounded-xl">
-                  <ExternalLink className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        
 
         {/* Enhanced Transaction History */}
         <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-3xl overflow-hidden">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <CardTitle className="text-white text-xl flex items-center gap-3">
-                <div className="p-2 bg-indigo-500/30 rounded-xl">
-                  <span className="text-lg">📊</span>
-                </div>
+                
                 آخر المعاملات
               </CardTitle>
               <Button variant="ghost" size="sm" onClick={() => loadWalletData(currentAddress)} disabled={isLoading} className="text-indigo-300 hover:text-white hover:bg-indigo-500/20 h-10 w-10 p-0 rounded-xl">

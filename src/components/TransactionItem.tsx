@@ -1,41 +1,32 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
 import { TONTransaction } from '../services/tonService';
 import { tonService } from '../services/tonService';
-
 interface TransactionItemProps {
   transaction: TONTransaction;
   onViewExplorer: (hash: string) => void;
 }
-
-const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onViewExplorer }) => {
+const TransactionItem: React.FC<TransactionItemProps> = ({
+  transaction,
+  onViewExplorer
+}) => {
   const getTransactionIcon = (tx: TONTransaction) => {
     if (tx.type === 'in') return '📥';
     if (tx.type === 'out') return '📤';
     return '💎';
   };
-
   const getTransactionDescription = (tx: TONTransaction) => {
     if (tx.comment) return tx.comment;
     if (tx.type === 'in') return 'استقبال TON';
     return 'إرسال TON';
   };
-
   const getTransactionColor = (type: string) => {
     return type === 'in' ? 'text-green-400' : 'text-red-400';
   };
-
-  return (
-    <div 
-      className="group flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 cursor-pointer"
-      onClick={() => onViewExplorer(transaction.hash)}
-    >
+  return <div className="group flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all duration-300 cursor-pointer" onClick={() => onViewExplorer(transaction.hash)}>
       <div className="flex items-center gap-4">
-        <div className="text-2xl p-2 bg-white/10 rounded-xl group-hover:bg-white/20 transition-colors">
-          {getTransactionIcon(transaction)}
-        </div>
+        
         <div className="min-w-0 flex-1">
           <p className="text-white font-semibold text-base truncate">
             {getTransactionDescription(transaction)}
@@ -55,27 +46,16 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onViewEx
             {transaction.type === 'in' ? '+' : '-'}{transaction.value} TON
           </p>
           <p className="text-gray-400 text-sm">رسوم: {transaction.fee} TON</p>
-          {!transaction.hash.startsWith('fallback_') && (
-            <p className="text-blue-400 text-xs">انقر للعرض</p>
-          )}
+          {!transaction.hash.startsWith('fallback_') && <p className="text-blue-400 text-xs">انقر للعرض</p>}
         </div>
         
-        {!transaction.hash.startsWith('fallback_') && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onViewExplorer(transaction.hash);
-            }}
-            className="text-gray-400 hover:text-white hover:bg-white/10 h-8 w-8 p-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-          >
+        {!transaction.hash.startsWith('fallback_') && <Button variant="ghost" size="sm" onClick={e => {
+        e.stopPropagation();
+        onViewExplorer(transaction.hash);
+      }} className="text-gray-400 hover:text-white hover:bg-white/10 h-8 w-8 p-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
             <ExternalLink className="w-4 h-4" />
-          </Button>
-        )}
+          </Button>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TransactionItem;
