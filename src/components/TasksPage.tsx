@@ -25,7 +25,7 @@ const TasksPage = () => {
       reward: 100,
       completed: false,
       type: 'daily',
-      icon: <Calendar className="w-5 h-5" />
+      icon: <Calendar className="w-4 h-4" />
     },
     {
       id: '2',
@@ -34,7 +34,7 @@ const TasksPage = () => {
       reward: 500,
       completed: false,
       type: 'daily',
-      icon: <Star className="w-5 h-5" />
+      icon: <Star className="w-4 h-4" />
     },
     {
       id: '3',
@@ -43,7 +43,7 @@ const TasksPage = () => {
       reward: 2000,
       completed: false,
       type: 'weekly',
-      icon: <Users className="w-5 h-5" />
+      icon: <Users className="w-4 h-4" />
     },
     {
       id: '4',
@@ -52,7 +52,7 @@ const TasksPage = () => {
       reward: 1000,
       completed: false,
       type: 'special',
-      icon: <TrendingUp className="w-5 h-5" />
+      icon: <TrendingUp className="w-4 h-4" />
     }
   ]);
 
@@ -90,76 +90,83 @@ const TasksPage = () => {
     }
   };
 
+  const completedTasks = tasks.filter(t => t.completed);
+  const totalRewards = completedTasks.reduce((sum, t) => sum + t.reward, 0);
+  const progressPercentage = Math.round((completedTasks.length / tasks.length) * 100);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-space-dark via-blue-900 to-purple-900 p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-space-dark via-blue-900 to-purple-900 p-3 pb-24">
+      <div className="max-w-md mx-auto space-y-4">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-400 to-purple-600 bg-clip-text text-transparent mb-2">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-400 to-purple-600 bg-clip-text text-transparent mb-2">
             المهام
           </h1>
-          <p className="text-gray-300">أكمل المهام واحصل على مكافآت $SPACE</p>
+          <p className="text-gray-300 text-sm">أكمل المهام واحصل على مكافآت $SPACE</p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-3 gap-2 mb-6">
           <Card className="glass-card">
-            <CardContent className="p-4 text-center">
-              <Gift className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-              <h3 className="text-lg font-semibold text-white">إجمالي المكافآت</h3>
-              <p className="text-2xl font-bold text-yellow-400">
-                {tasks.filter(t => t.completed).reduce((sum, t) => sum + t.reward, 0)} $SPACE
+            <CardContent className="p-3 text-center">
+              <Gift className="w-6 h-6 text-yellow-400 mx-auto mb-1" />
+              <h3 className="text-xs font-semibold text-white mb-1">إجمالي المكافآت</h3>
+              <p className="text-sm font-bold text-yellow-400">
+                {totalRewards} $SPACE
               </p>
             </CardContent>
           </Card>
           
           <Card className="glass-card">
-            <CardContent className="p-4 text-center">
-              <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <h3 className="text-lg font-semibold text-white">المهام المكتملة</h3>
-              <p className="text-2xl font-bold text-green-400">
-                {tasks.filter(t => t.completed).length} / {tasks.length}
+            <CardContent className="p-3 text-center">
+              <CheckCircle className="w-6 h-6 text-green-400 mx-auto mb-1" />
+              <h3 className="text-xs font-semibold text-white mb-1">المهام المكتملة</h3>
+              <p className="text-sm font-bold text-green-400">
+                {completedTasks.length} / {tasks.length}
               </p>
             </CardContent>
           </Card>
           
           <Card className="glass-card">
-            <CardContent className="p-4 text-center">
-              <Star className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-              <h3 className="text-lg font-semibold text-white">التقدم</h3>
-              <p className="text-2xl font-bold text-purple-400">
-                {Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100)}%
+            <CardContent className="p-3 text-center">
+              <Star className="w-6 h-6 text-purple-400 mx-auto mb-1" />
+              <h3 className="text-xs font-semibold text-white mb-1">التقدم</h3>
+              <p className="text-sm font-bold text-purple-400">
+                {progressPercentage}%
               </p>
             </CardContent>
           </Card>
         </div>
 
         {/* Tasks List */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {tasks.map((task) => (
             <Card key={task.id} className={`glass-card border-2 ${getTaskTypeColor(task.type)} ${task.completed ? 'opacity-60' : ''}`}>
               <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {task.icon}
-                    <div>
-                      <CardTitle className="text-white text-lg">{task.title}</CardTitle>
-                      <span className="text-xs px-2 py-1 rounded-full bg-white/20 text-white">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className="mt-1">
+                      {task.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-white text-base leading-tight">{task.title}</CardTitle>
+                      <span className="text-xs px-2 py-1 rounded-full bg-white/20 text-white inline-block mt-1">
                         {getTaskTypeLabel(task.type)}
                       </span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-yellow-400 font-bold">+{task.reward} $SPACE</p>
+                  <div className="text-right ml-2">
+                    <p className="text-yellow-400 font-bold text-sm">+{task.reward}</p>
+                    <p className="text-yellow-400 text-xs">$SPACE</p>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                <p className="text-gray-300 mb-4">{task.description}</p>
+              <CardContent className="pt-0">
+                <p className="text-gray-300 mb-4 text-sm leading-relaxed">{task.description}</p>
                 <Button
                   onClick={() => handleCompleteTask(task.id)}
                   disabled={task.completed}
-                  className={`w-full ${
+                  className={`w-full h-12 text-sm font-medium ${
                     task.completed
                       ? 'bg-green-600 hover:bg-green-600'
                       : 'space-button'

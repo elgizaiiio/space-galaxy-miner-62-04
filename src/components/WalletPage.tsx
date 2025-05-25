@@ -67,125 +67,127 @@ const WalletPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-space-dark via-blue-900 to-purple-900 p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-space-dark via-blue-900 to-purple-900 p-3 pb-24">
+      <div className="max-w-md mx-auto space-y-4">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-400 to-purple-600 bg-clip-text text-transparent mb-2">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-400 to-purple-600 bg-clip-text text-transparent mb-2">
             المحفظة
           </h1>
-          <p className="text-gray-300">إدارة أرصدتك ومعاملاتك</p>
+          <p className="text-gray-300 text-sm">إدارة أرصدتك ومعاملاتك</p>
         </div>
 
         {/* Balance Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="space-y-4">
           {/* $SPACE Balance */}
           <Card className="glass-card neon-border">
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <span className="text-2xl">💎</span>
+                <CardTitle className="text-white flex items-center gap-2 text-lg">
+                  <span className="text-xl">💎</span>
                   $SPACE
                 </CardTitle>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowBalance(!showBalance)}
-                  className="text-gray-400 hover:text-white"
+                  className="text-gray-400 hover:text-white h-8 w-8 p-0"
                 >
                   {showBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </Button>
               </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-white mb-2">
+            <CardContent className="pt-0">
+              <p className="text-2xl font-bold text-white mb-1">
                 {showBalance ? spaceBalance.toLocaleString() : '••••••'}
               </p>
-              <p className="text-gray-400 text-sm">≈ ${(spaceBalance * 0.001).toFixed(2)} USD</p>
+              <p className="text-gray-400 text-xs">≈ ${(spaceBalance * 0.001).toFixed(2)} USD</p>
             </CardContent>
           </Card>
 
           {/* TON Balance */}
           <Card className="glass-card">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-white flex items-center gap-2">
-                <span className="text-2xl">💎</span>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white flex items-center gap-2 text-lg">
+                <span className="text-xl">💎</span>
                 TON
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-white mb-2">
+            <CardContent className="pt-0">
+              <p className="text-2xl font-bold text-white mb-1">
                 {showBalance ? tonBalance.toFixed(2) : '••••'}
               </p>
-              <p className="text-gray-400 text-sm">≈ ${(tonBalance * 2.1).toFixed(2)} USD</p>
+              <p className="text-gray-400 text-xs">≈ ${(tonBalance * 2.1).toFixed(2)} USD</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Wallet Address */}
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Wallet className="w-5 h-5" />
-              عنوان المحفظة
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2 p-3 bg-white/5 rounded-lg">
-              <code className="text-sm text-gray-300 flex-1 break-all">
-                {walletAddress}
-              </code>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => copyToClipboard(walletAddress)}
-                className="text-gray-400 hover:text-white"
-              >
-                <Copy className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-400 hover:text-white"
-              >
-                <ExternalLink className="w-4 h-4" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <Button className="space-button h-16">
-            <ArrowUpFromLine className="w-5 h-5 mr-2" />
+        <div className="grid grid-cols-2 gap-3 my-6">
+          <Button className="space-button h-14 text-sm">
+            <ArrowUpFromLine className="w-4 h-4 mr-2" />
             إرسال
           </Button>
-          <Button variant="outline" className="h-16 border-white/20 text-white hover:bg-white/10">
-            <ArrowDownToLine className="w-5 h-5 mr-2" />
+          <Button variant="outline" className="h-14 border-white/20 text-white hover:bg-white/10 text-sm">
+            <ArrowDownToLine className="w-4 h-4 mr-2" />
             استقبال
           </Button>
         </div>
 
+        {/* Wallet Address */}
+        <Card className="glass-card">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-white flex items-center gap-2 text-base">
+              <Wallet className="w-4 h-4" />
+              عنوان المحفظة
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="flex items-center gap-2 p-3 bg-white/5 rounded-lg">
+              <code className="text-xs text-gray-300 flex-1 break-all leading-relaxed">
+                {walletAddress}
+              </code>
+              <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copyToClipboard(walletAddress)}
+                  className="text-gray-400 hover:text-white h-8 w-8 p-0"
+                >
+                  <Copy className="w-3 h-3" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-400 hover:text-white h-8 w-8 p-0"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Transaction History */}
         <Card className="glass-card">
-          <CardHeader>
-            <CardTitle className="text-white">سجل المعاملات</CardTitle>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-white text-base">سجل المعاملات</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="pt-0 space-y-3">
             {transactions.map((tx) => (
-              <div key={tx.id} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+              <div key={tx.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                 <div className="flex items-center gap-3">
-                  <div className="text-2xl">{getTransactionIcon(tx.type)}</div>
-                  <div>
-                    <p className="text-white font-medium">{tx.description}</p>
-                    <p className="text-gray-400 text-sm">{tx.time}</p>
+                  <div className="text-lg">{getTransactionIcon(tx.type)}</div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-white font-medium text-sm truncate">{tx.description}</p>
+                    <p className="text-gray-400 text-xs">{tx.time}</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className={`font-bold ${tx.amount.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>
+                <div className="text-right ml-2">
+                  <p className={`font-bold text-sm ${tx.amount.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>
                     {tx.amount}
                   </p>
-                  <p className="text-gray-400 text-sm">{tx.status === 'completed' ? 'مكتملة' : 'قيد المعالجة'}</p>
+                  <p className="text-gray-400 text-xs">{tx.status === 'completed' ? 'مكتملة' : 'قيد المعالجة'}</p>
                 </div>
               </div>
             ))}
