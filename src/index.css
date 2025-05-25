@@ -54,29 +54,37 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
   }
 
   /* Enhanced Arabic and RTL support */
   [dir="rtl"] {
     text-align: right;
+    font-family: 'Noto Sans Arabic', 'Inter', sans-serif;
   }
 
   /* Language-specific font improvements */
   *:lang(ar) {
-    font-family: 'Noto Sans Arabic', 'Inter', sans-serif;
-    line-height: 1.6;
+    font-family: 'Noto Sans Arabic', 'Inter', sans-serif !important;
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+    font-weight: 500;
   }
 
   *:lang(zh) {
-    font-family: 'Noto Sans SC', 'Inter', sans-serif;
+    font-family: 'Noto Sans SC', 'Inter', sans-serif !important;
+    line-height: 1.7;
   }
 
   *:lang(ja) {
-    font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    font-family: 'Noto Sans JP', 'Inter', sans-serif !important;
+    line-height: 1.7;
   }
 
   *:lang(hi) {
-    font-family: 'Noto Sans', 'Inter', sans-serif;
+    font-family: 'Noto Sans', 'Inter', sans-serif !important;
+    line-height: 1.7;
   }
 
   /* Telegram WebApp styles */
@@ -84,11 +92,32 @@
     height: 100vh;
     overflow: hidden;
   }
+
+  /* Better text rendering for all languages */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  p, span, div {
+    line-height: 1.6;
+  }
+
+  /* Arabic specific improvements */
+  .arabic-text, *:lang(ar) {
+    font-family: 'Noto Sans Arabic', 'Inter', sans-serif !important;
+    line-height: 1.8 !important;
+    letter-spacing: 0.03em !important;
+    font-weight: 500 !important;
+    text-align: right;
+    direction: rtl;
+  }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl;
+    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl;
   }
   
   .neon-border {
@@ -102,6 +131,11 @@
 
   .space-button {
     @apply relative overflow-hidden bg-gradient-to-r from-space-pink to-space-blue text-white font-bold py-4 px-8 rounded-xl transform transition-all duration-300 hover:scale-105 hover:shadow-2xl;
+    box-shadow: 0 10px 30px rgba(236, 72, 153, 0.3);
+  }
+
+  .space-button:hover {
+    box-shadow: 0 15px 40px rgba(236, 72, 153, 0.5);
   }
 
   .space-button::before {
@@ -127,19 +161,30 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  .arabic-text {
-    font-family: 'Noto Sans Arabic', 'Inter', sans-serif;
-    line-height: 1.7;
-    letter-spacing: 0.02em;
+  .mining-card {
+    @apply glass-card p-6 space-y-4 hover:bg-white/15 transition-all duration-300;
+    backdrop-filter: blur(20px);
   }
 
-  .chinese-text {
-    font-family: 'Noto Sans SC', 'Inter', sans-serif;
-    line-height: 1.6;
+  .mining-stats {
+    @apply flex items-center justify-between p-3 rounded-lg bg-white/5 backdrop-blur-sm;
   }
 
-  .japanese-text {
-    font-family: 'Noto Sans JP', 'Inter', sans-serif;
-    line-height: 1.6;
+  .mining-button {
+    @apply w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105;
+    background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%);
+    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+  }
+
+  .mining-button:hover {
+    box-shadow: 0 12px 35px rgba(236, 72, 153, 0.6);
+  }
+
+  .mining-button.active {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .upgrade-card {
+    @apply p-4 rounded-xl border-2 border-transparent bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg transition-all duration-300 hover:border-white/30 hover:from-white/15 hover:to-white/10;
   }
 }
