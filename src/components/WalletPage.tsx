@@ -1,13 +1,14 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Wallet, Send, ArrowDownToLine, ArrowUpFromLine, Eye, EyeOff, Copy, ExternalLink, TrendingUp, RefreshCw, LogIn, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useTonConnectUI } from '@tonconnect/ui-react';
 import { tonService, type TONTransaction } from '../services/tonService';
 
 const WalletPage = () => {
   const { toast } = useToast();
+  const [tonConnectUI] = useTonConnectUI();
   const [showBalance, setShowBalance] = useState(true);
   const [spaceBalance] = useState(15420.5);
   const [tonBalance, setTonBalance] = useState(2.45);
@@ -20,16 +21,33 @@ const WalletPage = () => {
 
   useEffect(() => {
     checkWalletConnection();
-  }, []);
+    
+    // Listen for TON Connect UI wallet changes
+    const unsubscribe = tonConnectUI.onStatusChange((wallet) => {
+      console.log('TON Connect UI wallet status changed:', wallet);
+      if (wallet) {
+        setConnectedAddress(wallet.account.address);
+        loadWalletData(wallet.account.address);
+      } else {
+        setConnectedAddress(null);
+        setTransactions([]);
+        setTonBalance(0);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [tonConnectUI]);
 
   const checkWalletConnection = () => {
-    const isConnected = tonService.isWalletConnected();
-    if (isConnected) {
-      const address = tonService.getConnectedWallet();
+    const wallet = tonConnectUI.wallet;
+    console.log('Current TON Connect UI wallet:', wallet);
+    
+    if (wallet) {
+      const address = wallet.account.address;
       setConnectedAddress(address);
-      if (address) {
-        loadWalletData(address);
-      }
+      loadWalletData(address);
     } else {
       // Use fallback address for demo
       setConnectedAddress(fallbackAddress);
@@ -40,29 +58,18 @@ const WalletPage = () => {
   const connectWallet = async () => {
     setIsConnecting(true);
     try {
-      console.log('Attempting to connect TON wallet...');
-      const address = await tonService.connectWallet();
+      console.log('Attempting to connect TON wallet via UI...');
+      await tonConnectUI.openModal();
       
-      if (address) {
-        setConnectedAddress(address);
-        await loadWalletData(address);
-        
-        toast({
-          title: "تم الاتصال بنجاح!",
-          description: "تم ربط محفظة TON بنجاح",
-        });
-      } else {
-        toast({
-          title: "فشل الاتصال",
-          description: "لم يتم العثور على محفظة متاحة",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "فتح نافذة الاتصال",
+        description: "يرجى اختيار محفظة TON للاتصال",
+      });
     } catch (error) {
-      console.error('Error connecting wallet:', error);
+      console.error('Error opening TON Connect modal:', error);
       toast({
         title: "خطأ في الاتصال",
-        description: "فشل في ربط المحفظة. تأكد من تثبيت محفظة TON",
+        description: "فشل في فتح نافذة الاتصال بالمحفظة",
         variant: "destructive",
       });
     } finally {
@@ -72,7 +79,7 @@ const WalletPage = () => {
 
   const disconnectWallet = async () => {
     try {
-      await tonService.disconnectWallet();
+      await tonConnectUI.disconnect();
       setConnectedAddress(null);
       setTransactions([]);
       setTonBalance(0);
@@ -138,6 +145,7 @@ const WalletPage = () => {
   };
 
   const currentAddress = connectedAddress || fallbackAddress;
+  const isWalletConnected = !!tonConnectUI.wallet;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-4 pb-24">
@@ -163,13 +171,13 @@ const WalletPage = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full ${tonService.isWalletConnected() ? 'bg-green-400' : 'bg-yellow-400'}`}></div>
+                <div className={`w-3 h-3 rounded-full ${isWalletConnected ? 'bg-green-400' : 'bg-yellow-400'}`}></div>
                 <span className="text-white font-semibold">
-                  {tonService.isWalletConnected() ? 'محفظة متصلة' : 'وضع العرض التجريبي'}
+                  {isWalletConnected ? 'محفظة متصلة' : 'وضع العرض التجريبي'}
                 </span>
               </div>
               <div className="flex gap-2">
-                {tonService.isWalletConnected() ? (
+                {isWalletConnected ? (
                   <Button
                     onClick={disconnectWallet}
                     variant="outline"
@@ -273,7 +281,7 @@ const WalletPage = () => {
         {/* Enhanced Action Buttons */}
         <div className="grid grid-cols-2 gap-4 my-8">
           <Button 
-            disabled={!tonService.isWalletConnected()}
+            disabled={!isWalletConnected}
             className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 h-16 text-base font-semibold rounded-2xl shadow-xl border-0 hover:scale-105 transition-all duration-300 disabled:opacity-50"
           >
             <ArrowUpFromLine className="w-5 h-5 mr-2" />
@@ -293,7 +301,7 @@ const WalletPage = () => {
                 <Wallet className="w-5 h-5" />
               </div>
               عنوان المحفظة
-              {!tonService.isWalletConnected() && (
+              {!isWalletConnected && (
                 <span className="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full">
                   تجريبي
                 </span>

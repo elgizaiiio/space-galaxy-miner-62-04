@@ -33,6 +33,11 @@ export class TONService {
       this.tonConnector = new TonConnect({
         manifestUrl: window.location.origin + '/tonconnect-manifest.json',
       });
+      
+      // Listen for wallet connection events
+      this.tonConnector.onStatusChange((wallet) => {
+        console.log('Wallet connection status changed:', wallet);
+      });
     } catch (error) {
       console.error('Failed to initialize TON Connect:', error);
     }
@@ -51,10 +56,13 @@ export class TONService {
 
       // Try to connect to the first available wallet
       if (walletsList.length > 0) {
-        await this.tonConnector.connect(walletsList[0]);
+        const connectedWallet = await this.tonConnector.connect(walletsList[0]);
+        console.log('Connected wallet result:', connectedWallet);
         
-        // Check if wallet is connected and get address
-        if (this.tonConnector.wallet) {
+        // Wait a bit and check if wallet is actually connected
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        if (this.tonConnector.wallet && this.tonConnector.wallet.account) {
           const address = this.tonConnector.wallet.account.address;
           console.log('Connected wallet address:', address);
           return address;
@@ -70,19 +78,33 @@ export class TONService {
 
   async disconnectWallet(): Promise<void> {
     if (this.tonConnector) {
-      await this.tonConnector.disconnect();
+      try {
+        await this.tonConnector.disconnect();
+        console.log('Wallet disconnected successfully');
+      } catch (error) {
+        console.error('Error disconnecting wallet:', error);
+      }
     }
   }
 
   getConnectedWallet(): string | null {
-    if (this.tonConnector && this.tonConnector.wallet) {
-      return this.tonConnector.wallet.account.address;
+    try {
+      if (this.tonConnector && this.tonConnector.wallet && this.tonConnector.wallet.account) {
+        return this.tonConnector.wallet.account.address;
+      }
+    } catch (error) {
+      console.error('Error getting connected wallet:', error);
     }
     return null;
   }
 
   isWalletConnected(): boolean {
-    return this.tonConnector?.wallet !== null && this.tonConnector?.wallet !== undefined;
+    try {
+      return !!(this.tonConnector?.wallet?.account?.address);
+    } catch (error) {
+      console.error('Error checking wallet connection:', error);
+      return false;
+    }
   }
 
   private async makeRequest(endpoint: string, params: Record<string, string> = {}) {
