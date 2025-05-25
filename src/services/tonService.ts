@@ -1,4 +1,3 @@
-
 import { TonConnect } from '@tonconnect/sdk';
 
 export interface TONTransaction {
@@ -52,9 +51,14 @@ export class TONService {
 
       // Try to connect to the first available wallet
       if (walletsList.length > 0) {
-        const wallet = await this.tonConnector.connect(walletsList[0]);
-        console.log('Connected wallet:', wallet);
-        return wallet.account.address;
+        await this.tonConnector.connect(walletsList[0]);
+        
+        // Check if wallet is connected and get address
+        if (this.tonConnector.wallet) {
+          const address = this.tonConnector.wallet.account.address;
+          console.log('Connected wallet address:', address);
+          return address;
+        }
       }
       
       return null;
@@ -78,7 +82,7 @@ export class TONService {
   }
 
   isWalletConnected(): boolean {
-    return this.tonConnector?.wallet !== null;
+    return this.tonConnector?.wallet !== null && this.tonConnector?.wallet !== undefined;
   }
 
   private async makeRequest(endpoint: string, params: Record<string, string> = {}) {
