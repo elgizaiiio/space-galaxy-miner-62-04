@@ -4,72 +4,73 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Star, Calendar, Users, TrendingUp, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabaseService } from '@/services/supabaseService';
-import { useAuth } from '@/hooks/useAuth';
-import type { Database } from '@/integrations/supabase/types';
 
-type Task = Database['public']['Tables']['tasks']['Row'];
-type UserTask = Database['public']['Tables']['user_tasks']['Row'];
-
-interface TaskWithCompletion extends Task {
+interface Task {
+  id: string;
+  title_key: string;
+  description_key: string;
+  task_type: string;
+  reward_amount: number;
+  action_url?: string;
   completed: boolean;
 }
 
 const TasksPage = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
-  const [tasks, setTasks] = useState<TaskWithCompletion[]>([]);
-  const [userTasks, setUserTasks] = useState<UserTask[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (user) {
-      loadTasks();
+  const [tasks, setTasks] = useState<Task[]>([
+    {
+      id: '1',
+      title_key: 'انضم إلى قناة التليجرام',
+      description_key: 'انضم إلى قناتنا الرسمية على التليجرام للحصول على آخر التحديثات',
+      task_type: 'telegram',
+      reward_amount: 100,
+      action_url: 'https://t.me/spacecoin',
+      completed: false
+    },
+    {
+      id: '2',
+      title_key: 'تابعنا على تويتر',
+      description_key: 'تابع حسابنا الرسمي على تويتر واحصل على مكافأة',
+      task_type: 'twitter',
+      reward_amount: 50,
+      action_url: 'https://twitter.com/spacecoin',
+      completed: false
+    },
+    {
+      id: '3',
+      title_key: 'دعوة 5 أصدقاء',
+      description_key: 'ادع 5 أصدقاء للانضمام إلى التطبيق',
+      task_type: 'referral',
+      reward_amount: 250,
+      completed: false
+    },
+    {
+      id: '4',
+      title_key: 'مهمة يومية - تسجيل الدخول',
+      description_key: 'سجل دخولك يومياً للحصول على مكافأة',
+      task_type: 'daily',
+      reward_amount: 25,
+      completed: false
     }
-  }, [user]);
-
-  const loadTasks = async () => {
-    try {
-      setIsLoading(true);
-      const [allTasks, completedTasks] = await Promise.all([
-        supabaseService.getTasks(),
-        supabaseService.getUserTasks()
-      ]);
-
-      setUserTasks(completedTasks);
-
-      const tasksWithCompletion = allTasks.map(task => ({
-        ...task,
-        completed: completedTasks.some(ut => ut.task_id === task.id && ut.is_verified)
-      }));
-
-      setTasks(tasksWithCompletion);
-    } catch (error) {
-      console.error('Error loading tasks:', error);
-      toast({
-        title: "خطأ في تحميل المهام",
-        description: "فشل في تحميل قائمة المهام",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  ]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCompleteTask = async (taskId: string) => {
     try {
-      await supabaseService.completeTask(taskId);
-      
       const task = tasks.find(t => t.id === taskId);
-      if (task) {
+      if (task && !task.completed) {
+        // Update task completion status
+        setTasks(prevTasks => 
+          prevTasks.map(t => 
+            t.id === taskId ? { ...t, completed: true } : t
+          )
+        );
+
         toast({
           title: "مهمة مكتملة!",
           description: `تم حصولك على ${task.reward_amount} $SPACE`,
         });
       }
-
-      // Reload tasks to update completion status
-      await loadTasks();
     } catch (error) {
       console.error('Error completing task:', error);
       toast({
@@ -78,6 +79,14 @@ const TasksPage = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const loadTasks = () => {
+    setIsLoading(true);
+    // Simulate loading
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
   };
 
   const getTaskIcon = (taskType: string) => {
