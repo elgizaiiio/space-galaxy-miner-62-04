@@ -7,7 +7,7 @@ import { useTonConnectUI } from '@tonconnect/ui-react';
 import { useToast } from '@/hooks/use-toast';
 import SpaceLogo3D from './SpaceLogo3D';
 import LanguageSwitcher from './LanguageSwitcher';
-import { UPGRADE_OPTIONS, formatTON, type UpgradeOption } from '../utils/ton';
+import { UPGRADE_OPTIONS, formatTON, textToBase64, type UpgradeOption } from '../utils/ton';
 import { hapticFeedback } from '../utils/telegram';
 import { getStoredLanguage, getTranslation } from '../utils/language';
 import { Palette, Crown, Zap, Timer } from 'lucide-react';
@@ -18,7 +18,7 @@ const MINING_PHRASES = {
   ru: ['Добывайте $SPACE монеты', 'Начните зарабатывать сейчас', 'Исследуйте галактику наград', 'Начните космическое путешествие майнинга', 'Собирайте космические сокровища', 'Откройте вселенское богатство'],
   zh: ['挖掘$SPACE币', '立即开始赚钱', '探索奖励银河', '开始太空挖矿之旅', '收集宇宙宝藏', '解锁宇宙财富'],
   hi: ['$SPACE सिक्का माइन करें', 'अभी कमाना शुरू करें', 'पुरस्कारों की आकाशगंगा का अन्वेषण करें', 'अपनी स्पेस माइनिंग यात्रा शुरू करें', 'ब्रह्मांडीय खजाने इकट्ठा करें', 'सार्वभौमिक धन अनलॉक करें'],
-  es: ['Mina monedas $SPACE', 'Comienza a ganar ahora', 'Explora la galaxia de recompensas', 'Comienza tu viaje de minería espacial', 'Recolecta tesoros cósmicos', 'Desbloquea riqueza universal'],
+  es: ['Mina monedas $SPACE', 'Comienza a ganar ahora', 'Explora la galaxia de recompensas', 'Comienza tu viaje de minera espacial', 'Recolecta tesoros cósmicos', 'Desbloquea riqueza universal'],
   fr: ['Minez des pièces $SPACE', 'Commencez à gagner maintenant', 'Explorez la galaxie des récompenses', 'Commencez votre voyage de minage spatial', 'Collectez des trésors cosmiques', 'Débloquez la richesse universelle'],
   de: ['Mine $SPACE Münzen', 'Beginne jetzt zu verdienen', 'Erkunde die Galaxie der Belohnungen', 'Beginne deine Weltraum-Mining-Reise', 'Sammle kosmische Schätze', 'Entsperre universellen Reichtum'],
   ja: ['$SPACEコインをマイニング', '今すぐ稼ぎ始める', '報酬の銀河を探索', '宇宙マイニングの旅を始める', '宇宙の宝物を集める', '宇宙の富をアンロック'],
@@ -230,13 +230,13 @@ const MiningPage: React.FC = () => {
 
     setIsProcessing(true);
     try {
+      const comment = `Mining Speed Upgrade: ${upgrade.label}`;
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 300,
         messages: [
           {
             address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
             amount: (upgrade.price * 1e9).toString(),
-            payload: `Mining Speed Upgrade: ${upgrade.label}`
           }
         ]
       };
@@ -281,7 +281,6 @@ const MiningPage: React.FC = () => {
           {
             address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
             amount: (0.5 * 1e9).toString(),
-            payload: 'Auto Mining - 3 Days'
           }
         ]
       };
@@ -344,7 +343,6 @@ const MiningPage: React.FC = () => {
           {
             address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
             amount: (background.price * 1e9).toString(),
-            payload: `Background: ${background.name}`
           }
         ]
       };

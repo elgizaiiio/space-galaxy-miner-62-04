@@ -7,7 +7,7 @@ import { useTonConnectUI } from '@tonconnect/ui-react';
 import { useToast } from '@/hooks/use-toast';
 import LanguageSwitcher from './LanguageSwitcher';
 import { getStoredLanguage, getTranslation } from '../utils/language';
-import { formatTON, sendTONPayment } from '../utils/ton';
+import { formatTON } from '../utils/ton';
 
 const SubscriptionPage = () => {
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
@@ -75,7 +75,6 @@ const SubscriptionPage = () => {
           {
             address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
             amount: (price * 1e9).toString(),
-            payload: `Premium subscription: ${planId}`
           }
         ]
       };

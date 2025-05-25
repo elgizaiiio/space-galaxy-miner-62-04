@@ -29,7 +29,17 @@ export const formatTON = (amount: number): string => {
   return amount.toFixed(2) + ' TON';
 };
 
-export const sendTONPayment = async (tonConnector: TonConnect, amount: number) => {
+// Helper function to convert text to base64 for TON comment
+export const textToBase64 = (text: string): string => {
+  try {
+    return btoa(unescape(encodeURIComponent(text)));
+  } catch (error) {
+    console.error('Error encoding text to base64:', error);
+    return '';
+  }
+};
+
+export const sendTONPayment = async (tonConnector: TonConnect, amount: number, comment?: string) => {
   try {
     const transaction = {
       validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
@@ -37,6 +47,7 @@ export const sendTONPayment = async (tonConnector: TonConnect, amount: number) =
         {
           address: TON_PAYMENT_ADDRESS,
           amount: (amount * 1e9).toString(), // Convert to nanoTON
+          payload: comment ? textToBase64(comment) : undefined,
         },
       ],
     };
