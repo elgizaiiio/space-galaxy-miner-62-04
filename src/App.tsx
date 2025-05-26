@@ -27,6 +27,7 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState<Page>('mining');
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [showAdminAccess, setShowAdminAccess] = useState(false);
+  const [taskClickCount, setTaskClickCount] = useState(0);
 
   useEffect(() => {
     setCurrentLanguage(getStoredLanguage());
@@ -53,6 +54,16 @@ const App = () => {
     };
   }, []);
 
+  // Reset task click count after 2 seconds
+  useEffect(() => {
+    if (taskClickCount > 0) {
+      const timer = setTimeout(() => {
+        setTaskClickCount(0);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [taskClickCount]);
+
   const handleSplashComplete = () => {
     const onboardingCompleted = localStorage.getItem('space-onboarding-completed');
     setAppState(onboardingCompleted ? 'main' : 'onboarding');
@@ -61,6 +72,19 @@ const App = () => {
   const handleOnboardingComplete = () => {
     localStorage.setItem('space-onboarding-completed', 'true');
     setAppState('main');
+  };
+
+  const handleTaskButtonClick = () => {
+    const newCount = taskClickCount + 1;
+    setTaskClickCount(newCount);
+    
+    if (newCount === 3) {
+      setCurrentPage('admin');
+      setShowAdminAccess(true);
+      setTaskClickCount(0);
+    } else {
+      setCurrentPage('tasks');
+    }
   };
 
   const t = (key: string) => getTranslation(key, currentLanguage.code);
@@ -126,7 +150,13 @@ const App = () => {
                         <Button
                           key={item.id}
                           variant="ghost"
-                          onClick={() => setCurrentPage(item.id as Page)}
+                          onClick={() => {
+                            if (item.id === 'tasks') {
+                              handleTaskButtonClick();
+                            } else {
+                              setCurrentPage(item.id as Page);
+                            }
+                          }}
                           className={`flex flex-col items-center gap-1 h-auto py-2 px-2 text-xs ${
                             currentPage === item.id
                               ? 'text-pink-400 bg-pink-400/20'
