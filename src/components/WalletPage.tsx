@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Wallet, Send, ArrowDownToLine, ArrowUpFromLine, Eye, EyeOff, Copy, ExternalLink, TrendingUp, RefreshCw, LogIn, LogOut, Settings, Plus } from 'lucide-react';
+import { Wallet, Eye, EyeOff, Copy, ExternalLink, RefreshCw, LogIn, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { tonService, type TONTransaction } from '../services/tonService';
@@ -10,6 +11,7 @@ import SendModal from './SendModal';
 import ReceiveModal from './ReceiveModal';
 import TransactionItem from './TransactionItem';
 import LanguageSwitcher from './LanguageSwitcher';
+
 const WalletPage = () => {
   const {
     toast
@@ -28,6 +30,7 @@ const WalletPage = () => {
 
   // Get translation function for current language
   const t = (key: string) => getTranslation(key, currentLanguage.code);
+  
   useEffect(() => {
     checkWalletConnection();
     const unsubscribe = tonConnectUI.onStatusChange(wallet => {
@@ -45,6 +48,7 @@ const WalletPage = () => {
       unsubscribe();
     };
   }, [tonConnectUI]);
+  
   const checkWalletConnection = () => {
     const wallet = tonConnectUI.wallet;
     console.log('Current TON Connect UI wallet:', wallet);
@@ -54,6 +58,7 @@ const WalletPage = () => {
       loadWalletData(address);
     }
   };
+  
   const connectWallet = async () => {
     setIsConnecting(true);
     try {
@@ -74,6 +79,7 @@ const WalletPage = () => {
       setIsConnecting(false);
     }
   };
+  
   const disconnectWallet = async () => {
     try {
       await tonConnectUI.disconnect();
@@ -88,6 +94,7 @@ const WalletPage = () => {
       console.error('Error disconnecting wallet:', error);
     }
   };
+  
   const loadWalletData = async (address: string) => {
     setIsLoading(true);
     try {
@@ -111,6 +118,7 @@ const WalletPage = () => {
       setIsLoading(false);
     }
   };
+  
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({
@@ -118,10 +126,12 @@ const WalletPage = () => {
       description: t('walletAddressCopied')
     });
   };
+  
   const openTxExplorer = (hash: string) => {
     if (hash.startsWith('fallback_')) return;
     window.open(`https://tonscan.org/tx/${hash}`, '_blank');
   };
+  
   const isWalletConnected = !!tonConnectUI.wallet;
 
   // If no wallet connected, show connection screen
@@ -169,6 +179,7 @@ const WalletPage = () => {
         </div>
       </div>;
   }
+  
   return <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-3 pb-24">
       <div className="max-w-md mx-auto space-y-4">
         {/* Enhanced Header */}
@@ -256,9 +267,6 @@ const WalletPage = () => {
           </Card>
         </div>
 
-        {/* Action Buttons - Compact */}
-        
-
         {/* Wallet Address Display - Compact */}
         {connectedAddress && <Card className="bg-gradient-to-br from-gray-500/10 to-slate-500/10 backdrop-blur-xl border border-gray-500/30 rounded-2xl overflow-hidden">
             <CardContent className="p-4">
@@ -314,4 +322,5 @@ const WalletPage = () => {
       <ReceiveModal isOpen={showReceiveModal} onClose={() => setShowReceiveModal(false)} address={connectedAddress!} />
     </div>;
 };
+
 export default WalletPage;
