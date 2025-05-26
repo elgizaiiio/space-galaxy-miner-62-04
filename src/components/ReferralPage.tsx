@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -74,7 +75,7 @@ const ReferralPage = () => {
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-0.5">2</div>
-                <p className="text-gray-300">{t('sendCommand') || 'Send the command'}: <code className="bg-white/10 px-2 py-1 rounded text-white">/Referral</code></p>
+                <p className="text-gray-300">{t('sendCommand') || 'Send the command'}: <code className="bg-white/10 px-2 py-1 rounded text-white">/space</code></p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-0.5">3</div>
