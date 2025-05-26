@@ -1,20 +1,74 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Trophy } from 'lucide-react';
+import { CheckCircle, Trophy, ExternalLink } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { getStoredLanguage, getTranslation } from '../utils/language';
+import { taskService } from '@/services/taskService';
+import { useToast } from '@/hooks/use-toast';
+import type { Database } from '@/integrations/supabase/types';
+
+type Task = Database['public']['Tables']['tasks']['Row'];
 
 const TasksPage = () => {
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
-  const [completedTasks] = useState<string[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [completedTasks, setCompletedTasks] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
   // Get translation function for current language
   const t = (key: string) => getTranslation(key, currentLanguage.code);
 
-  // Empty tasks array - tasks will be managed from admin panel
-  const tasks: any[] = [];
+  useEffect(() => {
+    loadTasks();
+    loadCompletedTasks();
+  }, []);
+
+  const loadTasks = async () => {
+    try {
+      const data = await taskService.getAllTasks();
+      setTasks(data.filter(task => task.is_active));
+    } catch (error) {
+      console.error('Error loading tasks:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadCompletedTasks = () => {
+    const completed = localStorage.getItem('completed-tasks');
+    if (completed) {
+      setCompletedTasks(JSON.parse(completed));
+    }
+  };
+
+  const handleTaskComplete = (taskId: string, actionUrl?: string) => {
+    if (actionUrl) {
+      window.open(actionUrl, '_blank');
+    }
+    
+    const newCompleted = [...completedTasks, taskId];
+    setCompletedTasks(newCompleted);
+    localStorage.setItem('completed-tasks', JSON.stringify(newCompleted));
+    
+    toast({
+      title: "Task Completed!",
+      description: "You've earned $SPACE tokens!",
+    });
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'daily': return 'bg-blue-500/20 text-blue-300';
+      case 'social': return 'bg-purple-500/20 text-purple-300';
+      case 'mining': return 'bg-orange-500/20 text-orange-300';
+      case 'wallet': return 'bg-pink-500/20 text-pink-300';
+      default: return 'bg-gray-500/20 text-gray-300';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-4 pb-24">
@@ -57,18 +111,91 @@ const TasksPage = () => {
           </CardContent>
         </Card>
 
-        {/* Empty State */}
-        <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-3xl overflow-hidden">
-          <CardContent className="p-8 text-center">
-            <div className="space-y-4">
-              <div className="p-4 bg-indigo-500/20 rounded-full mx-auto w-fit">
-                <Trophy className="w-12 h-12 text-indigo-400" />
+        {/* Tasks List */}
+        {isLoading ? (
+          <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-3xl overflow-hidden">
+            <CardContent className="p-8 text-center">
+              <p className="text-gray-300">Loading tasks...</p>
+            </CardContent>
+          </Card>
+        ) : tasks.length === 0 ? (
+          <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-3xl overflow-hidden">
+            <CardContent className="p-8 text-center">
+              <div className="space-y-4">
+                <div className="p-4 bg-indigo-500/20 rounded-full mx-auto w-fit">
+                  <Trophy className="w-12 h-12 text-indigo-400" />
+                </div>
+                <h3 className="text-white text-xl font-bold">{t('noTasksAvailable') || 'No Tasks Available'}</h3>
+                <p className="text-gray-300">{t('noTasksDesc') || 'New tasks will be added soon. Stay tuned!'}</p>
               </div>
-              <h3 className="text-white text-xl font-bold">{t('noTasksAvailable') || 'No Tasks Available'}</h3>
-              <p className="text-gray-300">{t('noTasksDesc') || 'New tasks will be added soon. Stay tuned!'}</p>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            {tasks.map((task) => {
+              const isCompleted = completedTasks.includes(task.id);
+              
+              return (
+                <Card 
+                  key={task.id}
+                  className={`bg-gradient-to-br backdrop-blur-xl border-2 rounded-3xl overflow-hidden transition-all ${
+                    isCompleted 
+                      ? 'from-green-500/10 to-emerald-500/10 border-green-500/30' 
+                      : 'from-indigo-500/10 to-purple-500/10 border-indigo-500/30'
+                  }`}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-3 rounded-full ${
+                          isCompleted ? 'bg-green-500/20' : 'bg-indigo-500/20'
+                        }`}>
+                          {isCompleted ? (
+                            <CheckCircle className="w-6 h-6 text-green-400" />
+                          ) : (
+                            <Trophy className="w-6 h-6 text-indigo-400" />
+                          )}
+                        </div>
+                        <div>
+                          <CardTitle className="text-white text-lg">
+                            {t(task.title_key) || task.title_key}
+                          </CardTitle>
+                          <div className="flex gap-2 mt-1">
+                            <Badge className={getTypeColor(task.task_type)}>
+                              {task.task_type}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <p className="text-gray-300 text-sm mb-4">
+                      {t(task.description_key) || task.description_key}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-pink-400 font-bold">+{task.reward_amount} $SPACE</span>
+                      {!isCompleted && (
+                        <Button
+                          onClick={() => handleTaskComplete(task.id, task.action_url || undefined)}
+                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                        >
+                          {task.action_url && <ExternalLink className="w-4 h-4 mr-2" />}
+                          Complete
+                        </Button>
+                      )}
+                      {isCompleted && (
+                        <Badge className="bg-green-500/20 text-green-300">
+                          Completed
+                        </Badge>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
