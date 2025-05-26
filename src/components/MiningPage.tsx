@@ -502,7 +502,7 @@ const MiningPage: React.FC = () => {
           size="lg"
         >
           {autoMiningActive
-            ? `${t('autoMiningActive') || 'Auto Mining Active'} ⚡`
+            ? `${t('autoMining') || 'Auto Mining'} ⚡`
             : miningActive 
             ? `${t('stopMining') || 'Stop Mining'} (${formatTime(remainingTime)})` 
             : t('startMining') || 'Start Mining'
@@ -528,10 +528,7 @@ const MiningPage: React.FC = () => {
             disabled={autoMiningActive}
           >
             <Crown className="w-4 h-4 mr-2" />
-            {autoMiningActive 
-              ? t('autoActive') || 'Auto Active'
-              : t('autoMining') || 'Auto Mining'
-            }
+            {t('autoMining') || 'Auto Mining'}
           </Button>
         </div>
 
