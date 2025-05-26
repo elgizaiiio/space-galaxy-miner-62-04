@@ -10,7 +10,6 @@ import SendModal from './SendModal';
 import ReceiveModal from './ReceiveModal';
 import TransactionItem from './TransactionItem';
 import LanguageSwitcher from './LanguageSwitcher';
-
 const WalletPage = () => {
   const {
     toast
@@ -258,26 +257,10 @@ const WalletPage = () => {
         </div>
 
         {/* Action Buttons - Compact */}
-        <div className="grid grid-cols-2 gap-3">
-          <Button 
-            onClick={() => setShowSendModal(true)}
-            className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 h-12 text-sm font-semibold rounded-xl"
-          >
-            <Send className="w-4 h-4 mr-2" />
-            {t('send')}
-          </Button>
-          <Button 
-            onClick={() => setShowReceiveModal(true)}
-            className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 h-12 text-sm font-semibold rounded-xl"
-          >
-            <ArrowDownToLine className="w-4 h-4 mr-2" />
-            {t('receive')}
-          </Button>
-        </div>
+        
 
         {/* Wallet Address Display - Compact */}
-        {connectedAddress && (
-          <Card className="bg-gradient-to-br from-gray-500/10 to-slate-500/10 backdrop-blur-xl border border-gray-500/30 rounded-2xl overflow-hidden">
+        {connectedAddress && <Card className="bg-gradient-to-br from-gray-500/10 to-slate-500/10 backdrop-blur-xl border border-gray-500/30 rounded-2xl overflow-hidden">
             <CardContent className="p-4">
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0 flex-1">
@@ -287,27 +270,16 @@ const WalletPage = () => {
                   </code>
                 </div>
                 <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => copyToClipboard(connectedAddress)}
-                    className="text-gray-300 hover:text-white hover:bg-white/10 h-8 w-8 p-0 rounded-lg"
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => copyToClipboard(connectedAddress)} className="text-gray-300 hover:text-white hover:bg-white/10 h-8 w-8 p-0 rounded-lg">
                     <Copy className="w-3 h-3" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => window.open(`https://tonscan.org/address/${connectedAddress}`, '_blank')}
-                    className="text-gray-300 hover:text-white hover:bg-white/10 h-8 w-8 p-0 rounded-lg"
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => window.open(`https://tonscan.org/address/${connectedAddress}`, '_blank')} className="text-gray-300 hover:text-white hover:bg-white/10 h-8 w-8 p-0 rounded-lg">
                     <ExternalLink className="w-3 h-3" />
                   </Button>
                 </div>
               </div>
             </CardContent>
-          </Card>
-        )}
+          </Card>}
 
         {/* Enhanced Transaction History - Compact */}
         <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-2xl overflow-hidden">
@@ -342,5 +314,4 @@ const WalletPage = () => {
       <ReceiveModal isOpen={showReceiveModal} onClose={() => setShowReceiveModal(false)} address={connectedAddress!} />
     </div>;
 };
-
 export default WalletPage;
