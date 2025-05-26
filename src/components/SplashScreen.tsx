@@ -91,9 +91,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
                 {SUPPORTED_LANGUAGES[greetingIndex].greeting}
               </motion.h1>
             </AnimatePresence>
-            <p className="text-xl text-white/80">
-              {SUPPORTED_LANGUAGES[greetingIndex].flag} {SUPPORTED_LANGUAGES[greetingIndex].name}
-            </p>
+            
           </motion.div>
 
           {/* Subtitle */}
