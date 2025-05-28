@@ -147,7 +147,7 @@ const TasksPage = () => {
                   <CardContent className="pt-0">
                     
                     <div className="flex items-center justify-between">
-                      <span className="text-pink-400 font-bold">+{task.reward_amount} $SPACE</span>
+                      <span className="font-bold text-zinc-50">+{task.reward_amount} $SPACE</span>
                       {!isCompleted && <Button onClick={() => handleTaskComplete(task.id, task.action_url || undefined)} className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 font-normal text-base rounded-full">
                           {task.action_url && <ExternalLink className="w-4 h-4 mr-2" />}
                           Complete
