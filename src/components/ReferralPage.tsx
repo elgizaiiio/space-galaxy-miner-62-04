@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -71,15 +70,15 @@ const ReferralPage = () => {
             <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-0.5">1</div>
-                <p className="text-gray-300">{t('goToBot') || 'Go to'} @Spacelbot {t('onTelegram') || 'on Telegram'}</p>
+                <p className="text-zinc-50">{t('goToBot') || 'Go to'} @Spacelbot {t('onTelegram') || 'on Telegram'}</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-0.5">2</div>
-                <p className="text-gray-300">{t('sendCommand') || 'Send the command'}: <code className="bg-white/10 px-2 py-1 rounded text-white">/space</code></p>
+                <p className="text-zinc-50">{t('sendCommand') || 'Send the command'}: <code className="bg-white/10 px-2 py-1 rounded text-white">/space</code></p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 mt-0.5">3</div>
-                <p className="text-gray-300">{t('receiveLink') || 'You will receive your personal referral link'}</p>
+                <p className="text-zinc-50">{t('receiveLink') || 'You will receive your personal referral link'}</p>
               </div>
             </div>
             
