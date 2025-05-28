@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,24 +8,22 @@ import { getStoredLanguage, getTranslation } from '../utils/language';
 import { taskService } from '@/services/taskService';
 import { useToast } from '@/hooks/use-toast';
 import type { Database } from '@/integrations/supabase/types';
-
 type Task = Database['public']['Tables']['tasks']['Row'];
-
 const TasksPage = () => {
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [tasks, setTasks] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
 
   // Get translation function for current language
   const t = (key: string) => getTranslation(key, currentLanguage.code);
-
   useEffect(() => {
     loadTasks();
     loadCompletedTasks();
   }, []);
-
   const loadTasks = async () => {
     try {
       const data = await taskService.getAllTasks();
@@ -37,41 +34,39 @@ const TasksPage = () => {
       setIsLoading(false);
     }
   };
-
   const loadCompletedTasks = () => {
     const completed = localStorage.getItem('completed-tasks');
     if (completed) {
       setCompletedTasks(JSON.parse(completed));
     }
   };
-
   const handleTaskComplete = (taskId: string, actionUrl?: string) => {
     if (actionUrl) {
       window.open(actionUrl, '_blank');
     }
-    
     const newCompleted = [...completedTasks, taskId];
     setCompletedTasks(newCompleted);
     localStorage.setItem('completed-tasks', JSON.stringify(newCompleted));
-    
     toast({
       title: "Task Completed!",
-      description: "You've earned $SPACE tokens!",
+      description: "You've earned $SPACE tokens!"
     });
   };
-
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'daily': return 'bg-blue-500/20 text-blue-300';
-      case 'social': return 'bg-purple-500/20 text-purple-300';
-      case 'mining': return 'bg-orange-500/20 text-orange-300';
-      case 'wallet': return 'bg-pink-500/20 text-pink-300';
-      default: return 'bg-gray-500/20 text-gray-300';
+      case 'daily':
+        return 'bg-blue-500/20 text-blue-300';
+      case 'social':
+        return 'bg-purple-500/20 text-purple-300';
+      case 'mining':
+        return 'bg-orange-500/20 text-orange-300';
+      case 'wallet':
+        return 'bg-pink-500/20 text-pink-300';
+      default:
+        return 'bg-gray-500/20 text-gray-300';
     }
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-4 pb-24">
+  return <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-4 pb-24">
       <div className="max-w-md mx-auto space-y-6">
         {/* Header */}
         <div className="text-center mb-8 relative">
@@ -112,14 +107,11 @@ const TasksPage = () => {
         </Card>
 
         {/* Tasks List */}
-        {isLoading ? (
-          <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-3xl overflow-hidden">
+        {isLoading ? <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-3xl overflow-hidden">
             <CardContent className="p-8 text-center">
               <p className="text-gray-300">Loading tasks...</p>
             </CardContent>
-          </Card>
-        ) : tasks.length === 0 ? (
-          <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-3xl overflow-hidden">
+          </Card> : tasks.length === 0 ? <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-3xl overflow-hidden">
             <CardContent className="p-8 text-center">
               <div className="space-y-4">
                 <div className="p-4 bg-indigo-500/20 rounded-full mx-auto w-fit">
@@ -129,32 +121,15 @@ const TasksPage = () => {
                 <p className="text-gray-300">{t('noTasksDesc') || 'New tasks will be added soon. Stay tuned!'}</p>
               </div>
             </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            {tasks.map((task) => {
-              const isCompleted = completedTasks.includes(task.id);
-              
-              return (
-                <Card 
-                  key={task.id}
-                  className={`bg-gradient-to-br backdrop-blur-xl border-2 rounded-3xl overflow-hidden transition-all ${
-                    isCompleted 
-                      ? 'from-green-500/10 to-emerald-500/10 border-green-500/30' 
-                      : 'from-indigo-500/10 to-purple-500/10 border-indigo-500/30'
-                  }`}
-                >
+          </Card> : <div className="space-y-4">
+            {tasks.map(task => {
+          const isCompleted = completedTasks.includes(task.id);
+          return <Card key={task.id} className={`bg-gradient-to-br backdrop-blur-xl border-2 rounded-3xl overflow-hidden transition-all ${isCompleted ? 'from-green-500/10 to-emerald-500/10 border-green-500/30' : 'from-indigo-500/10 to-purple-500/10 border-indigo-500/30'}`}>
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <div className={`p-3 rounded-full ${
-                          isCompleted ? 'bg-green-500/20' : 'bg-indigo-500/20'
-                        }`}>
-                          {isCompleted ? (
-                            <CheckCircle className="w-6 h-6 text-green-400" />
-                          ) : (
-                            <Trophy className="w-6 h-6 text-indigo-400" />
-                          )}
+                        <div className={`p-3 rounded-full ${isCompleted ? 'bg-green-500/20' : 'bg-indigo-500/20'}`}>
+                          {isCompleted ? <CheckCircle className="w-6 h-6 text-green-400" /> : <Trophy className="w-6 h-6 text-indigo-400" />}
                         </div>
                         <div>
                           <CardTitle className="text-white text-lg">
@@ -170,35 +145,22 @@ const TasksPage = () => {
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <p className="text-gray-300 text-sm mb-4">
-                      {t(task.description_key) || task.description_key}
-                    </p>
+                    
                     <div className="flex items-center justify-between">
                       <span className="text-pink-400 font-bold">+{task.reward_amount} $SPACE</span>
-                      {!isCompleted && (
-                        <Button
-                          onClick={() => handleTaskComplete(task.id, task.action_url || undefined)}
-                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-                        >
+                      {!isCompleted && <Button onClick={() => handleTaskComplete(task.id, task.action_url || undefined)} className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 font-normal text-base rounded-full">
                           {task.action_url && <ExternalLink className="w-4 h-4 mr-2" />}
                           Complete
-                        </Button>
-                      )}
-                      {isCompleted && (
-                        <Badge className="bg-green-500/20 text-green-300">
+                        </Button>}
+                      {isCompleted && <Badge className="bg-green-500/20 text-green-300">
                           Completed
-                        </Badge>
-                      )}
+                        </Badge>}
                     </div>
                   </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
+                </Card>;
+        })}
+          </div>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TasksPage;
