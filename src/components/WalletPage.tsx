@@ -151,7 +151,7 @@ const WalletPage = () => {
 
           {/* Connection Card */}
           <Card className="bg-gradient-to-br from-purple-500/15 to-pink-500/15 backdrop-blur-xl border-2 border-purple-500/40 rounded-2xl overflow-hidden">
-            <CardContent className="p-6 text-center">
+            <CardContent className="p-6 text-center bg-violet-950">
               <div className="mb-4">
                 <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Wallet className="w-8 h-8 text-white" />
