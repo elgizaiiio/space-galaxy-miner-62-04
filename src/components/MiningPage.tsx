@@ -508,7 +508,7 @@ const MiningPage: React.FC = () => {
       delay: 0.2
     }}>
         <Card className="bg-black/40 backdrop-blur-xl border-2 border-white/20 rounded-3xl overflow-hidden">
-          <CardContent className="p-6 w-full max-w-md space-y-4 py-[3px]">
+          <CardContent className="p-6 w-full max-w-md space-y-4 py-[4px]">
             {/* Balance Display */}
             <div className="text-center">
               <motion.div key={spaceCoins} initial={{
