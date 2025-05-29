@@ -183,7 +183,7 @@ const ContestsPage = () => {
                   <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                   {t('completeTasks') || 'Complete tasks'}
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2 bg-transparent">
                   <div className="w-1.5 h-1.5 bg-purple-400 rounded-full"></div>
                   {t('dailyMining') || 'Daily mining activity'}
                 </li>
