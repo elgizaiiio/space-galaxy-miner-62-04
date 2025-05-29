@@ -142,7 +142,7 @@ const WalletPage = () => {
                   <Wallet className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text mb-2 text-zinc-50">
                 {t('smartWallet')}
               </h1>
               <p className="text-gray-300 text-sm leading-relaxed px-2">{t('walletDescription')}</p>
