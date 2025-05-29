@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,6 @@ import SendModal from './SendModal';
 import ReceiveModal from './ReceiveModal';
 import TransactionItem from './TransactionItem';
 import LanguageSwitcher from './LanguageSwitcher';
-
 const WalletPage = () => {
   const {
     toast
@@ -30,7 +28,6 @@ const WalletPage = () => {
 
   // Get translation function for current language
   const t = (key: string) => getTranslation(key, currentLanguage.code);
-  
   useEffect(() => {
     checkWalletConnection();
     const unsubscribe = tonConnectUI.onStatusChange(wallet => {
@@ -48,7 +45,6 @@ const WalletPage = () => {
       unsubscribe();
     };
   }, [tonConnectUI]);
-  
   const checkWalletConnection = () => {
     const wallet = tonConnectUI.wallet;
     console.log('Current TON Connect UI wallet:', wallet);
@@ -58,7 +54,6 @@ const WalletPage = () => {
       loadWalletData(address);
     }
   };
-  
   const connectWallet = async () => {
     setIsConnecting(true);
     try {
@@ -79,7 +74,6 @@ const WalletPage = () => {
       setIsConnecting(false);
     }
   };
-  
   const disconnectWallet = async () => {
     try {
       await tonConnectUI.disconnect();
@@ -94,7 +88,6 @@ const WalletPage = () => {
       console.error('Error disconnecting wallet:', error);
     }
   };
-  
   const loadWalletData = async (address: string) => {
     setIsLoading(true);
     try {
@@ -118,7 +111,6 @@ const WalletPage = () => {
       setIsLoading(false);
     }
   };
-  
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({
@@ -126,12 +118,10 @@ const WalletPage = () => {
       description: t('walletAddressCopied')
     });
   };
-  
   const openTxExplorer = (hash: string) => {
     if (hash.startsWith('fallback_')) return;
     window.open(`https://tonscan.org/tx/${hash}`, '_blank');
   };
-  
   const isWalletConnected = !!tonConnectUI.wallet;
 
   // If no wallet connected, show connection screen
@@ -179,7 +169,6 @@ const WalletPage = () => {
         </div>
       </div>;
   }
-  
   return <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-3 pb-24">
       <div className="max-w-md mx-auto space-y-4">
         {/* Enhanced Header */}
@@ -205,13 +194,13 @@ const WalletPage = () => {
 
         {/* Wallet Connection Status */}
         <Card className="bg-gradient-to-br from-green-500/15 to-emerald-500/15 backdrop-blur-xl border border-green-500/40 rounded-2xl overflow-hidden">
-          <CardContent className="p-4">
+          <CardContent className="p-4 bg-blue-950">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span className="text-green-200 font-medium text-sm">{t('walletConnected')}</span>
               </div>
-              <Button onClick={disconnectWallet} variant="outline" size="sm" className="bg-red-500/20 border-red-500/50 text-red-200 hover:bg-red-500/30 text-xs h-8 px-3">
+              <Button onClick={disconnectWallet} variant="outline" size="sm" className="border-red-500/50 text-xs h-8 px-3 bg-violet-700 hover:bg-violet-600 text-slate-50">
                 <LogOut className="w-3 h-3 mr-1" />
                 {t('disconnectWallet')}
               </Button>
@@ -268,32 +257,13 @@ const WalletPage = () => {
         </div>
 
         {/* Wallet Address Display - Compact */}
-        {connectedAddress && <Card className="bg-gradient-to-br from-gray-500/10 to-slate-500/10 backdrop-blur-xl border border-gray-500/30 rounded-2xl overflow-hidden">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between gap-2">
-                <div className="min-w-0 flex-1">
-                  <p className="text-gray-300 text-xs mb-1">{t('walletAddress')}</p>
-                  <code className="text-white text-xs font-mono break-all leading-relaxed">
-                    {tonService.formatAddress(connectedAddress)}
-                  </code>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => copyToClipboard(connectedAddress)} className="text-gray-300 hover:text-white hover:bg-white/10 h-8 w-8 p-0 rounded-lg">
-                    <Copy className="w-3 h-3" />
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => window.open(`https://tonscan.org/address/${connectedAddress}`, '_blank')} className="text-gray-300 hover:text-white hover:bg-white/10 h-8 w-8 p-0 rounded-lg">
-                    <ExternalLink className="w-3 h-3" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>}
+        {connectedAddress}
 
         {/* Enhanced Transaction History - Compact */}
         <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-2xl overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-white text-lg flex items-center gap-2">
+              <CardTitle className="text-white text-lg flex items-center gap-2 font-bold">
                 {t('latestTransactions')}
               </CardTitle>
               <Button variant="ghost" size="sm" onClick={() => loadWalletData(connectedAddress!)} disabled={isLoading} className="text-indigo-300 hover:text-white hover:bg-indigo-500/20 h-8 w-8 p-0 rounded-lg">
@@ -322,5 +292,4 @@ const WalletPage = () => {
       <ReceiveModal isOpen={showReceiveModal} onClose={() => setShowReceiveModal(false)} address={connectedAddress!} />
     </div>;
 };
-
 export default WalletPage;
