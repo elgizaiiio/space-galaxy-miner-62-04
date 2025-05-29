@@ -576,7 +576,7 @@ const MiningPage: React.FC = () => {
       }} whileTap={{
         scale: 0.98
       }}>
-          <Button onClick={() => setShowUpgradeModal(true)} variant="outline" className="w-full h-12 bg-white/10 border-white/30 text-white hover:bg-white/20 rounded-xl backdrop-blur-sm">
+          <Button onClick={() => setShowUpgradeModal(true)} variant="outline" className="w-full h-12 border-white/30 text-white rounded-xl backdrop-blur-sm bg-fuchsia-950 hover:bg-fuchsia-800">
             <Zap className="w-4 h-4 mr-2" />
             {t('upgrade') || 'Upgrade'}
           </Button>
