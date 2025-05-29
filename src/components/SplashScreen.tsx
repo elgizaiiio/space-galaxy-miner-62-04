@@ -244,69 +244,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
 
           {/* Enhanced Loading Section */}
           <AnimatePresence>
-            {currentPhase >= 3 && <motion.div initial={{
-          opacity: 0,
-          y: 30
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} exit={{
-          opacity: 0,
-          scale: 0.9
-        }} transition={{
-          duration: 0.6
-        }} className="text-center space-y-6">
-                {/* Loading Progress Bar */}
-                <div className="w-64 mx-auto">
-                  <div className="flex justify-between text-sm text-blue-300 mb-2">
-                    <span>جاري التحضير...</span>
-                    <span>{Math.round(loadingProgress)}%</span>
-                  </div>
-                  
-                  <div className="h-2 bg-gray-800/50 rounded-full overflow-hidden backdrop-blur-sm border border-blue-500/20">
-                    <motion.div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full relative" initial={{
-                width: 0
-              }} animate={{
-                width: `${loadingProgress}%`
-              }} transition={{
-                duration: 0.3,
-                ease: "easeOut"
-              }}>
-                      <motion.div className="absolute inset-0 bg-white/20 rounded-full" animate={{
-                  x: ['-100%', '100%']
-                }} transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }} />
-                    </motion.div>
-                  </div>
-                </div>
-
-                {/* Loading Dots Animation */}
-                <div className="flex justify-center space-x-2 rtl:space-x-reverse">
-                  {[...Array(4)].map((_, i) => <motion.div key={i} className="w-3 h-3 rounded-full bg-gradient-to-r from-blue-400 to-purple-400" animate={{
-              scale: [1, 1.5, 1],
-              opacity: [0.4, 1, 0.4]
-            }} transition={{
-              duration: 1.2,
-              repeat: Infinity,
-              delay: i * 0.2,
-              ease: "easeInOut"
-            }} />)}
-                </div>
-
-                {/* Cosmic Loading Text */}
-                <motion.p className="text-blue-300 text-sm font-medium" animate={{
-            opacity: [0.5, 1, 0.5]
-          }} transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}>
-                  تحضير رحلتك عبر الفضاء الرقمي...
-                </motion.p>
-              </motion.div>}
+            {currentPhase >= 3}
           </AnimatePresence>
         </motion.div>}
       
