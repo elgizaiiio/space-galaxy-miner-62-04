@@ -129,7 +129,7 @@ const ContestsPage = () => {
 
         {/* Daily Contest */}
         <Card className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-blue-500/30 rounded-2xl overflow-hidden bg-indigo-900">
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-3 bg-indigo-900">
             <CardTitle className="text-white text-lg text-center flex items-center justify-center gap-2">
               <Calendar className="w-5 h-5" />
               {t('dailyContest') || 'Daily Contest'}
