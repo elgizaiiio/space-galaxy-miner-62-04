@@ -125,7 +125,7 @@ const TasksPage = () => {
             {tasks.map(task => {
           const isCompleted = completedTasks.includes(task.id);
           return <Card key={task.id} className={`bg-gradient-to-br backdrop-blur-xl border-2 rounded-3xl overflow-hidden transition-all ${isCompleted ? 'from-green-500/10 to-emerald-500/10 border-green-500/30' : 'from-indigo-500/10 to-purple-500/10 border-indigo-500/30'}`}>
-                  <CardHeader className="pb-3">
+                  <CardHeader className="pb-3 bg-violet-800">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
                         <div className={`p-3 rounded-full ${isCompleted ? 'bg-green-500/20' : 'bg-indigo-500/20'}`}>
@@ -144,7 +144,7 @@ const TasksPage = () => {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="pt-0">
+                  <CardContent className="pt-0 bg-violet-800">
                     
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-zinc-50">+{task.reward_amount} $SPACE</span>
