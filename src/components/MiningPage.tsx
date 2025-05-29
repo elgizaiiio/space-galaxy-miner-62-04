@@ -640,9 +640,9 @@ const MiningPage: React.FC = () => {
               onClick={() => setShowAutoMiningModal(true)} 
               variant="outline" 
               disabled={autoMiningActive}
-              className="h-12 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/30 text-white hover:bg-yellow-500/30 rounded-xl backdrop-blur-sm"
+              className="h-6 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/30 text-white hover:bg-yellow-500/30 rounded-lg backdrop-blur-sm text-xs px-2"
             >
-              <Timer className="w-4 h-4 mr-2" />
+              <Timer className="w-3 h-3 mr-1" />
               {t('autoMining') || 'Auto'}
             </Button>
           </motion.div>
