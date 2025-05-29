@@ -599,7 +599,7 @@ const MiningPage: React.FC = () => {
       }} whileTap={{
         scale: 0.98
       }}>
-          <Button onClick={() => setShowBackgroundModal(true)} variant="outline" className="w-full h-12 bg-purple-500/20 border-purple-500/30 text-white hover:bg-purple-500/30 rounded-xl backdrop-blur-sm">
+          <Button onClick={() => setShowBackgroundModal(true)} variant="outline" className="w-full h-12 border-purple-500/30 text-white rounded-xl backdrop-blur-sm bg-fuchsia-950 hover:bg-fuchsia-800">
             <Palette className="w-4 h-4 mr-2" />
             {t('changeTheme') || 'Change Theme'}
           </Button>
