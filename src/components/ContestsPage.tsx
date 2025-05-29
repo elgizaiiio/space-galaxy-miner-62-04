@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,17 +5,26 @@ import { Trophy, Calendar, Users, Gift, Star, Clock } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { getStoredLanguage, getTranslation } from '../utils/language';
 import { useToast } from '@/hooks/use-toast';
-
 const ContestsPage = () => {
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
-  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
-  const [weeklyTimeLeft, setWeeklyTimeLeft] = useState({ days: 0, hours: 0, minutes: 0 });
+  const [timeLeft, setTimeLeft] = useState({
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
+  const [weeklyTimeLeft, setWeeklyTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0
+  });
   const [dailyParticipants] = useState(1247);
   const [weeklyParticipants] = useState(8934);
   const [lastWeeklyWinner] = useState('Ahmed Mohammed');
   const [dailyJoined, setDailyJoined] = useState(false);
   const [weeklyJoined, setWeeklyJoined] = useState(false);
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
 
   // Get translation function for current language
   const t = (key: string) => getTranslation(key, currentLanguage.code);
@@ -28,13 +36,15 @@ const ContestsPage = () => {
       const tomorrow = new Date(now);
       tomorrow.setDate(tomorrow.getDate() + 1);
       tomorrow.setHours(0, 0, 0, 0);
-      
       const diff = tomorrow.getTime() - now.getTime();
       const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      
-      setTimeLeft({ hours, minutes, seconds });
+      const minutes = Math.floor(diff % (1000 * 60 * 60) / (1000 * 60));
+      const seconds = Math.floor(diff % (1000 * 60) / 1000);
+      setTimeLeft({
+        hours,
+        minutes,
+        seconds
+      });
     };
 
     // Calculate time left for weekly contest (resets on Sunday)
@@ -44,64 +54,55 @@ const ContestsPage = () => {
       const daysUntilSunday = (7 - now.getDay()) % 7 || 7;
       nextSunday.setDate(now.getDate() + daysUntilSunday);
       nextSunday.setHours(0, 0, 0, 0);
-      
       const diff = nextSunday.getTime() - now.getTime();
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      
-      setWeeklyTimeLeft({ days, hours, minutes });
+      const hours = Math.floor(diff % (1000 * 60 * 60 * 24) / (1000 * 60 * 60));
+      const minutes = Math.floor(diff % (1000 * 60 * 60) / (1000 * 60));
+      setWeeklyTimeLeft({
+        days,
+        hours,
+        minutes
+      });
     };
-
     updateDailyTimer();
     updateWeeklyTimer();
-    
     const interval = setInterval(() => {
       updateDailyTimer();
       updateWeeklyTimer();
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
-
   const handleJoinDailyContest = () => {
     if (dailyJoined) {
       toast({
         title: t('alreadyJoined') || 'Already Joined',
-        description: t('alreadyJoinedDaily') || 'You have already joined today\'s contest',
+        description: t('alreadyJoinedDaily') || 'You have already joined today\'s contest'
       });
       return;
     }
-
     setDailyJoined(true);
     toast({
       title: t('joinedSuccessfully') || 'Joined Successfully!',
-      description: t('joinedDailyContest') || 'You have joined the daily contest. Good luck!',
+      description: t('joinedDailyContest') || 'You have joined the daily contest. Good luck!'
     });
-    
     console.log('Joining daily contest');
   };
-
   const handleJoinWeeklyContest = () => {
     if (weeklyJoined) {
       toast({
         title: t('alreadyJoined') || 'Already Joined',
-        description: t('alreadyJoinedWeekly') || 'You have already joined this week\'s contest',
+        description: t('alreadyJoinedWeekly') || 'You have already joined this week\'s contest'
       });
       return;
     }
-
     setWeeklyJoined(true);
     toast({
       title: t('joinedSuccessfully') || 'Joined Successfully!',
-      description: t('joinedWeeklyContest') || 'You have joined the weekly contest. Good luck!',
+      description: t('joinedWeeklyContest') || 'You have joined the weekly contest. Good luck!'
     });
-    
     console.log('Joining weekly contest');
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-4 pb-24">
+  return <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-4 pb-24">
       <div className="max-w-md mx-auto space-y-6">
         {/* Header */}
         <div className="text-center mb-8 relative">
@@ -117,10 +118,10 @@ const ContestsPage = () => {
                 <Trophy className="w-8 h-8 text-white" />
               </div>
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent mb-3">
+            <h1 className="text-4xl bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text mb-3 font-bold text-lime-300">
               {t('contests') || 'Contests'}
             </h1>
-            <p className="text-gray-300 text-base leading-relaxed">
+            <p className="text-base leading-relaxed text-zinc-50 font-bold">
               {t('joinContestsWinPrizes') || 'Join contests and win amazing prizes'}
             </p>
           </div>
@@ -169,7 +170,7 @@ const ContestsPage = () => {
 
             {/* How to increase chances */}
             <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-2xl p-4">
-              <h4 className="text-white font-medium mb-3 flex items-center gap-2">
+              <h4 className="mb-3 flex items-center gap-2 text-zinc-50 font-bold">
                 <Star className="w-4 h-4" />
                 {t('increaseChances') || 'Increase Your Chances'}
               </h4>
@@ -178,7 +179,7 @@ const ContestsPage = () => {
                   <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                   {t('inviteFriends') || 'Invite friends'}
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2 bg-transparent">
                   <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                   {t('completeTasks') || 'Complete tasks'}
                 </li>
@@ -189,17 +190,9 @@ const ContestsPage = () => {
               </ul>
             </div>
 
-            <Button 
-              onClick={handleJoinDailyContest}
-              disabled={dailyJoined}
-              className={`w-full rounded-2xl ${
-                dailyJoined 
-                  ? 'bg-green-600 hover:bg-green-600 cursor-not-allowed' 
-                  : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
-              }`}
-            >
+            <Button onClick={handleJoinDailyContest} disabled={dailyJoined} className={`w-full rounded-2xl ${dailyJoined ? 'bg-green-600 hover:bg-green-600 cursor-not-allowed' : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'}`}>
               <Gift className="w-4 h-4 mr-2" />
-              {dailyJoined ? (t('joined') || 'Joined') : (t('joinContest') || 'Join Contest')}
+              {dailyJoined ? t('joined') || 'Joined' : t('joinContest') || 'Join Contest'}
             </Button>
           </CardContent>
         </Card>
@@ -251,17 +244,9 @@ const ContestsPage = () => {
               <p className="text-yellow-400 font-bold text-lg">{lastWeeklyWinner}</p>
             </div>
 
-            <Button 
-              onClick={handleJoinWeeklyContest}
-              disabled={weeklyJoined}
-              className={`w-full rounded-2xl ${
-                weeklyJoined 
-                  ? 'bg-green-600 hover:bg-green-600 cursor-not-allowed' 
-                  : 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700'
-              }`}
-            >
+            <Button onClick={handleJoinWeeklyContest} disabled={weeklyJoined} className={`w-full rounded-2xl ${weeklyJoined ? 'bg-green-600 hover:bg-green-600 cursor-not-allowed' : 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700'}`}>
               <Trophy className="w-4 h-4 mr-2" />
-              {weeklyJoined ? (t('joined') || 'Joined') : (t('joinContest') || 'Join Contest')}
+              {weeklyJoined ? t('joined') || 'Joined' : t('joinContest') || 'Join Contest'}
             </Button>
           </CardContent>
         </Card>
@@ -295,8 +280,6 @@ const ContestsPage = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ContestsPage;
