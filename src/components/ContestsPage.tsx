@@ -262,19 +262,19 @@ const ContestsPage = () => {
             <div className="space-y-3 text-sm text-gray-300">
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">1</div>
-                <p>{t('rule1') || 'Winners are selected randomly from all participants'}</p>
+                <p className="text-zinc-50 font-semibold">{t('rule1') || 'Winners are selected randomly from all participants'}</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">2</div>
-                <p>{t('rule2') || 'Complete tasks and invite friends to increase your chances'}</p>
+                <p className="text-zinc-50 font-semibold">{t('rule2') || 'Complete tasks and invite friends to increase your chances'}</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">3</div>
-                <p>{t('rule3') || 'Prizes are distributed automatically to winners'}</p>
+                <p className="text-zinc-50 font-semibold">{t('rule3') || 'Prizes are distributed automatically to winners'}</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">4</div>
-                <p>{t('rule4') || 'Each user can participate once per contest period'}</p>
+                <p className="text-zinc-50 font-semibold">{t('rule4') || 'Each user can participate once per contest period'}</p>
               </div>
             </div>
           </CardContent>
