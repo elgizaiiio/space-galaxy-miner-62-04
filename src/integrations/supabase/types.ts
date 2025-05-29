@@ -283,36 +283,54 @@ export type Database = {
       }
       tasks: {
         Row: {
+          action_url: string | null
           category: string | null
           completed: boolean | null
           created_at: string | null
           description: string | null
+          description_key: string | null
           id: string
+          is_active: boolean | null
           link: string | null
           reward: string | null
-          title: string
+          reward_amount: number | null
+          task_type: string | null
+          title: string | null
+          title_key: string | null
           updated_at: string | null
         }
         Insert: {
+          action_url?: string | null
           category?: string | null
           completed?: boolean | null
           created_at?: string | null
           description?: string | null
+          description_key?: string | null
           id?: string
+          is_active?: boolean | null
           link?: string | null
           reward?: string | null
-          title: string
+          reward_amount?: number | null
+          task_type?: string | null
+          title?: string | null
+          title_key?: string | null
           updated_at?: string | null
         }
         Update: {
+          action_url?: string | null
           category?: string | null
           completed?: boolean | null
           created_at?: string | null
           description?: string | null
+          description_key?: string | null
           id?: string
+          is_active?: boolean | null
           link?: string | null
           reward?: string | null
-          title?: string
+          reward_amount?: number | null
+          task_type?: string | null
+          title?: string | null
+          title_key?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -414,6 +432,56 @@ export type Database = {
             columns: ["card_id"]
             isOneToOne: false
             referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_game_data: {
+        Row: {
+          created_at: string | null
+          energy_level: number | null
+          id: string
+          last_mining_claim: string | null
+          max_energy: number | null
+          mining_rate: number | null
+          referral_count: number | null
+          tap_multiplier: number | null
+          total_balance: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          energy_level?: number | null
+          id?: string
+          last_mining_claim?: string | null
+          max_energy?: number | null
+          mining_rate?: number | null
+          referral_count?: number | null
+          tap_multiplier?: number | null
+          total_balance?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          energy_level?: number | null
+          id?: string
+          last_mining_claim?: string | null
+          max_energy?: number | null
+          mining_rate?: number | null
+          referral_count?: number | null
+          tap_multiplier?: number | null
+          total_balance?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_game_data_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -586,6 +654,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_complete_data: {
+        Args: { p_user_id: string }
+        Returns: Json
+      }
       get_user_hourly_earnings: {
         Args: { user_addr: string }
         Returns: number
@@ -593,6 +665,16 @@ export type Database = {
       process_card_yields: {
         Args: { user_addr: string }
         Returns: number
+      }
+      sync_telegram_user: {
+        Args: {
+          p_telegram_user_id: number
+          p_first_name: string
+          p_last_name?: string
+          p_username?: string
+          p_referral_code?: string
+        }
+        Returns: string
       }
     }
     Enums: {
