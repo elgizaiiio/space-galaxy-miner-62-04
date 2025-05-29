@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -11,19 +12,23 @@ import TasksPage from './components/TasksPage';
 import WalletPage from './components/WalletPage';
 import ReferralPage from './components/ReferralPage';
 import SubscriptionPage from './components/SubscriptionPage';
+import ContestsPage from './components/ContestsPage';
 import TaskAdminPage from './components/TaskAdminPage';
 import { Button } from '@/components/ui/button';
-import { Home, CheckSquare, Wallet, Users, Crown, Settings } from 'lucide-react';
+import { Home, CheckSquare, Wallet, Users, Crown, Trophy, Settings } from 'lucide-react';
 import { getStoredLanguage, getTranslation } from './utils/language';
+
 const queryClient = new QueryClient();
 type AppState = 'splash' | 'onboarding' | 'main';
-type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'subscription' | 'admin';
+type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'subscription' | 'contests' | 'admin';
+
 const App = () => {
   const [appState, setAppState] = useState<AppState>('splash');
   const [currentPage, setCurrentPage] = useState<Page>('mining');
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [showAdminAccess, setShowAdminAccess] = useState(false);
   const [taskClickCount, setTaskClickCount] = useState(0);
+
   useEffect(() => {
     setCurrentLanguage(getStoredLanguage());
     let clickCount = 0;
@@ -57,14 +62,17 @@ const App = () => {
       return () => clearTimeout(timer);
     }
   }, [taskClickCount]);
+
   const handleSplashComplete = () => {
     const onboardingCompleted = localStorage.getItem('space-onboarding-completed');
     setAppState(onboardingCompleted ? 'main' : 'onboarding');
   };
+
   const handleOnboardingComplete = () => {
     localStorage.setItem('space-onboarding-completed', 'true');
     setAppState('main');
   };
+
   const handleTaskButtonClick = () => {
     const newCount = taskClickCount + 1;
     setTaskClickCount(newCount);
@@ -76,7 +84,9 @@ const App = () => {
       setCurrentPage('tasks');
     }
   };
+
   const t = (key: string) => getTranslation(key, currentLanguage.code);
+
   const navigationItems = [{
     id: 'mining',
     label: t('mining'),
@@ -85,6 +95,10 @@ const App = () => {
     id: 'tasks',
     label: t('tasks'),
     icon: CheckSquare
+  }, {
+    id: 'contests',
+    label: t('contests') || 'Contests',
+    icon: Trophy
   }, {
     id: 'wallet',
     label: t('wallet'),
@@ -98,6 +112,7 @@ const App = () => {
     label: t('premium'),
     icon: Crown
   }];
+
   if (showAdminAccess) {
     navigationItems.push({
       id: 'admin',
@@ -105,6 +120,7 @@ const App = () => {
       icon: Settings
     });
   }
+
   const renderCurrentPage = () => {
     switch (currentPage) {
       case 'mining':
@@ -117,12 +133,15 @@ const App = () => {
         return <ReferralPage />;
       case 'subscription':
         return <SubscriptionPage />;
+      case 'contests':
+        return <ContestsPage />;
       case 'admin':
         return showAdminAccess ? <TaskAdminPage /> : <MiningPage />;
       default:
         return <MiningPage />;
     }
   };
+
   return <TonConnectUIProvider manifestUrl={window.location.origin + '/tonconnect-manifest.json'}>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
@@ -140,7 +159,7 @@ const App = () => {
 
               <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/20 p-4 z-50 py-[5px]">
                 <div className="max-w-md mx-auto">
-                  <div className={`grid gap-2 ${showAdminAccess ? 'grid-cols-6' : 'grid-cols-5'}`}>
+                  <div className={`grid gap-2 ${showAdminAccess ? 'grid-cols-7' : 'grid-cols-6'}`}>
                     {navigationItems.map(item => {
                   const Icon = item.icon;
                   return <Button key={item.id} variant="ghost" onClick={() => {
@@ -162,4 +181,5 @@ const App = () => {
       </QueryClientProvider>
     </TonConnectUIProvider>;
 };
+
 export default App;
