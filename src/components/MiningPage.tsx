@@ -439,7 +439,7 @@ const MiningPage: React.FC = () => {
                 <span className="text-green-400 font-bold">{totalEarned.toLocaleString()}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Coins className="w-4 h-4 text-yellow-400" />
+                
                 <span className="text-white/80">{t('miningSpeed') || 'Speed'}:</span>
                 <span className="text-yellow-400 font-bold">{miningSpeed}x</span>
               </div>
@@ -522,7 +522,7 @@ const MiningPage: React.FC = () => {
             }} className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
                 {spaceCoins.toLocaleString()} $SPACE
               </motion.div>
-              <p className="text-white/60 text-sm">{t('spaceBalance') || 'Your Balance'}</p>
+              <p className="text-sm text-zinc-50">{t('spaceBalance') || 'Your Balance'}</p>
             </div>
 
             {/* Status Indicators */}
