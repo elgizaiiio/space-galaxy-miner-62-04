@@ -561,13 +561,7 @@ const MiningPage: React.FC = () => {
                 <Crown className="w-5 h-5 mr-2" />
                 {t('autoMining') || 'Auto Mining'} ⚡
               </> : miningActive ? <>
-                <motion.div animate={{
-              rotate: 360
-            }} transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "linear"
-            }} className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2" />
+                
                 {t('mining') || 'Mining'} • {formatTime(remainingTime)}
               </> : <>
                 <Play className="w-5 h-5 mr-2" />
@@ -594,7 +588,7 @@ const MiningPage: React.FC = () => {
       }} whileTap={{
         scale: 0.98
       }}>
-          <Button onClick={() => setShowAutoMiningModal(true)} variant="outline" disabled={autoMiningActive} className="w-full h-12 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/30 text-white hover:bg-yellow-500/30 rounded-xl backdrop-blur-sm">
+          <Button onClick={() => setShowAutoMiningModal(true)} variant="outline" disabled={autoMiningActive} className="w-full h-12 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/30 text-white rounded-xl backdrop-blur-sm bg-fuchsia-950 hover:bg-fuchsia-800">
             <Timer className="w-4 h-4 mr-2" />
             {t('autoMining') || 'Auto Mining'}
           </Button>
