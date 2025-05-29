@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,6 @@ import { Trophy, Calendar, Users, Gift, Star, Clock } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { getStoredLanguage, getTranslation } from '../utils/language';
 import { useToast } from '@/hooks/use-toast';
-
 const ContestsPage = () => {
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [timeLeft, setTimeLeft] = useState({
@@ -24,7 +22,9 @@ const ContestsPage = () => {
   const [lastWeeklyWinner] = useState('Ahmed Mohammed');
   const [dailyJoined, setDailyJoined] = useState(false);
   const [weeklyJoined, setWeeklyJoined] = useState(false);
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
 
   // Get translation function for current language
   const t = (key: string) => getTranslation(key, currentLanguage.code);
@@ -40,7 +40,11 @@ const ContestsPage = () => {
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor(diff % (1000 * 60 * 60) / (1000 * 60));
       const seconds = Math.floor(diff % (1000 * 60) / 1000);
-      setTimeLeft({ hours, minutes, seconds });
+      setTimeLeft({
+        hours,
+        minutes,
+        seconds
+      });
     };
 
     // Calculate time left for weekly contest (resets on Sunday)
@@ -54,9 +58,12 @@ const ContestsPage = () => {
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor(diff % (1000 * 60 * 60 * 24) / (1000 * 60 * 60));
       const minutes = Math.floor(diff % (1000 * 60 * 60) / (1000 * 60));
-      setWeeklyTimeLeft({ days, hours, minutes });
+      setWeeklyTimeLeft({
+        days,
+        hours,
+        minutes
+      });
     };
-
     updateDailyTimer();
     updateWeeklyTimer();
     const interval = setInterval(() => {
@@ -65,7 +72,6 @@ const ContestsPage = () => {
     }, 1000);
     return () => clearInterval(interval);
   }, []);
-
   const handleJoinDailyContest = () => {
     if (dailyJoined) {
       toast({
@@ -81,7 +87,6 @@ const ContestsPage = () => {
     });
     console.log('Joining daily contest');
   };
-
   const handleJoinWeeklyContest = () => {
     if (weeklyJoined) {
       toast({
@@ -97,9 +102,7 @@ const ContestsPage = () => {
     });
     console.log('Joining weekly contest');
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-3 pb-20">
+  return <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-3 pb-20">
       <div className="max-w-md mx-auto space-y-4">
         {/* Header */}
         <div className="text-center mb-6 relative">
@@ -125,14 +128,14 @@ const ContestsPage = () => {
         </div>
 
         {/* Daily Contest */}
-        <Card className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-blue-500/30 rounded-2xl overflow-hidden">
+        <Card className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-blue-500/30 rounded-2xl overflow-hidden bg-indigo-900">
           <CardHeader className="pb-3">
             <CardTitle className="text-white text-lg text-center flex items-center justify-center gap-2">
               <Calendar className="w-5 h-5" />
               {t('dailyContest') || 'Daily Contest'}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 p-4 pt-0">
+          <CardContent className="space-y-3 p-4 pt-0 bg-indigo-900">
             <div className="text-center">
               <div className="text-2xl font-bold text-yellow-400 mb-1">1 TON</div>
               <p className="text-gray-300 text-xs">{t('dailyPrize') || 'Daily Prize'}</p>
@@ -166,7 +169,7 @@ const ContestsPage = () => {
             </div>
 
             {/* How to increase chances */}
-            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-xl p-3">
+            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-xl p-3 bg-violet-900">
               <h4 className="mb-2 flex items-center gap-2 text-zinc-50 font-bold text-sm">
                 <Star className="w-4 h-4" />
                 {t('increaseChances') || 'Increase Your Chances'}
@@ -187,15 +190,7 @@ const ContestsPage = () => {
               </ul>
             </div>
 
-            <Button 
-              onClick={handleJoinDailyContest} 
-              disabled={dailyJoined} 
-              className={`w-full rounded-xl h-11 ${
-                dailyJoined 
-                  ? 'bg-green-600 hover:bg-green-600 cursor-not-allowed' 
-                  : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
-              }`}
-            >
+            <Button onClick={handleJoinDailyContest} disabled={dailyJoined} className={`w-full rounded-xl h-11 ${dailyJoined ? 'bg-green-600 hover:bg-green-600 cursor-not-allowed' : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'}`}>
               <Gift className="w-4 h-4 mr-2" />
               {dailyJoined ? t('joined') || 'Joined' : t('joinContest') || 'Join Contest'}
             </Button>
@@ -203,14 +198,14 @@ const ContestsPage = () => {
         </Card>
 
         {/* Weekly Contest */}
-        <Card className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-xl border-2 border-yellow-500/30 rounded-2xl overflow-hidden">
-          <CardHeader className="pb-3">
+        <Card className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-xl border-2 border-yellow-500/30 rounded-2xl overflow-hidden bg-violet-800">
+          <CardHeader className="pb-3 bg-violet-800">
             <CardTitle className="text-white text-lg text-center flex items-center justify-center gap-2">
               <Trophy className="w-5 h-5" />
               {t('weeklyContest') || 'Weekly Contest'}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 p-4 pt-0">
+          <CardContent className="space-y-3 p-4 pt-0 bg-violet-800">
             <div className="text-center">
               <div className="text-3xl font-bold text-yellow-400 mb-1">100 TON</div>
               <p className="text-gray-300 text-xs">{t('weeklyPrize') || 'Weekly Prize'}</p>
@@ -249,15 +244,7 @@ const ContestsPage = () => {
               <p className="text-yellow-400 font-bold text-base">{lastWeeklyWinner}</p>
             </div>
 
-            <Button 
-              onClick={handleJoinWeeklyContest} 
-              disabled={weeklyJoined} 
-              className={`w-full rounded-xl h-11 ${
-                weeklyJoined 
-                  ? 'bg-green-600 hover:bg-green-600 cursor-not-allowed' 
-                  : 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700'
-              }`}
-            >
+            <Button onClick={handleJoinWeeklyContest} disabled={weeklyJoined} className={`w-full rounded-xl h-11 ${weeklyJoined ? 'bg-green-600 hover:bg-green-600 cursor-not-allowed' : 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700'}`}>
               <Trophy className="w-4 h-4 mr-2" />
               {weeklyJoined ? t('joined') || 'Joined' : t('joinContest') || 'Join Contest'}
             </Button>
@@ -293,8 +280,6 @@ const ContestsPage = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ContestsPage;
