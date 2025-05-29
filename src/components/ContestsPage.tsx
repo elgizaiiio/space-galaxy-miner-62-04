@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Trophy, Calendar, Users, Gift, Star, Clock } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { getStoredLanguage, getTranslation } from '../utils/language';
+import { useToast } from '@/hooks/use-toast';
 
 const ContestsPage = () => {
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
@@ -13,6 +14,9 @@ const ContestsPage = () => {
   const [dailyParticipants] = useState(1247);
   const [weeklyParticipants] = useState(8934);
   const [lastWeeklyWinner] = useState('Ahmed Mohammed');
+  const [dailyJoined, setDailyJoined] = useState(false);
+  const [weeklyJoined, setWeeklyJoined] = useState(false);
+  const { toast } = useToast();
 
   // Get translation function for current language
   const t = (key: string) => getTranslation(key, currentLanguage.code);
@@ -61,12 +65,38 @@ const ContestsPage = () => {
   }, []);
 
   const handleJoinDailyContest = () => {
-    // TODO: Implement daily contest participation logic
+    if (dailyJoined) {
+      toast({
+        title: t('alreadyJoined') || 'Already Joined',
+        description: t('alreadyJoinedDaily') || 'You have already joined today\'s contest',
+      });
+      return;
+    }
+
+    setDailyJoined(true);
+    toast({
+      title: t('joinedSuccessfully') || 'Joined Successfully!',
+      description: t('joinedDailyContest') || 'You have joined the daily contest. Good luck!',
+    });
+    
     console.log('Joining daily contest');
   };
 
   const handleJoinWeeklyContest = () => {
-    // TODO: Implement weekly contest participation logic
+    if (weeklyJoined) {
+      toast({
+        title: t('alreadyJoined') || 'Already Joined',
+        description: t('alreadyJoinedWeekly') || 'You have already joined this week\'s contest',
+      });
+      return;
+    }
+
+    setWeeklyJoined(true);
+    toast({
+      title: t('joinedSuccessfully') || 'Joined Successfully!',
+      description: t('joinedWeeklyContest') || 'You have joined the weekly contest. Good luck!',
+    });
+    
     console.log('Joining weekly contest');
   };
 
@@ -161,10 +191,15 @@ const ContestsPage = () => {
 
             <Button 
               onClick={handleJoinDailyContest}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-2xl"
+              disabled={dailyJoined}
+              className={`w-full rounded-2xl ${
+                dailyJoined 
+                  ? 'bg-green-600 hover:bg-green-600 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
+              }`}
             >
               <Gift className="w-4 h-4 mr-2" />
-              {t('joinContest') || 'Join Contest'}
+              {dailyJoined ? (t('joined') || 'Joined') : (t('joinContest') || 'Join Contest')}
             </Button>
           </CardContent>
         </Card>
@@ -218,10 +253,15 @@ const ContestsPage = () => {
 
             <Button 
               onClick={handleJoinWeeklyContest}
-              className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 rounded-2xl"
+              disabled={weeklyJoined}
+              className={`w-full rounded-2xl ${
+                weeklyJoined 
+                  ? 'bg-green-600 hover:bg-green-600 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700'
+              }`}
             >
               <Trophy className="w-4 h-4 mr-2" />
-              {t('joinContest') || 'Join Contest'}
+              {weeklyJoined ? (t('joined') || 'Joined') : (t('joinContest') || 'Join Contest')}
             </Button>
           </CardContent>
         </Card>
