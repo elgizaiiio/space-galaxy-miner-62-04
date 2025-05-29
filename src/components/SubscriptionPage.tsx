@@ -101,7 +101,7 @@ const SubscriptionPage = () => {
           {plans.map(plan => {
           const Icon = plan.icon;
           const isCurrentPlan = currentPlan === plan.id;
-          return <Card key={plan.id} className={`relative bg-gradient-to-br backdrop-blur-xl border-2 rounded-3xl overflow-hidden transition-all duration-300 hover:scale-105 ${plan.popular ? 'from-yellow-500/20 to-orange-500/20 border-yellow-500/50' : plan.color === 'purple' ? 'from-purple-500/20 to-pink-500/20 border-purple-500/30' : 'from-gray-500/10 to-gray-600/10 border-gray-500/30'} ${isCurrentPlan ? 'ring-2 ring-green-500' : ''}`}>
+          return <Card key={plan.id} className="bg-pink-900">
                 {plan.popular && <div className="absolute top-4 right-4">
                     <Badge className="bg-yellow-500 text-black font-bold">
                       {t('popular') || 'Popular'}
@@ -114,7 +114,7 @@ const SubscriptionPage = () => {
                     </Badge>
                   </div>}
 
-                <CardHeader className="text-center pb-4">
+                <CardHeader className="text-center pb-4 bg-pink-900">
                   <div className="flex justify-center mb-4">
                     <div className={`p-4 rounded-full ${plan.color === 'yellow' ? 'bg-yellow-500/20' : plan.color === 'purple' ? 'bg-purple-500/20' : 'bg-gray-500/20'}`}>
                       <Icon className="bg-transparent" />
@@ -133,7 +133,7 @@ const SubscriptionPage = () => {
                   </div>
                 </CardHeader>
 
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 bg-pink-900">
                   <div className="space-y-3">
                     {plan.features.map((feature, index) => <div key={index} className="flex items-center gap-3">
                         <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
