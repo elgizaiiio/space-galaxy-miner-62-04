@@ -198,6 +198,10 @@ const MiningPage: React.FC = () => {
           setRemainingTime(0);
           localStorage.removeItem('miningEndTime');
           localStorage.removeItem('miningActive');
+          toast({
+            title: t('miningCompleted') || 'Mining Completed',
+            description: t('miningCompletedDesc') || 'Your 8-hour mining session has finished'
+          });
           if (autoMiningActive) {
             setTimeout(() => {
               handleStartMining();
@@ -209,7 +213,7 @@ const MiningPage: React.FC = () => {
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [miningActive, miningEndTime, autoMiningActive]);
+  }, [miningActive, miningEndTime, autoMiningActive, toast, t]);
 
   // Update remaining time for auto mining
   useEffect(() => {
@@ -266,13 +270,10 @@ const MiningPage: React.FC = () => {
       localStorage.setItem('miningEndTime', endTime.toString());
       localStorage.setItem('miningActive', 'true');
       hapticFeedback('success');
-    } else {
-      setMiningActive(false);
-      setMiningEndTime(null);
-      setRemainingTime(0);
-      localStorage.removeItem('miningEndTime');
-      localStorage.removeItem('miningActive');
-      hapticFeedback('light');
+      toast({
+        title: t('miningStarted') || 'Mining Started',
+        description: t('miningStartedDesc') || 'Mining will automatically stop after 8 hours'
+      });
     }
   };
 
@@ -595,10 +596,10 @@ const MiningPage: React.FC = () => {
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Button 
             onClick={handleStartMining} 
-            disabled={autoMiningActive} 
+            disabled={miningActive || autoMiningActive} 
             className={`w-full h-14 text-lg font-bold rounded-2xl transition-all duration-300 ${
               miningActive || autoMiningActive
-                ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg shadow-green-500/30'
+                ? 'bg-gradient-to-r from-green-500 to-emerald-600 shadow-lg shadow-green-500/30 cursor-not-allowed opacity-75'
                 : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg shadow-blue-500/30'
             }`}
           >
@@ -609,8 +610,12 @@ const MiningPage: React.FC = () => {
               </>
             ) : miningActive ? (
               <>
-                <Pause className="w-5 h-5 mr-2" />
-                {t('stopMining') || 'Stop Mining'}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
+                />
+                {t('mining') || 'Mining'} • {formatTime(remainingTime)}
               </>
             ) : (
               <>
