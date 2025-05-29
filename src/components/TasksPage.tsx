@@ -128,8 +128,8 @@ const TasksPage = () => {
                   <CardHeader className="pb-3 bg-violet-800">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <div className={`p-3 rounded-full ${isCompleted ? 'bg-green-500/20' : 'bg-indigo-500/20'}`}>
-                          {isCompleted ? <CheckCircle className="w-6 h-6 text-green-400" /> : <Trophy className="w-6 h-6 text-indigo-400" />}
+                        <div className="bg-transparent">
+                          {isCompleted ? <CheckCircle className="w-6 h-6 text-green-400 bg-transparent" /> : <Trophy className="w-6 h-6 text-indigo-400" />}
                         </div>
                         <div>
                           <CardTitle className="text-white text-lg">
