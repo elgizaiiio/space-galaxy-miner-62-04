@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -622,31 +621,30 @@ const MiningPage: React.FC = () => {
           </Button>
         </motion.div>
 
-        {/* Secondary Buttons */}
-        <div className="grid grid-cols-2 gap-3">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button 
-              onClick={() => setShowUpgradeModal(true)} 
-              variant="outline" 
-              className="h-12 bg-white/10 border-white/30 text-white hover:bg-white/20 rounded-xl backdrop-blur-sm"
-            >
-              <Zap className="w-4 h-4 mr-2" />
-              {t('upgrade') || 'Upgrade'}
-            </Button>
-          </motion.div>
+        {/* Upgrade Button */}
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button 
+            onClick={() => setShowUpgradeModal(true)} 
+            variant="outline" 
+            className="w-full h-12 bg-white/10 border-white/30 text-white hover:bg-white/20 rounded-xl backdrop-blur-sm"
+          >
+            <Zap className="w-4 h-4 mr-2" />
+            {t('upgrade') || 'Upgrade'}
+          </Button>
+        </motion.div>
 
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button 
-              onClick={() => setShowAutoMiningModal(true)} 
-              variant="outline" 
-              disabled={autoMiningActive}
-              className="h-12 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/30 text-white hover:bg-yellow-500/30 rounded-xl backdrop-blur-sm"
-            >
-              <Timer className="w-4 h-4 mr-2" />
-              {t('autoMining') || 'Auto'}
-            </Button>
-          </motion.div>
-        </div>
+        {/* Auto Mining Button */}
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button 
+            onClick={() => setShowAutoMiningModal(true)} 
+            variant="outline" 
+            disabled={autoMiningActive}
+            className="w-full h-12 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/30 text-white hover:bg-yellow-500/30 rounded-xl backdrop-blur-sm"
+          >
+            <Timer className="w-4 h-4 mr-2" />
+            {t('autoMining') || 'Auto Mining'}
+          </Button>
+        </motion.div>
 
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Button 
