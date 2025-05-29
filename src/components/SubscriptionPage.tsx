@@ -117,7 +117,7 @@ const SubscriptionPage = () => {
                 <CardHeader className="text-center pb-4">
                   <div className="flex justify-center mb-4">
                     <div className={`p-4 rounded-full ${plan.color === 'yellow' ? 'bg-yellow-500/20' : plan.color === 'purple' ? 'bg-purple-500/20' : 'bg-gray-500/20'}`}>
-                      <Icon className={`w-8 h-8 ${plan.color === 'yellow' ? 'text-yellow-400' : plan.color === 'purple' ? 'text-purple-400' : 'text-gray-400'}`} />
+                      <Icon className="bg-transparent" />
                     </div>
                   </div>
                   <CardTitle className="text-white text-2xl font-bold">
