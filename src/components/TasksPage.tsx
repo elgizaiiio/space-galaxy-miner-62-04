@@ -93,14 +93,14 @@ const TasksPage = () => {
 
         {/* Stats Card */}
         <Card className="bg-gradient-to-br from-green-500/15 to-emerald-500/15 backdrop-blur-xl border-2 border-green-500/40 rounded-3xl overflow-hidden">
-          <CardContent className="p-6">
+          <CardContent className="p-6 bg-fuchsia-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-200 text-sm">{t('tasksCompleted') || 'Tasks Completed'}</p>
+                <p className="text-sm text-zinc-50 font-bold">{t('tasksCompleted') || 'Tasks Completed'}</p>
                 <p className="text-white text-2xl font-bold">{completedTasks.length}/{tasks.length}</p>
               </div>
               <div className="p-3 bg-green-500/20 rounded-full">
-                <CheckCircle className="w-8 h-8 text-green-400" />
+                <CheckCircle className="w-8 h-8 text-green-400 bg-transparent" />
               </div>
             </div>
           </CardContent>
