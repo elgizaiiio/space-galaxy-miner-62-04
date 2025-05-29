@@ -170,7 +170,7 @@ const WalletPage = () => {
       </div>;
   }
   return <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-3 pb-24">
-      <div className="max-w-md mx-auto space-y-4">
+      <div className="max-w-md mx-auto space-y-4 py-[16px] my-0">
         {/* Enhanced Header */}
         <div className="text-center mb-6 relative">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl"></div>
@@ -261,28 +261,8 @@ const WalletPage = () => {
 
         {/* Enhanced Transaction History - Compact */}
         <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-2xl overflow-hidden">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-white text-lg flex items-center gap-2 font-bold">
-                {t('latestTransactions')}
-              </CardTitle>
-              <Button variant="ghost" size="sm" onClick={() => loadWalletData(connectedAddress!)} disabled={isLoading} className="text-indigo-300 hover:text-white hover:bg-indigo-500/20 h-8 w-8 p-0 rounded-lg">
-                <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0 space-y-2">
-            {isLoading ? <div className="text-center text-gray-400 py-6">
-                <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2" />
-                <p className="text-sm">{t('loadingTransactions')}</p>
-              </div> : transactions.length === 0 ? <div className="text-center text-gray-400 py-6">
-                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Wallet className="w-6 h-6" />
-                </div>
-                <p className="text-base font-semibold mb-1">{t('noTransactions')}</p>
-                <p className="text-xs">{t('startSendingReceiving')}</p>
-              </div> : transactions.map(tx => <TransactionItem key={tx.hash} transaction={tx} onViewExplorer={openTxExplorer} language={currentLanguage.code} />)}
-          </CardContent>
+          
+          
         </Card>
       </div>
 
