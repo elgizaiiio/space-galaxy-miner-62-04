@@ -1,4 +1,3 @@
-
 import { TranslationMap } from './types';
 
 export const miningTranslations: TranslationMap = {
@@ -107,6 +106,21 @@ export const miningTranslations: TranslationMap = {
     ko: '자동 활성',
     hi: 'ऑटो सक्रिय',
     tr: 'Otomatik Etkin'
+  },
+  autoMining: {
+    en: 'Auto mining',
+    ar: 'التعدين التلقائي',
+    es: 'Minería automática',
+    fr: 'Minage automatique',
+    de: 'Auto-Mining',
+    it: 'Mining automatico',
+    pt: 'Mineração automática',
+    ru: 'Авто майнинг',
+    zh: '自动挖矿',
+    ja: '自動マイニング',
+    ko: '자동 마이닝',
+    hi: 'ऑटो माइनिंग',
+    tr: 'Otomatik madencilik'
   },
   autoMiningDesc: {
     en: 'Enable automatic mining for 3 days. Your coins will be mined continuously without manual intervention.',
