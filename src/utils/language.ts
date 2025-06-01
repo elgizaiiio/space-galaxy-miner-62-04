@@ -4,13 +4,15 @@ import { commonTranslations } from './languages/commonTranslations';
 import { miningTranslations } from './languages/miningTranslations';
 import { subscriptionTranslations } from './languages/subscriptionTranslations';
 import { contestTranslations } from './languages/contestTranslations';
+import { gameTranslations } from './languages/gameTranslations';
 
 // Combine all translations
-const TRANSLATIONS: TranslationMap = {
-  ...commonTranslations,
+const translations: TranslationMap = {
   ...miningTranslations,
+  ...commonTranslations,
   ...subscriptionTranslations,
-  ...contestTranslations
+  ...contestTranslations,
+  ...gameTranslations
 };
 
 export { SUPPORTED_LANGUAGES, type Language };
@@ -34,7 +36,7 @@ export const setStoredLanguage = (language: Language): void => {
 };
 
 export const getTranslation = (key: string, languageCode: string): string => {
-  const translation = TRANSLATIONS[key];
+  const translation = translations[key];
   if (!translation) {
     console.warn(`Translation key "${key}" not found`);
     return key;

@@ -14,13 +14,14 @@ import ReferralPage from './components/ReferralPage';
 import SubscriptionPage from './components/SubscriptionPage';
 import ContestsPage from './components/ContestsPage';
 import TaskAdminPage from './components/TaskAdminPage';
+import GamePage from './components/GamePage';
 import { Button } from '@/components/ui/button';
-import { Home, CheckSquare, Wallet, Users, Crown, Trophy, Settings } from 'lucide-react';
+import { Home, CheckSquare, Wallet, Users, Crown, Trophy, Settings, Gamepad2 } from 'lucide-react';
 import { getStoredLanguage, getTranslation } from './utils/language';
 
 const queryClient = new QueryClient();
 type AppState = 'splash' | 'onboarding' | 'main';
-type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'subscription' | 'contests' | 'admin';
+type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'subscription' | 'contests' | 'game' | 'admin';
 
 const App = () => {
   const [appState, setAppState] = useState<AppState>('splash');
@@ -96,6 +97,10 @@ const App = () => {
     label: t('tasks'),
     icon: CheckSquare
   }, {
+    id: 'game',
+    label: t('game') || 'Game',
+    icon: Gamepad2
+  }, {
     id: 'contests',
     label: t('contests') || 'Contests',
     icon: Trophy
@@ -127,6 +132,8 @@ const App = () => {
         return <MiningPage />;
       case 'tasks':
         return <TasksPage />;
+      case 'game':
+        return <GamePage />;
       case 'wallet':
         return <WalletPage />;
       case 'referral':
@@ -159,7 +166,7 @@ const App = () => {
 
               <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/20 p-4 z-50 py-[5px]">
                 <div className="max-w-md mx-auto">
-                  <div className={`grid gap-2 ${showAdminAccess ? 'grid-cols-7' : 'grid-cols-6'}`}>
+                  <div className={`grid gap-2 ${showAdminAccess ? 'grid-cols-8' : 'grid-cols-7'}`}>
                     {navigationItems.map(item => {
                   const Icon = item.icon;
                   return <Button key={item.id} variant="ghost" onClick={() => {
