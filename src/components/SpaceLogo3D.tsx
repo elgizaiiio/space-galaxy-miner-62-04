@@ -1,6 +1,6 @@
 
 import React, { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { Text3D, Center, Float } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -89,24 +89,17 @@ const SpaceParticles = () => {
 interface SpaceLogo3DProps {
   text?: string;
   size?: number;
-  className?: string;
 }
 
 const SpaceLogo3D: React.FC<SpaceLogo3DProps> = ({ 
   text = '$SPACE', 
-  size = 1, 
-  className = 'w-full h-64' 
+  size = 1
 }) => {
   return (
-    <div className={className}>
-      <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-        <ambientLight intensity={0.2} />
-        <pointLight position={[10, 10, 10]} intensity={1} color="#ec4899" />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#1e3a8a" />
-        <SpaceParticles />
-        <SpaceText text={text} size={size} />
-      </Canvas>
-    </div>
+    <group>
+      <SpaceParticles />
+      <SpaceText text={text} size={size} />
+    </group>
   );
 };
 
