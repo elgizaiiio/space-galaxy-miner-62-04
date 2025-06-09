@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Copy, QrCode, X, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { getStoredLanguage, getTranslation } from '@/utils/language';
+import { getTranslation } from '@/utils/language';
 
 interface ReceiveModalProps {
   isOpen: boolean;
@@ -15,9 +15,8 @@ interface ReceiveModalProps {
 const ReceiveModal: React.FC<ReceiveModalProps> = ({ isOpen, onClose, address }) => {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
-  const currentLanguage = getStoredLanguage();
   
-  const t = (key: string) => getTranslation(key, currentLanguage.code);
+  const t = (key: string) => getTranslation(key);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(address);

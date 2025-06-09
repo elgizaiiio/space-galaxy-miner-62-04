@@ -6,14 +6,13 @@ import { Wallet, Eye, EyeOff, RefreshCw, LogIn, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { tonService, type TONTransaction } from '../services/tonService';
-import { getStoredLanguage, getTranslation } from '../utils/language';
+import { getTranslation } from '../utils/language';
 import SendModal from './SendModal';
 import ReceiveModal from './ReceiveModal';
 
 const WalletPage = () => {
   const { toast } = useToast();
   const [tonConnectUI] = useTonConnectUI();
-  const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [showBalance, setShowBalance] = useState(true);
   const [spaceBalance] = useState(15420.5);
   const [tonBalance, setTonBalance] = useState(0);
@@ -24,8 +23,8 @@ const WalletPage = () => {
   const [showSendModal, setShowSendModal] = useState(false);
   const [showReceiveModal, setShowReceiveModal] = useState(false);
 
-  // Get translation function for current language
-  const t = (key: string) => getTranslation(key, currentLanguage.code);
+  // Get translation function
+  const t = (key: string) => getTranslation(key);
 
   useEffect(() => {
     checkWalletConnection();

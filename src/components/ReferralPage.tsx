@@ -3,15 +3,13 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Users, Gift, MessageSquare, TrendingUp, Star, ArrowRight } from 'lucide-react';
-import LanguageSwitcher from './LanguageSwitcher';
-import { getStoredLanguage, getTranslation } from '../utils/language';
+import { getTranslation } from '../utils/language';
 
 const ReferralPage = () => {
-  const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [referredUsers] = useState(12);
   const [totalEarned] = useState(2400);
 
-  const t = (key: string) => getTranslation(key, currentLanguage.code);
+  const t = (key: string) => getTranslation(key);
   
   const openTelegramBot = () => {
     window.open('https://t.me/Spacelbot', '_blank');
@@ -41,11 +39,6 @@ const ReferralPage = () => {
         <div className="text-center mb-8 relative">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-xl"></div>
           <div className="relative">
-            {/* Language Switcher */}
-            <div className="absolute top-0 right-0">
-              <LanguageSwitcher onLanguageChange={() => setCurrentLanguage(getStoredLanguage())} />
-            </div>
-            
             <div className="flex items-center justify-center mb-4">
               <div className="p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-2xl animate-pulse-glow">
                 <Users className="w-8 h-8 text-white" />

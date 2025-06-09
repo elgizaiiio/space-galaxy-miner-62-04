@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Trophy, ExternalLink } from 'lucide-react';
-import { getStoredLanguage, getTranslation } from '../utils/language';
+import { getTranslation } from '../utils/language';
 import { taskService } from '@/services/taskService';
 import { useToast } from '@/hooks/use-toast';
 import type { Database } from '@/integrations/supabase/types';
@@ -12,14 +12,13 @@ import type { Database } from '@/integrations/supabase/types';
 type Task = Database['public']['Tables']['tasks']['Row'];
 
 const TasksPage = () => {
-  const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [tasks, setTasks] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  // Get translation function for current language
-  const t = (key: string) => getTranslation(key, currentLanguage.code);
+  // Get translation function
+  const t = (key: string) => getTranslation(key);
 
   useEffect(() => {
     loadTasks();

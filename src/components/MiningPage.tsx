@@ -8,23 +8,12 @@ import { useToast } from '@/hooks/use-toast';
 import SpaceLogo3D from './SpaceLogo3D';
 import { UPGRADE_OPTIONS, formatTON, type UpgradeOption } from '../utils/ton';
 import { hapticFeedback } from '../utils/telegram';
-import { getStoredLanguage, getTranslation } from '../utils/language';
+import { getTranslation } from '../utils/language';
 import { Palette, Crown, Zap, Timer, Play, Pause, TrendingUp, Clock, Coins } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
 
 const MINING_PHRASES = {
-  en: ['Mine $SPACE Coin', 'Start Earning Now', 'Explore the Galaxy of Rewards', 'Begin Your Space Mining Journey', 'Collect Cosmic Treasures', 'Unlock Universal Wealth'],
-  ar: ['عدن عملة $SPACE', 'ابدأ الكسب الآن', 'استكشف مجرة المكافآت', 'ابدأ رحلة التعدين الفضائية', 'اجمع الكنوز الكونية', 'افتح الثروة الكونية'],
-  ru: ['Добывайте $SPACE монеты', 'Начните зарабатывать сейчас', 'Исследуйте галактику наград', 'Начните космическое путешествие майнинга', 'Собирайте космические сокровища', 'Откройте вселенское богатство'],
-  zh: ['挖掘$SPACE币', '立即开始赚钱', '探索奖励银河', '开始太空挖矿之旅', '收集宇宙宝藏', '解锁宇宙财富'],
-  hi: ['$SPACE सिक्का माइन करें', 'अभी कमाना शुरू करें', 'पुरस्कारों की आकाशगंगा का अन्वेषण करें', 'अपनी स्पेस माइनिंग यात्रा शुरू करें', 'ब्रह्मांडीय खजाने इकट्ठा करें', 'सार्वभौमिक धन अनलॉक करें'],
-  es: ['Mina monedas $SPACE', 'Comienza a ganar ahora', 'Explora la galaxia de recompensas', 'Comienza tu viaje de minera espacial', 'Recolecta tesoros cósmicos', 'Desbloquea riqueza universal'],
-  fr: ['Minez des pièces $SPACE', 'Commencez à gagner maintenant', 'Explorez la galaxie des récompenses', 'Commencez votre voyage de minage spatial', 'Collectez des trésors cosmiques', 'Débloquez la richesse universelle'],
-  de: ['Mine $SPACE Münzen', 'Beginne jetzt zu verdienen', 'Erkunde die Galaxie der Belohnungen', 'Beginne deine Weltraum-Mining-Reise', 'Sammle kosmische Schätze', 'Entsperre universellen Reichtum'],
-  ja: ['$SPACEコインをマイニング', '今すぐ稼ぎ始める', '報酬の銀河を探索', '宇宙マイニングの旅を始める', '宇宙の宝物を集める', '宇宙の富をアンロック'],
-  tr: ['$SPACE Coin madenciliği yap', 'Şimdi kazanmaya başla', 'Ödüller galaksisini keşfet', 'Uzay madencilik yolculuğuna başla', 'Kozmik hazineler topla', 'Evrensel zenginliği aç'],
-  pt: ['Mine moedas $SPACE', 'Comece a ganhar agora', 'Explore a galáxia de recompensas', 'Comece sua jornada de mineração espacial', 'Colete tesouros cósmicos', 'Desbloqueie riqueza universal'],
-  uk: ['Добувайте монети $SPACE', 'Почніть заробляти зараз', 'Досліджуйте галактику нагород', 'Розпочніть свою космічну подорож майнінгу', 'Збирайте космічні скарби', 'Відкрийте універсальне багатство']
+  en: ['Mine $SPACE Coin', 'Start Earning Now', 'Explore the Galaxy of Rewards', 'Begin Your Space Mining Journey', 'Collect Cosmic Treasures', 'Unlock Universal Wealth']
 };
 const MINING_DURATION = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
 const AUTO_MINING_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
@@ -75,7 +64,6 @@ const BACKGROUND_OPTIONS = [
 ];
 
 const MiningPage: React.FC = () => {
-  const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [currentPhrase, setCurrentPhrase] = useState(0);
   const [miningActive, setMiningActive] = useState(false);
   const [autoMiningActive, setAutoMiningActive] = useState(false);
@@ -95,11 +83,11 @@ const MiningPage: React.FC = () => {
   const [tonConnectUI] = useTonConnectUI();
   const { toast } = useToast();
 
-  // Get translation function for current language
-  const t = (key: string) => getTranslation(key, currentLanguage.code);
+  // Get translation function
+  const t = (key: string) => getTranslation(key);
 
-  // Get phrases for current language
-  const currentPhrases = MINING_PHRASES[currentLanguage.code as keyof typeof MINING_PHRASES] || MINING_PHRASES.en;
+  // Get phrases for English
+  const currentPhrases = MINING_PHRASES.en;
 
   // Helper function to format $SPACE text with white styling
   const formatSpaceText = (text: string) => {

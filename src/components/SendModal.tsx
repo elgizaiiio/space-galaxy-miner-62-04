@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Send, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { getStoredLanguage, getTranslation } from '@/utils/language';
+import { getTranslation } from '@/utils/language';
 
 interface SendModalProps {
   isOpen: boolean;
@@ -20,9 +20,8 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, balance, currenc
   const [amount, setAmount] = useState('');
   const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const currentLanguage = getStoredLanguage();
   
-  const t = (key: string) => getTranslation(key, currentLanguage.code);
+  const t = (key: string) => getTranslation(key);
 
   const handleSend = async () => {
     if (!amount || !address) {

@@ -6,17 +6,16 @@ import { Badge } from '@/components/ui/badge';
 import { Crown, CheckCircle, Rocket } from 'lucide-react';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { useToast } from '@/hooks/use-toast';
-import { getStoredLanguage, getTranslation } from '../utils/language';
+import { getTranslation } from '../utils/language';
 import { formatTON } from '../utils/ton';
 
 const SubscriptionPage = () => {
-  const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [currentPlan, setCurrentPlan] = useState('free');
   const [isProcessing, setIsProcessing] = useState(false);
   const [tonConnectUI] = useTonConnectUI();
   const { toast } = useToast();
 
-  const t = (key: string) => getTranslation(key, currentLanguage.code);
+  const t = (key: string) => getTranslation(key);
 
   const plans = [
     {
