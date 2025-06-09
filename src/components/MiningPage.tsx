@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,28 @@ import {
 interface MiningPageProps {
   initialMiningSpeed?: number;
 }
+
+const StarField = () => {
+  return (
+    <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      {[...Array(200)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute bg-white rounded-full animate-pulse"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            width: `${Math.random() * 3 + 1}px`,
+            height: `${Math.random() * 3 + 1}px`,
+            animationDelay: `${Math.random() * 3}s`,
+            animationDuration: `${Math.random() * 2 + 1}s`,
+            boxShadow: `0 0 ${Math.random() * 10 + 5}px rgba(255, 255, 255, 0.8)`,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 const MiningPage = () => {
   const [spaceCoins, setSpaceCoins] = useState(0);
@@ -104,8 +125,10 @@ const MiningPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-2 pb-20">
-      <div className="max-w-sm mx-auto space-y-3">
+    <div className="min-h-screen bg-black p-2 pb-20 relative">
+      <StarField />
+      
+      <div className="max-w-sm mx-auto space-y-3 relative z-10">
         {/* Compact Header */}
         <div className="text-center mb-3">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-1">
@@ -237,40 +260,6 @@ const MiningPage = () => {
             </div>
           </Button>
         </motion.div>
-
-        {/* Compact Upgrades Section */}
-        <div className="space-y-2">
-          <h2 className="text-lg font-bold text-white text-center">
-            Upgrades
-          </h2>
-          <p className="text-gray-300 text-center text-xs">
-            Upgrade your mining speed to earn more coins
-          </p>
-          
-          {/* Compact Upgrade Card */}
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border border-blue-400/20 rounded-2xl p-3 shadow-xl"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <h3 className="text-sm font-semibold text-white">
-                  Basic Upgrade
-                </h3>
-                <p className="text-xs text-gray-300">
-                  Increase mining speed by 2x
-                </p>
-              </div>
-              <div className="text-yellow-400 text-sm font-bold">
-                10 TON
-              </div>
-            </div>
-            <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-xl text-sm py-1.5">
-              Upgrade Now
-            </Button>
-          </motion.div>
-        </div>
 
         {/* Compact Notification Section */}
         <motion.div

@@ -11,13 +11,14 @@ import TasksPage from './components/TasksPage';
 import WalletPage from './components/WalletPage';
 import ReferralPage from './components/ReferralPage';
 import SubscriptionPage from './components/SubscriptionPage';
+import StorePage from './components/StorePage';
 import TaskAdminPage from './components/TaskAdminPage';
 import { Button } from '@/components/ui/button';
-import { Home, CheckSquare, Wallet, Users, Crown, Settings } from 'lucide-react';
+import { Home, CheckSquare, Wallet, Users, Crown, Settings, ShoppingBag } from 'lucide-react';
 import { getTranslation } from './utils/language';
 
 const queryClient = new QueryClient();
-type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'subscription' | 'admin';
+type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'subscription' | 'store' | 'admin';
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -83,6 +84,10 @@ const App = () => {
     label: getTranslation('tasks'),
     icon: CheckSquare
   }, {
+    id: 'store',
+    label: 'Store',
+    icon: ShoppingBag
+  }, {
     id: 'wallet',
     label: getTranslation('wallet'),
     icon: Wallet
@@ -110,6 +115,8 @@ const App = () => {
         return <MiningPage />;
       case 'tasks':
         return <TasksPage />;
+      case 'store':
+        return <StorePage />;
       case 'wallet':
         return <WalletPage />;
       case 'referral':
@@ -141,7 +148,7 @@ const App = () => {
 
             <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/20 p-2 z-50">
               <div className="max-w-md mx-auto">
-                <div className={`grid gap-1 ${showAdminAccess ? 'grid-cols-6' : 'grid-cols-5'}`}>
+                <div className={`grid gap-1 ${showAdminAccess ? 'grid-cols-7' : 'grid-cols-6'}`}>
                   {navigationItems.map(item => {
                     const Icon = item.icon;
                     return (
