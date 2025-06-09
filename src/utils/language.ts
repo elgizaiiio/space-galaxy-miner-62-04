@@ -2,7 +2,7 @@
 import { Language } from './languages/types';
 import { SUPPORTED_LANGUAGES } from './languages/supportedLanguages';
 
-// English-only translations
+// Enhanced translations with missing keys
 const translations: Record<string, string> = {
   // Basic navigation
   'mining': 'Mining',
@@ -24,12 +24,22 @@ const translations: Record<string, string> = {
   'purchaseAutoMining': 'Purchase Auto Mining',
   'timeRemaining': 'Time Remaining',
   'upgrade': 'Upgrade',
+  'upgrades': 'Upgrades',
   'fasterMining': 'faster mining',
-  'upgradeMiningSpeed': 'Upgrade Mining Speed',
+  'upgradeMiningSpeed': 'Upgrade your mining speed to earn more coins',
+  'basicUpgrade': 'Basic Upgrade',
+  'increaseMiningSpeed': 'Increase mining speed by 2x',
+  'upgradeNow': 'Upgrade Now',
   'changeTheme': 'Change Theme',
   'currentBackground': 'Current',
   'unlocked': 'Unlocked',
   'select': 'Select',
+  'stayUpdated': 'Stay Updated',
+  'enableNotifications': 'Enable notifications for mining updates',
+  'enableNow': 'Enable Now',
+  'mainCurrency': 'Main Currency',
+  'walletConnected': 'Wallet Connected',
+  'disconnectWallet': 'Disconnect',
   
   // Tasks page
   'completeTasksEarn': 'Complete tasks to earn $SPACE tokens',
@@ -72,6 +82,12 @@ const translations: Record<string, string> = {
   'amountExceedsBalance': 'Amount exceeds available balance',
   'sentSuccessfully': 'Sent Successfully',
   'sentToAddress': 'sent to',
+  'connectionError': 'Connection Error',
+  'failedToOpenWallet': 'Failed to open wallet connection',
+  'disconnected': 'Disconnected',
+  'tonWalletDisconnected': 'TON wallet disconnected successfully',
+  'loadingDataError': 'Loading Error',
+  'failedToLoadWallet': 'Failed to load wallet data',
   
   // Friends/Referral
   'inviteFriendsEarn': 'Invite friends and earn $SPACE coins together',
