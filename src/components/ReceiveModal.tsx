@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Copy, QrCode, X, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { getStoredLanguage, getTranslation } from '@/utils/language';
 
 interface ReceiveModalProps {
   isOpen: boolean;
@@ -14,13 +15,16 @@ interface ReceiveModalProps {
 const ReceiveModal: React.FC<ReceiveModalProps> = ({ isOpen, onClose, address }) => {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
+  const currentLanguage = getStoredLanguage();
+  
+  const t = (key: string) => getTranslation(key, currentLanguage.code);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(address);
     setCopied(true);
     toast({
-      title: "تم النسخ!",
-      description: "تم نسخ عنوان المحفظة إلى الحافظة",
+      title: t('copied'),
+      description: t('walletAddressCopied'),
     });
   };
 
@@ -37,7 +41,7 @@ const ReceiveModal: React.FC<ReceiveModalProps> = ({ isOpen, onClose, address })
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              استقبال العملات
+              {t('receiveCoins')}
             </DialogTitle>
             <Button
               variant="ghost"
@@ -63,7 +67,7 @@ const ReceiveModal: React.FC<ReceiveModalProps> = ({ isOpen, onClose, address })
 
           {/* Address */}
           <div className="space-y-2">
-            <Label className="text-white font-semibold text-sm">عنوان المحفظة</Label>
+            <Label className="text-white font-semibold text-sm">{t('walletAddress')}</Label>
             <div className="flex items-center gap-2 p-3 bg-white/5 rounded-lg border border-white/10">
               <code className="text-xs text-gray-200 flex-1 break-all leading-relaxed font-mono">
                 {address}
@@ -86,7 +90,7 @@ const ReceiveModal: React.FC<ReceiveModalProps> = ({ isOpen, onClose, address })
           {/* Instructions */}
           <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
             <p className="text-xs text-yellow-200 text-center leading-relaxed">
-              شارك هذا العنوان لاستقبال العملات الرقمية. تأكد من صحة العنوان قبل المشاركة.
+              {t('shareAddressInstruction')}
             </p>
           </div>
 
@@ -97,12 +101,12 @@ const ReceiveModal: React.FC<ReceiveModalProps> = ({ isOpen, onClose, address })
             {copied ? (
               <>
                 <Check className="w-4 h-4 mr-2" />
-                تم النسخ!
+                {t('copied')}
               </>
             ) : (
               <>
                 <Copy className="w-4 h-4 mr-2" />
-                نسخ العنوان
+                {t('copyAddress')}
               </>
             )}
           </Button>

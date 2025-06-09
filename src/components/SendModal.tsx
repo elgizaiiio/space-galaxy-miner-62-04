@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Send, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { getStoredLanguage, getTranslation } from '@/utils/language';
 
 interface SendModalProps {
   isOpen: boolean;
@@ -19,12 +20,15 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, balance, currenc
   const [amount, setAmount] = useState('');
   const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const currentLanguage = getStoredLanguage();
+  
+  const t = (key: string) => getTranslation(key, currentLanguage.code);
 
   const handleSend = async () => {
     if (!amount || !address) {
       toast({
-        title: "خطأ",
-        description: "يرجى ملء جميع الحقول",
+        title: t('error'),
+        description: t('fillAllFields'),
         variant: "destructive",
       });
       return;
@@ -32,8 +36,8 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, balance, currenc
 
     if (parseFloat(amount) > balance) {
       toast({
-        title: "رصيد غير كافي",
-        description: "المبلغ المدخل أكبر من الرصيد المتاح",
+        title: t('insufficientBalance'),
+        description: t('amountExceedsBalance'),
         variant: "destructive",
       });
       return;
@@ -44,8 +48,8 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, balance, currenc
     // Simulate transaction
     setTimeout(() => {
       toast({
-        title: "تم الإرسال بنجاح!",
-        description: `تم إرسال ${amount} ${currency} إلى ${address.slice(0, 6)}...${address.slice(-4)}`,
+        title: t('sentSuccessfully'),
+        description: `${t('sentToAddress')} ${amount} ${currency} ${t('sentToAddress')} ${address.slice(0, 6)}...${address.slice(-4)}`,
       });
       setIsLoading(false);
       setAmount('');
@@ -60,7 +64,7 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, balance, currenc
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              إرسال {currency}
+              {t('sendCurrency')} {currency}
             </DialogTitle>
             <Button
               variant="ghost"
@@ -75,13 +79,13 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, balance, currenc
         
         <div className="space-y-4 pt-2">
           <div className="text-center p-3 bg-white/5 rounded-lg border border-white/10">
-            <p className="text-xs text-gray-300 mb-0.5">الرصيد المتاح</p>
+            <p className="text-xs text-gray-300 mb-0.5">{t('availableBalance')}</p>
             <p className="text-lg font-bold text-white">{balance.toFixed(4)} {currency}</p>
           </div>
 
           <div className="space-y-3">
             <div>
-              <Label htmlFor="amount" className="text-white mb-1.5 block text-sm">المبلغ</Label>
+              <Label htmlFor="amount" className="text-white mb-1.5 block text-sm">{t('amount')}</Label>
               <Input
                 id="amount"
                 type="number"
@@ -93,7 +97,7 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, balance, currenc
             </div>
 
             <div>
-              <Label htmlFor="address" className="text-white mb-1.5 block text-sm">عنوان المستقبل</Label>
+              <Label htmlFor="address" className="text-white mb-1.5 block text-sm">{t('recipientAddress')}</Label>
               <Input
                 id="address"
                 placeholder="UQA..."
@@ -112,12 +116,12 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, balance, currenc
             {isLoading ? (
               <div className="flex items-center gap-2">
                 <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                جاري الإرسال...
+                {t('sending')}
               </div>
             ) : (
               <>
                 <Send className="w-4 h-4 mr-2" />
-                إرسال
+                {t('sendCurrency')}
               </>
             )}
           </Button>
