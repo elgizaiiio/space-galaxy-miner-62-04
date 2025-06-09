@@ -429,22 +429,22 @@ const MiningPage: React.FC = () => {
   const currentBg = BACKGROUND_OPTIONS.find(bg => bg.id === currentBackground) || BACKGROUND_OPTIONS[0];
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${currentBg.gradient} flex flex-col items-center justify-center p-6 space-y-8 relative overflow-hidden`}>
-      {/* Enhanced particles background */}
+    <div className={`min-h-screen bg-gradient-to-br ${currentBg.gradient} flex flex-col items-center justify-center p-3 space-y-4 relative overflow-hidden`}>
+      {/* Compact particles background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {[...Array(10)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-white/20 rounded-full"
+            className="absolute w-1 h-1 bg-white/15 rounded-full"
             animate={{
-              y: [0, -100, 0],
+              y: [0, -80, 0],
               opacity: [0, 1, 0],
               scale: [0, 1, 0],
             }}
             transition={{
-              duration: 3,
+              duration: 2.5,
               repeat: Infinity,
-              delay: i * 0.2,
+              delay: i * 0.3,
             }}
             style={{
               left: `${Math.random() * 100}%`,
@@ -455,82 +455,82 @@ const MiningPage: React.FC = () => {
       </div>
 
       {/* Language Switcher */}
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-2 right-2 z-10">
         <LanguageSwitcher onLanguageChange={() => setCurrentLanguage(getStoredLanguage())} />
       </div>
 
-      {/* Stats Bar */}
+      {/* Compact Stats Bar */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        className="w-full max-w-sm"
       >
-        <Card className="bg-black/30 backdrop-blur-md border border-white/20 rounded-xl">
-          <CardContent className="p-4">
-            <div className="flex justify-between items-center text-white/90">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-green-400" />
-                <span className="text-sm">{totalEarned.toLocaleString()} earned</span>
+        <Card className="bg-black/25 backdrop-blur-md border border-white/15 rounded-lg">
+          <CardContent className="p-2">
+            <div className="flex justify-between items-center text-white/90 text-xs">
+              <div className="flex items-center gap-1">
+                <TrendingUp className="w-3 h-3 text-green-400" />
+                <span>{totalEarned.toLocaleString()}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-yellow-400" />
-                <span className="text-sm">{miningSpeed}x speed</span>
+              <div className="flex items-center gap-1">
+                <Zap className="w-3 h-3 text-yellow-400" />
+                <span>{miningSpeed}x</span>
               </div>
             </div>
           </CardContent>
         </Card>
       </motion.div>
 
-      {/* 3D Logo */}
+      {/* Compact 3D Logo */}
       <motion.div
         initial={{ scale: 0, rotateY: 180 }}
         animate={{ scale: 1, rotateY: 0 }}
-        transition={{ duration: 1, type: "spring" }}
+        transition={{ duration: 0.8, type: "spring" }}
       >
-        <SpaceLogo3D size={1} className="w-96 h-48" />
+        <SpaceLogo3D size={0.6} className="w-64 h-32" />
       </motion.div>
 
-      {/* Phrase Display */}
-      <div className="h-16 flex items-center justify-center">
+      {/* Compact Phrase Display */}
+      <div className="h-10 flex items-center justify-center">
         <AnimatePresence mode="wait">
           <motion.h1
             key={currentPhrase}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="text-2xl md:text-3xl font-bold text-white text-center max-w-md"
+            exit={{ opacity: 0, y: -10 }}
+            className="text-lg md:text-xl font-bold text-white text-center max-w-xs"
           >
             {formatSpaceText(currentPhrases[currentPhrase])}
           </motion.h1>
         </AnimatePresence>
       </div>
 
-      {/* Balance Card */}
-      <Card className="bg-black/30 backdrop-blur-md border border-white/20 rounded-2xl w-full max-w-md">
-        <CardContent className="p-6 text-center">
+      {/* Compact Balance Card */}
+      <Card className="bg-black/25 backdrop-blur-md border border-white/15 rounded-xl w-full max-w-sm">
+        <CardContent className="p-4 text-center">
           <motion.div
             key={spaceCoins}
-            initial={{ scale: 1.1 }}
+            initial={{ scale: 1.05 }}
             animate={{ scale: 1 }}
-            className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
+            className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
           >
             {spaceCoins.toLocaleString()} $SPACE
           </motion.div>
           {autoMiningActive && (
-            <div className="text-sm text-yellow-300 mt-2 p-2 bg-yellow-500/20 rounded-lg">
-              Auto mining active for {formatTime(autoMiningRemainingTime)}
+            <div className="text-xs text-yellow-300 mt-1 p-1 bg-yellow-500/15 rounded-md">
+              Auto mining: {formatTime(autoMiningRemainingTime)}
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Action Buttons */}
-      <div className="space-y-4 w-full max-w-md">
+      {/* Compact Action Buttons */}
+      <div className="space-y-3 w-full max-w-sm">
         {/* Main Mining Button */}
         <Button
           onClick={handleStartMining}
           disabled={miningActive || autoMiningActive}
-          className={`w-full h-16 text-lg font-bold rounded-xl transition-all duration-300 ${
+          className={`w-full h-12 text-base font-bold rounded-lg transition-all duration-300 ${
             miningActive || autoMiningActive
               ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700'
               : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
@@ -538,30 +538,30 @@ const MiningPage: React.FC = () => {
         >
           {autoMiningActive ? (
             <>
-              <Crown className="w-5 h-5 mr-2" />
-              Auto Mining Active
+              <Crown className="w-4 h-4 mr-1" />
+              Auto Mining
             </>
           ) : miningActive ? (
             <>
-              <Coins className="w-5 h-5 mr-2" />
-              Mining: {formatTime(remainingTime)}
+              <Coins className="w-4 h-4 mr-1" />
+              {formatTime(remainingTime)}
             </>
           ) : (
             <>
-              <Play className="w-5 h-5 mr-2" />
+              <Play className="w-4 h-4 mr-1" />
               Start Mining
             </>
           )}
         </Button>
 
-        {/* Feature Buttons Grid */}
-        <div className="grid grid-cols-3 gap-3">
+        {/* Compact Feature Buttons Grid */}
+        <div className="grid grid-cols-3 gap-2">
           <Button
             onClick={() => setShowUpgradeModal(true)}
             variant="outline"
-            className="h-20 flex flex-col items-center gap-2 border-white/30 text-white bg-black/20 hover:bg-white/10 rounded-xl"
+            className="h-14 flex flex-col items-center gap-1 border-white/25 text-white bg-black/15 hover:bg-white/10 rounded-lg"
           >
-            <Zap className="w-6 h-6 text-yellow-400" />
+            <Zap className="w-4 h-4 text-yellow-400" />
             <span className="text-xs font-medium">Upgrade</span>
           </Button>
           
@@ -569,18 +569,18 @@ const MiningPage: React.FC = () => {
             onClick={() => setShowAutoMiningModal(true)}
             variant="outline"
             disabled={autoMiningActive}
-            className="h-20 flex flex-col items-center gap-2 border-yellow-500/30 text-white bg-black/20 hover:bg-yellow-500/10 rounded-xl"
+            className="h-14 flex flex-col items-center gap-1 border-yellow-500/25 text-white bg-black/15 hover:bg-yellow-500/10 rounded-lg"
           >
-            <Timer className="w-6 h-6 text-yellow-400" />
-            <span className="text-xs font-medium">Auto Mine</span>
+            <Timer className="w-4 h-4 text-yellow-400" />
+            <span className="text-xs font-medium">Auto</span>
           </Button>
           
           <Button
             onClick={() => setShowBackgroundModal(true)}
             variant="outline"
-            className="h-20 flex flex-col items-center gap-2 border-purple-500/30 text-white bg-black/20 hover:bg-purple-500/10 rounded-xl"
+            className="h-14 flex flex-col items-center gap-1 border-purple-500/25 text-white bg-black/15 hover:bg-purple-500/10 rounded-lg"
           >
-            <Palette className="w-6 h-6 text-purple-400" />
+            <Palette className="w-4 h-4 text-purple-400" />
             <span className="text-xs font-medium">Themes</span>
           </Button>
         </div>
