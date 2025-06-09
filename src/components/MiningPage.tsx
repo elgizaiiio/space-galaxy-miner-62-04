@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -126,9 +127,9 @@ const MiningPage = () => {
 
   return (
     <div className="min-h-screen relative p-2 pb-20 overflow-hidden">
-      {/* Background Image */}
+      {/* Background Image - Full Screen Coverage */}
       <div 
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat scale-90"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `url('/lovable-uploads/e80a217f-cec9-4e53-bb98-cb1000455827.png')`
         }}
@@ -150,16 +151,16 @@ const MiningPage = () => {
           </p>
         </div>
 
-        {/* Mining Circle */}
+        {/* Mining Circle - Smaller Logo */}
         <div className="relative flex justify-center items-center mb-4">
-          <div className="relative w-40 h-40">
+          <div className="relative w-32 h-32">
             {/* Outer glow ring */}
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-lg animate-pulse"></div>
             
             {/* Main circle with no border */}
             <div className="relative w-full h-full rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-lg shadow-xl overflow-hidden">
-              {/* SPACE AI Logo in center - no borders or padding */}
-              <div className="absolute inset-0 z-10 flex items-center justify-center">
+              {/* SPACE AI Logo in center - smaller size */}
+              <div className="absolute inset-2 z-10 flex items-center justify-center">
                 <img 
                   src="/lovable-uploads/d391ae90-26f4-41e1-b5c8-5451cc3c1664.png" 
                   alt="SPACE AI Logo"
