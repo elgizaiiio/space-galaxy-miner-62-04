@@ -83,10 +83,10 @@ const TasksPage = () => {
             </div>
           </div>
           <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-0.5">
-            {t('tasks') || 'Tasks'}
+            {t('tasks')}
           </h1>
           <p className="text-gray-300 text-xs">
-            {t('completeTasksEarn') || 'Complete tasks to earn $SPACE coins'}
+            {t('completeTasksEarn')}
           </p>
         </div>
 
@@ -95,7 +95,7 @@ const TasksPage = () => {
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-zinc-50 font-bold">{t('tasksCompleted') || 'Tasks Completed'}</p>
+                <p className="text-xs text-zinc-50 font-bold">{t('tasksCompleted')}</p>
                 <p className="text-white text-base font-bold">{completedTasks.length}/{tasks.length}</p>
               </div>
               <CheckCircle className="w-5 h-5 text-green-400" />
@@ -115,8 +115,8 @@ const TasksPage = () => {
             <CardContent className="p-4 text-center">
               <div className="space-y-2">
                 <Trophy className="w-6 h-6 text-indigo-400 mx-auto" />
-                <h3 className="text-white text-base font-bold">{t('noTasksAvailable') || 'No Tasks Available'}</h3>
-                <p className="text-gray-300 text-xs">{t('noTasksDesc') || 'New tasks will be added soon!'}</p>
+                <h3 className="text-white text-base font-bold">{t('noTasksAvailable')}</h3>
+                <p className="text-gray-300 text-xs">{t('noTasksDesc')}</p>
               </div>
             </CardContent>
           </Card>
