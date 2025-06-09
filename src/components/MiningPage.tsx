@@ -447,7 +447,7 @@ const MiningPage: React.FC = () => {
           {/* Inner glow effect */}
           <div className="absolute inset-4 rounded-full bg-gradient-to-br from-blue-400/10 to-purple-400/10 blur-xl"></div>
           
-          {/* SPACE AI Logo in center - Full circular logo covering entire circle */}
+          {/* SPACE AI Logo in center - Clean logo without text overlays */}
           <div className="absolute inset-0 z-10 flex items-center justify-center">
             <img 
               src="/lovable-uploads/d391ae90-26f4-41e1-b5c8-5451cc3c1664.png" 
@@ -455,58 +455,52 @@ const MiningPage: React.FC = () => {
               className="w-full h-full object-cover rounded-full"
             />
           </div>
-
-          {/* Balance Display - Overlay on the image */}
-          <motion.div
-            key={444}
-            initial={{ scale: 1.1 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.3 }}
-            className="text-center z-20 absolute bottom-8"
-          >
-            <div className="text-xl font-black text-white mb-1 drop-shadow-lg">
-              444
-            </div>
-            <div className="text-white/90 font-bold text-sm drop-shadow-lg">$SPACE</div>
-          </motion.div>
-
-          {/* Mining Status - Overlay on the image */}
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="absolute top-4 text-center z-20"
-          >
-            <div className="text-xs text-green-300 font-semibold drop-shadow-lg">
-              Mining Active
-            </div>
-            <div className="text-xs text-white/80 drop-shadow-lg">
-              07:48:58
-            </div>
-          </motion.div>
         </div>
 
-        {/* Start Mining Button */}
+        {/* Start Mining Button - Enhanced with more information */}
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="mt-6"
+          className="mt-8"
         >
           <Button
             onClick={handleStartMining}
             disabled={miningActive || autoMiningActive}
-            className={`px-8 py-3 text-lg font-bold rounded-full transition-all duration-300 shadow-lg ${
+            className={`px-8 py-4 text-lg font-bold rounded-full transition-all duration-300 shadow-lg min-w-[280px] ${
               miningActive || autoMiningActive
                 ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700'
                 : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
             }`}
           >
-            <div className="flex flex-col items-center">
-              <div className="flex items-center">
-                <Play className="w-5 h-5 mr-2" />
-                Mining Active
+            <div className="flex flex-col items-center space-y-2">
+              <div className="flex items-center space-x-3">
+                {miningActive || autoMiningActive ? (
+                  <Pause className="w-6 h-6" />
+                ) : (
+                  <Play className="w-6 h-6" />
+                )}
+                <span className="text-xl">
+                  {autoMiningActive ? 'Auto Mining Active' : miningActive ? 'Mining Active' : 'Start Mining'}
+                </span>
               </div>
-              <div className="text-sm font-normal">
-                07:48:58
+              
+              {(miningActive || autoMiningActive) && (
+                <div className="bg-black/20 px-4 py-2 rounded-full">
+                  <div className="text-sm opacity-90">
+                    Time Remaining: {formatTime(autoMiningActive ? autoMiningRemainingTime : remainingTime)}
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex items-center space-x-4 text-sm">
+                <div className="flex items-center space-x-1">
+                  <Coins className="w-4 h-4" />
+                  <span>{spaceCoins.toLocaleString()} $SPACE</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Zap className="w-4 h-4" />
+                  <span>{miningSpeed}x Speed</span>
+                </div>
               </div>
             </div>
           </Button>
