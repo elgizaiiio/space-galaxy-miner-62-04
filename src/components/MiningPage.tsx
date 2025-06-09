@@ -428,22 +428,22 @@ const MiningPage: React.FC = () => {
   const currentBg = BACKGROUND_OPTIONS.find(bg => bg.id === currentBackground) || BACKGROUND_OPTIONS[0];
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${currentBg.gradient} flex flex-col items-center justify-center p-3 space-y-4 relative overflow-hidden`}>
-      {/* Compact particles background */}
+    <div className={`min-h-screen bg-gradient-to-br ${currentBg.gradient} flex flex-col items-center justify-center p-4 space-y-6 relative overflow-hidden`}>
+      {/* Enhanced particles background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(10)].map((_, i) => (
+        {[...Array(15)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-white/15 rounded-full"
+            className="absolute w-2 h-2 bg-white/20 rounded-full"
             animate={{
-              y: [0, -80, 0],
+              y: [0, -100, 0],
               opacity: [0, 1, 0],
               scale: [0, 1, 0],
             }}
             transition={{
-              duration: 2.5,
+              duration: 3,
               repeat: Infinity,
-              delay: i * 0.3,
+              delay: i * 0.2,
             }}
             style={{
               left: `${Math.random() * 100}%`,
@@ -453,158 +453,184 @@ const MiningPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Compact Stats Bar */}
+      {/* Top Stats Bar */}
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-sm"
+        className="w-full max-w-md"
       >
-        <Card className="bg-black/25 backdrop-blur-md border border-white/15 rounded-lg">
-          <CardContent className="p-2">
-            <div className="flex justify-between items-center text-white/90 text-xs">
-              <div className="flex items-center gap-1">
-                <TrendingUp className="w-3 h-3 text-green-400" />
-                <span>{totalEarned.toLocaleString()}</span>
+        <Card className="bg-black/30 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl">
+          <CardContent className="p-4">
+            <div className="flex justify-between items-center text-white/90">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-green-400" />
+                <div>
+                  <p className="text-xs text-white/70">Total Earned</p>
+                  <p className="font-bold text-lg">{totalEarned.toLocaleString()}</p>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <Zap className="w-3 h-3 text-yellow-400" />
-                <span>{miningSpeed}x</span>
+              <div className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-yellow-400" />
+                <div>
+                  <p className="text-xs text-white/70">Speed</p>
+                  <p className="font-bold text-lg">{miningSpeed}x</p>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
       </motion.div>
 
-      {/* Compact 3D Logo */}
+      {/* Enhanced 3D Logo */}
       <motion.div
         initial={{ scale: 0, rotateY: 180 }}
         animate={{ scale: 1, rotateY: 0 }}
-        transition={{ duration: 0.8, type: "spring" }}
+        transition={{ duration: 1, type: "spring", bounce: 0.3 }}
+        className="my-4"
       >
-        <SpaceLogo3D size={0.6} className="w-64 h-32" />
+        <SpaceLogo3D size={0.8} className="w-80 h-40" />
       </motion.div>
 
-      {/* Compact Phrase Display */}
-      <div className="h-10 flex items-center justify-center">
+      {/* Enhanced Phrase Display */}
+      <div className="h-16 flex items-center justify-center">
         <AnimatePresence mode="wait">
           <motion.h1
             key={currentPhrase}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="text-lg md:text-xl font-bold text-white text-center max-w-xs"
+            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.8 }}
+            transition={{ duration: 0.5 }}
+            className="text-xl md:text-2xl font-bold text-white text-center max-w-md leading-tight"
           >
             {formatSpaceText(currentPhrases[currentPhrase])}
           </motion.h1>
         </AnimatePresence>
       </div>
 
-      {/* Compact Balance Card */}
-      <Card className="bg-black/25 backdrop-blur-md border border-white/15 rounded-xl w-full max-w-sm">
-        <CardContent className="p-4 text-center">
+      {/* Enhanced Balance Card */}
+      <Card className="bg-black/30 backdrop-blur-xl border border-white/20 rounded-2xl w-full max-w-md shadow-2xl">
+        <CardContent className="p-6 text-center">
           <motion.div
             key={spaceCoins}
-            initial={{ scale: 1.05 }}
-            animate={{ scale: 1 }}
-            className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
+            initial={{ scale: 1.1, rotateY: 5 }}
+            animate={{ scale: 1, rotateY: 0 }}
+            transition={{ duration: 0.3 }}
+            className="text-3xl md:text-4xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2"
           >
             {spaceCoins.toLocaleString()} $SPACE
           </motion.div>
           {autoMiningActive && (
-            <div className="text-xs text-yellow-300 mt-1 p-1 bg-yellow-500/15 rounded-md">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-sm text-yellow-300 mt-2 p-2 bg-yellow-500/20 rounded-lg border border-yellow-500/30"
+            >
+              <Crown className="w-4 h-4 inline mr-1" />
               Auto mining: {formatTime(autoMiningRemainingTime)}
-            </div>
+            </motion.div>
           )}
         </CardContent>
       </Card>
 
-      {/* Compact Action Buttons */}
-      <div className="space-y-3 w-full max-w-sm">
+      {/* Enhanced Action Buttons */}
+      <div className="space-y-4 w-full max-w-md">
         {/* Main Mining Button */}
-        <Button
-          onClick={handleStartMining}
-          disabled={miningActive || autoMiningActive}
-          className={`w-full h-12 text-base font-bold rounded-lg transition-all duration-300 ${
-            miningActive || autoMiningActive
-              ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700'
-              : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
-          }`}
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
-          {autoMiningActive ? (
-            <>
-              <Crown className="w-4 h-4 mr-1" />
-              Auto Mining
-            </>
-          ) : miningActive ? (
-            <>
-              <Coins className="w-4 h-4 mr-1" />
-              {formatTime(remainingTime)}
-            </>
-          ) : (
-            <>
-              <Play className="w-4 h-4 mr-1" />
-              Start Mining
-            </>
-          )}
-        </Button>
+          <Button
+            onClick={handleStartMining}
+            disabled={miningActive || autoMiningActive}
+            className={`w-full h-16 text-lg font-bold rounded-xl transition-all duration-300 shadow-lg ${
+              miningActive || autoMiningActive
+                ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-green-500/30'
+                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-blue-500/30'
+            }`}
+          >
+            {autoMiningActive ? (
+              <>
+                <Crown className="w-5 h-5 mr-2" />
+                Auto Mining Active
+              </>
+            ) : miningActive ? (
+              <>
+                <Coins className="w-5 h-5 mr-2 animate-pulse" />
+                {formatTime(remainingTime)}
+              </>
+            ) : (
+              <>
+                <Play className="w-5 h-5 mr-2" />
+                Start Mining Session
+              </>
+            )}
+          </Button>
+        </motion.div>
 
-        {/* Compact Feature Buttons Grid */}
-        <div className="grid grid-cols-3 gap-2">
-          <Button
-            onClick={() => setShowUpgradeModal(true)}
-            variant="outline"
-            className="h-14 flex flex-col items-center gap-1 border-white/25 text-white bg-black/15 hover:bg-white/10 rounded-lg"
-          >
-            <Zap className="w-4 h-4 text-yellow-400" />
-            <span className="text-xs font-medium">Upgrade</span>
-          </Button>
+        {/* Enhanced Feature Buttons Grid */}
+        <div className="grid grid-cols-3 gap-3">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={() => setShowUpgradeModal(true)}
+              variant="outline"
+              className="h-20 flex flex-col items-center gap-2 border-yellow-500/30 text-white bg-black/20 hover:bg-yellow-500/20 rounded-xl backdrop-blur-md transition-all duration-300"
+            >
+              <Zap className="w-6 h-6 text-yellow-400" />
+              <span className="text-sm font-semibold">Upgrade</span>
+            </Button>
+          </motion.div>
           
-          <Button
-            onClick={() => setShowAutoMiningModal(true)}
-            variant="outline"
-            disabled={autoMiningActive}
-            className="h-14 flex flex-col items-center gap-1 border-yellow-500/25 text-white bg-black/15 hover:bg-yellow-500/10 rounded-lg"
-          >
-            <Timer className="w-4 h-4 text-yellow-400" />
-            <span className="text-xs font-medium">Auto</span>
-          </Button>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={() => setShowAutoMiningModal(true)}
+              variant="outline"
+              disabled={autoMiningActive}
+              className="h-20 flex flex-col items-center gap-2 border-green-500/30 text-white bg-black/20 hover:bg-green-500/20 rounded-xl backdrop-blur-md transition-all duration-300"
+            >
+              <Timer className="w-6 h-6 text-green-400" />
+              <span className="text-sm font-semibold">Auto Mine</span>
+            </Button>
+          </motion.div>
           
-          <Button
-            onClick={() => setShowBackgroundModal(true)}
-            variant="outline"
-            className="h-14 flex flex-col items-center gap-1 border-purple-500/25 text-white bg-black/15 hover:bg-purple-500/10 rounded-lg"
-          >
-            <Palette className="w-4 h-4 text-purple-400" />
-            <span className="text-xs font-medium">Themes</span>
-          </Button>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={() => setShowBackgroundModal(true)}
+              variant="outline"
+              className="h-20 flex flex-col items-center gap-2 border-purple-500/30 text-white bg-black/20 hover:bg-purple-500/20 rounded-xl backdrop-blur-md transition-all duration-300"
+            >
+              <Palette className="w-6 h-6 text-purple-400" />
+              <span className="text-sm font-semibold">Themes</span>
+            </Button>
+          </motion.div>
         </div>
       </div>
 
-      {/* Modals */}
+      {/* Enhanced Modals */}
       {/* Upgrade Modal */}
       <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
-        <DialogContent className="bg-gradient-to-br from-indigo-900/95 to-purple-900/95 backdrop-blur-xl border border-white/20 text-white max-w-md rounded-2xl">
+        <DialogContent className="bg-gradient-to-br from-indigo-900/95 to-purple-900/95 backdrop-blur-xl border border-white/20 text-white max-w-md rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-center">
-              <Zap className="w-6 h-6 text-yellow-400 inline mr-2" />
+            <DialogTitle className="text-2xl font-bold text-center">
+              <Zap className="w-8 h-8 text-yellow-400 inline mr-3" />
               Mining Speed Upgrades
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-3 max-h-80 overflow-y-auto">
+          <div className="space-y-4 max-h-80 overflow-y-auto">
             {UPGRADE_OPTIONS.map((upgrade) => (
-              <Button
-                key={upgrade.id}
-                onClick={() => handlePurchaseUpgrade(upgrade)}
-                disabled={isProcessing}
-                className="w-full p-4 h-auto flex justify-between bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl"
-                variant="ghost"
-              >
-                <div className="text-left">
-                  <div className="font-bold text-white">{upgrade.label}</div>
-                  <div className="text-sm text-blue-200">{upgrade.multiplier}x faster mining</div>
-                </div>
-                <div className="font-bold text-yellow-400">{formatTON(upgrade.price)}</div>
-              </Button>
+              <motion.div key={upgrade.id} whileHover={{ scale: 1.02 }}>
+                <Button
+                  onClick={() => handlePurchaseUpgrade(upgrade)}
+                  disabled={isProcessing}
+                  className="w-full p-6 h-auto flex justify-between bg-white/10 hover:bg-white/20 border border-white/30 rounded-2xl transition-all duration-300"
+                  variant="ghost"
+                >
+                  <div className="text-left">
+                    <div className="font-bold text-white text-lg">{upgrade.label}</div>
+                    <div className="text-sm text-blue-200">{upgrade.multiplier}x faster mining</div>
+                  </div>
+                  <div className="font-bold text-yellow-400 text-lg">{formatTON(upgrade.price)}</div>
+                </Button>
+              </motion.div>
             ))}
           </div>
         </DialogContent>
@@ -612,26 +638,29 @@ const MiningPage: React.FC = () => {
 
       {/* Auto Mining Modal */}
       <Dialog open={showAutoMiningModal} onOpenChange={setShowAutoMiningModal}>
-        <DialogContent className="bg-gradient-to-br from-green-900/95 to-emerald-900/95 backdrop-blur-xl border border-green-500/30 text-white max-w-md rounded-2xl">
+        <DialogContent className="bg-gradient-to-br from-green-900/95 to-emerald-900/95 backdrop-blur-xl border border-green-500/30 text-white max-w-md rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-center">
-              <Crown className="w-6 h-6 text-yellow-400 inline mr-2" />
+            <DialogTitle className="text-2xl font-bold text-center">
+              <Crown className="w-8 h-8 text-yellow-400 inline mr-3" />
               Auto Mining Premium
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-6 text-center">
-            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
-              <Timer className="w-10 h-10 text-green-400" />
-            </div>
+          <div className="space-y-8 text-center">
+            <motion.div 
+              className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto"
+              whileHover={{ scale: 1.1, rotate: 5 }}
+            >
+              <Timer className="w-12 h-12 text-green-400" />
+            </motion.div>
             <div>
-              <p className="text-green-200 mb-4">Activate auto mining for 3 continuous days</p>
-              <div className="text-3xl font-bold text-green-300 mb-2">{formatTON(0.5)}</div>
+              <p className="text-green-200 mb-6 text-lg">Activate auto mining for 3 continuous days</p>
+              <div className="text-4xl font-bold text-green-300 mb-3">{formatTON(0.5)}</div>
               <p className="text-sm text-green-300/80">One-time payment</p>
             </div>
             <Button
               onClick={handlePurchaseAutoMining}
               disabled={isProcessing}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 rounded-xl"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 rounded-2xl text-lg shadow-lg"
             >
               {isProcessing ? 'Processing...' : 'Activate Auto Mining'}
             </Button>
@@ -641,45 +670,46 @@ const MiningPage: React.FC = () => {
 
       {/* Background Modal */}
       <Dialog open={showBackgroundModal} onOpenChange={setShowBackgroundModal}>
-        <DialogContent className="bg-gradient-to-br from-purple-900/95 to-pink-900/95 backdrop-blur-xl border border-purple-500/30 text-white max-w-md rounded-2xl">
+        <DialogContent className="bg-gradient-to-br from-purple-900/95 to-pink-900/95 backdrop-blur-xl border border-purple-500/30 text-white max-w-md rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-center">
-              <Palette className="w-6 h-6 text-pink-400 inline mr-2" />
+            <DialogTitle className="text-2xl font-bold text-center">
+              <Palette className="w-8 h-8 text-pink-400 inline mr-3" />
               Background Themes
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-3 max-h-80 overflow-y-auto">
+          <div className="space-y-4 max-h-80 overflow-y-auto">
             {BACKGROUND_OPTIONS.map((bg) => {
               const isUnlocked = unlockedBackgrounds.includes(bg.id);
               const isCurrent = currentBackground === bg.id;
               
               return (
-                <Button
-                  key={bg.id}
-                  onClick={() => handlePurchaseBackground(bg.id)}
-                  disabled={isCurrent || (isProcessing && bg.price > 0)}
-                  className={`w-full p-4 h-auto flex justify-between border border-white/20 rounded-xl ${
-                    isCurrent ? 'bg-green-600/30' : 'bg-white/10 hover:bg-white/20'
-                  }`}
-                  variant="ghost"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${bg.gradient}`}></div>
-                    <div className="text-left">
-                      <div className="font-bold text-white">{bg.name}</div>
-                      {isCurrent && <div className="text-sm text-green-200">Currently active</div>}
+                <motion.div key={bg.id} whileHover={{ scale: 1.02 }}>
+                  <Button
+                    onClick={() => handlePurchaseBackground(bg.id)}
+                    disabled={isCurrent || (isProcessing && bg.price > 0)}
+                    className={`w-full p-6 h-auto flex justify-between border border-white/30 rounded-2xl transition-all duration-300 ${
+                      isCurrent ? 'bg-green-600/30 border-green-500/50' : 'bg-white/10 hover:bg-white/20'
+                    }`}
+                    variant="ghost"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-full bg-gradient-to-r ${bg.gradient} border-2 border-white/30`}></div>
+                      <div className="text-left">
+                        <div className="font-bold text-white text-lg">{bg.name}</div>
+                        {isCurrent && <div className="text-sm text-green-200">Currently active</div>}
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    {bg.price === 0 || isUnlocked ? (
-                      <span className="text-green-400 font-bold">
-                        {isCurrent ? '✓ Active' : 'Select'}
-                      </span>
-                    ) : (
-                      <div className="font-bold text-purple-300">{formatTON(bg.price)}</div>
-                    )}
-                  </div>
-                </Button>
+                    <div className="text-right">
+                      {bg.price === 0 || isUnlocked ? (
+                        <span className="text-green-400 font-bold text-lg">
+                          {isCurrent ? '✓ Active' : 'Select'}
+                        </span>
+                      ) : (
+                        <div className="font-bold text-purple-300 text-lg">{formatTON(bg.price)}</div>
+                      )}
+                    </div>
+                  </Button>
+                </motion.div>
               );
             })}
           </div>
