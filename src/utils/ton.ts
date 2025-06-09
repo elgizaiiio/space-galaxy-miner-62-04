@@ -1,7 +1,6 @@
-
 import { TonConnect } from '@tonconnect/sdk';
 
-export const TON_PAYMENT_ADDRESS = 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf';
+export const TON_PAYMENT_ADDRESS = 'UQCiVNm22dMF9S3YsHPcgrmqXEQHt4MIdk_N7VJu88NrLr4R';
 
 export interface UpgradeOption {
   id: string;
