@@ -141,7 +141,7 @@ const TasksPage = () => {
                           <CardTitle className="text-white text-base">
                             {t(task.title_key) || task.title_key}
                           </CardTitle>
-                          <Badge className={getTypeColor(task.task_type)} size="sm">
+                          <Badge className={getTypeColor(task.task_type)}>
                             {task.task_type}
                           </Badge>
                         </div>
