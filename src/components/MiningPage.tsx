@@ -10,6 +10,7 @@ import { UPGRADE_OPTIONS, formatTON, type UpgradeOption } from '../utils/ton';
 import { hapticFeedback } from '../utils/telegram';
 import { getStoredLanguage, getTranslation } from '../utils/language';
 import { Palette, Crown, Zap, Timer, Play, Pause, TrendingUp, Clock, Coins } from 'lucide-react';
+import { Canvas } from '@react-three/fiber';
 
 const MINING_PHRASES = {
   en: ['Mine $SPACE Coin', 'Start Earning Now', 'Explore the Galaxy of Rewards', 'Begin Your Space Mining Journey', 'Collect Cosmic Treasures', 'Unlock Universal Wealth'],
@@ -481,14 +482,18 @@ const MiningPage: React.FC = () => {
         </Card>
       </motion.div>
 
-      {/* Compact 3D Logo */}
+      {/* 3D Logo */}
       <motion.div
-        initial={{ scale: 0, rotateY: 180 }}
-        animate={{ scale: 1, rotateY: 0 }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1, type: "spring", bounce: 0.3 }}
-        className="my-2"
+        className="my-2 w-48 h-24"
       >
-        <SpaceLogo3D size={0.6} />
+        <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
+          <ambientLight intensity={0.1} />
+          <pointLight position={[10, 10, 10]} intensity={0.5} color="#ec4899" />
+          <SpaceLogo3D size={0.6} />
+        </Canvas>
       </motion.div>
 
       {/* Compact Phrase Display */}
