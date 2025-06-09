@@ -447,44 +447,42 @@ const MiningPage: React.FC = () => {
           {/* Inner glow effect */}
           <div className="absolute inset-4 rounded-full bg-gradient-to-br from-blue-400/10 to-purple-400/10 blur-xl"></div>
           
-          {/* SPACE AI Logo in center - Full circular logo */}
-          <div className="w-32 h-32 mb-2 z-10 flex items-center justify-center">
+          {/* SPACE AI Logo in center - Full circular logo covering entire circle */}
+          <div className="absolute inset-0 z-10 flex items-center justify-center">
             <img 
               src="/lovable-uploads/d391ae90-26f4-41e1-b5c8-5451cc3c1664.png" 
               alt="SPACE AI" 
-              className="w-full h-full object-contain rounded-full"
+              className="w-full h-full object-cover rounded-full"
             />
           </div>
 
-          {/* Balance Display */}
+          {/* Balance Display - Overlay on the image */}
           <motion.div
-            key={spaceCoins}
+            key={444}
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="text-center z-10 absolute bottom-8"
+            className="text-center z-20 absolute bottom-8"
           >
-            <div className="text-xl font-black text-white mb-1">
-              {spaceCoins.toLocaleString()}
+            <div className="text-xl font-black text-white mb-1 drop-shadow-lg">
+              444
             </div>
-            <div className="text-white/80 font-bold text-sm">$SPACE</div>
+            <div className="text-white/90 font-bold text-sm drop-shadow-lg">$SPACE</div>
           </motion.div>
 
-          {/* Mining Status */}
-          {(miningActive || autoMiningActive) && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute bottom-2 text-center z-10"
-            >
-              <div className="text-xs text-green-300 font-semibold">
-                {autoMiningActive ? 'Auto Mining' : 'Mining Active'}
-              </div>
-              <div className="text-xs text-white/70">
-                {formatTime(autoMiningActive ? autoMiningRemainingTime : remainingTime)}
-              </div>
-            </motion.div>
-          )}
+          {/* Mining Status - Overlay on the image */}
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="absolute top-4 text-center z-20"
+          >
+            <div className="text-xs text-green-300 font-semibold drop-shadow-lg">
+              Mining Active
+            </div>
+            <div className="text-xs text-white/80 drop-shadow-lg">
+              07:48:58
+            </div>
+          </motion.div>
         </div>
 
         {/* Start Mining Button */}
@@ -502,22 +500,15 @@ const MiningPage: React.FC = () => {
                 : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
             }`}
           >
-            {autoMiningActive ? (
-              <>
-                <Crown className="w-5 h-5 mr-2" />
-                Auto Mining Active
-              </>
-            ) : miningActive ? (
-              <>
-                <Pause className="w-5 h-5 mr-2" />
-                Mining Active
-              </>
-            ) : (
-              <>
+            <div className="flex flex-col items-center">
+              <div className="flex items-center">
                 <Play className="w-5 h-5 mr-2" />
-                Start Mining
-              </>
-            )}
+                Mining Active
+              </div>
+              <div className="text-sm font-normal">
+                07:48:58
+              </div>
+            </div>
           </Button>
         </motion.div>
       </div>
