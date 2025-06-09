@@ -1,197 +1,154 @@
 
-import { Language, TranslationMap } from './languages/types';
+import { Language } from './languages/types';
 import { SUPPORTED_LANGUAGES } from './languages/supportedLanguages';
-import { commonTranslations } from './languages/commonTranslations';
-import { miningTranslations } from './languages/miningTranslations';
-import { subscriptionTranslations } from './languages/subscriptionTranslations';
-import { contestTranslations } from './languages/contestTranslations';
 
-// Combine all translations
-const translations: TranslationMap = {
-  ...miningTranslations,
-  ...commonTranslations,
-  ...subscriptionTranslations,
-  ...contestTranslations
-};
-
-// Default translations for missing keys
-const defaultTranslations: Record<string, Record<string, string>> = {
-  'mining': {
-    en: 'Mining',
-    ar: 'التعدين',
-    ru: 'Добыча',
-    zh: '挖矿',
-    hi: 'माइनिंग',
-    es: 'Minería',
-    fr: 'Minage',
-    de: 'Mining',
-    ja: 'マイニング',
-    tr: 'Madencilik',
-    pt: 'Mineração',
-    uk: 'Видобуток'
-  },
-  'tasks': {
-    en: 'Tasks',
-    ar: 'المهام',
-    ru: 'Задачи',
-    zh: '任务',
-    hi: 'कार्य',
-    es: 'Tareas',
-    fr: 'Tâches',
-    de: 'Aufgaben',
-    ja: 'タスク',
-    tr: 'Görevler',
-    pt: 'Tarefas',
-    uk: 'Завдання'
-  },
-  'wallet': {
-    en: 'Wallet',
-    ar: 'المحفظة',
-    ru: 'Кошелёк',
-    zh: '钱包',
-    hi: 'वॉलेट',
-    es: 'Billetera',
-    fr: 'Portefeuille',
-    de: 'Geldbörse',
-    ja: 'ウォレット',
-    tr: 'Cüzdan',
-    pt: 'Carteira',
-    uk: 'Гаманець'
-  },
-  'friends': {
-    en: 'Friends',
-    ar: 'الأصدقاء',
-    ru: 'Друзья',
-    zh: '朋友',
-    hi: 'दोस्त',
-    es: 'Amigos',
-    fr: 'Amis',
-    de: 'Freunde',
-    ja: '友達',
-    tr: 'Arkadaşlar',
-    pt: 'Amigos',
-    uk: 'Друзі'
-  },
-  'premium': {
-    en: 'Premium',
-    ar: 'المميز',
-    ru: 'Премиум',
-    zh: '高级',
-    hi: 'प्रीमियम',
-    es: 'Premium',
-    fr: 'Premium',
-    de: 'Premium',
-    ja: 'プレミアム',
-    tr: 'Premium',
-    pt: 'Premium',
-    uk: 'Преміум'
-  },
-  'completeTasksEarn': {
-    en: 'Complete tasks to earn $SPACE tokens',
-    ar: 'أكمل المهام لكسب رموز $SPACE',
-    ru: 'Выполняйте задачи, чтобы заработать токены $SPACE',
-    zh: '完成任务赚取 $SPACE 代币',
-    hi: '$SPACE टोकन कमाने के लिए कार्य पूरे करें',
-    es: 'Completa tareas para ganar tokens $SPACE',
-    fr: 'Complétez les tâches pour gagner des jetons $SPACE',
-    de: 'Erledige Aufgaben, um $SPACE-Token zu verdienen',
-    ja: 'タスクを完了して$SPACEトークンを獲得',
-    tr: '$SPACE token kazanmak için görevleri tamamlayın',
-    pt: 'Complete tarefas para ganhar tokens $SPACE',
-    uk: 'Виконуйте завдання, щоб заробити токени $SPACE'
-  },
-  'tasksCompleted': {
-    en: 'Tasks Completed',
-    ar: 'المهام المكتملة',
-    ru: 'Задачи выполнены',
-    zh: '已完成任务',
-    hi: 'पूरे किए गए कार्य',
-    es: 'Tareas Completadas',
-    fr: 'Tâches Terminées',
-    de: 'Aufgaben Erledigt',
-    ja: '完了したタスク',
-    tr: 'Tamamlanan Görevler',
-    pt: 'Tarefas Concluídas',
-    uk: 'Завершені завдання'
-  },
-  'noTasksAvailable': {
-    en: 'No Tasks Available',
-    ar: 'لا توجد مهام متاحة',
-    ru: 'Нет доступных задач',
-    zh: '没有可用任务',
-    hi: 'कोई कार्य उपलब्ध नहीं',
-    es: 'No hay tareas disponibles',
-    fr: 'Aucune tâche disponible',
-    de: 'Keine Aufgaben verfügbar',
-    ja: '利用可能なタスクがありません',
-    tr: 'Mevcut görev yok',
-    pt: 'Nenhuma tarefa disponível',
-    uk: 'Немає доступних завдань'
-  },
-  'noTasksDesc': {
-    en: 'Check back later for new tasks!',
-    ar: 'تحقق مرة أخرى لاحقاً للحصول على مهام جديدة!',
-    ru: 'Зайдите позже для новых задач!',
-    zh: '稍后查看新任务！',
-    hi: 'नए कार्यों के लिए बाद में वापस देखें!',
-    es: '¡Vuelve más tarde para nuevas tareas!',
-    fr: 'Revenez plus tard pour de nouvelles tâches !',
-    de: 'Schauen Sie später für neue Aufgaben vorbei!',
-    ja: '新しいタスクについては後でご確認ください！',
-    tr: 'Yeni görevler için daha sonra tekrar kontrol edin!',
-    pt: 'Volte mais tarde para novas tarefas!',
-    uk: 'Поверніться пізніше за новими завданнями!'
-  }
+// English-only translations
+const translations: Record<string, string> = {
+  // Basic navigation
+  'mining': 'Mining',
+  'tasks': 'Tasks',
+  'wallet': 'Wallet',
+  'friends': 'Friends',
+  'premium': 'Premium',
+  
+  // Mining page
+  'startMining': 'Start Mining',
+  'stopMining': 'Stop Mining',
+  'miningSpeed': 'Mining Speed',
+  'spaceBalance': '$SPACE Balance',
+  'autoMiningActive': 'Auto Mining Active',
+  'autoActive': 'Auto Active',
+  'autoMining': 'Auto mining',
+  'autoMiningDesc': 'Enable automatic mining for 3 days. Your coins will be mined continuously without manual intervention.',
+  'threeDaysDuration': '3 Days Duration',
+  'purchaseAutoMining': 'Purchase Auto Mining',
+  'timeRemaining': 'Time Remaining',
+  'upgrade': 'Upgrade',
+  'fasterMining': 'faster mining',
+  'upgradeMiningSpeed': 'Upgrade Mining Speed',
+  'changeTheme': 'Change Theme',
+  'currentBackground': 'Current',
+  'unlocked': 'Unlocked',
+  'select': 'Select',
+  
+  // Tasks page
+  'completeTasksEarn': 'Complete tasks to earn $SPACE tokens',
+  'tasksCompleted': 'Tasks Completed',
+  'noTasksAvailable': 'No Tasks Available',
+  'noTasksDesc': 'Check back later for new tasks!',
+  
+  // Common UI
+  'yes': 'Yes',
+  'no': 'No',
+  'loading': 'Loading...',
+  'error': 'Error',
+  'success': 'Success',
+  'cancel': 'Cancel',
+  'save': 'Save',
+  'close': 'Close',
+  'continue': 'Continue',
+  
+  // Wallet
+  'connecting': 'Connecting...',
+  'openConnectionWindow': 'Open Connection Window',
+  'pleaseSelectWallet': 'Please select a wallet',
+  'smartWallet': 'Smart Wallet',
+  'walletDescription': 'Connect your TON wallet to start mining $SPACE coins',
+  'connectWallet': 'Connect Wallet',
+  'connectWalletToAccess': 'Connect your wallet to access wallet features',
+  'receiveCoins': 'Receive Coins',
+  'walletAddress': 'Wallet Address',
+  'shareAddressInstruction': 'Share this address to receive payments',
+  'copyAddress': 'Copy Address',
+  'copied': 'Copied!',
+  'walletAddressCopied': 'Wallet address copied to clipboard',
+  'sendCurrency': 'Send',
+  'availableBalance': 'Available Balance',
+  'amount': 'Amount',
+  'recipientAddress': 'Recipient Address',
+  'sending': 'Sending...',
+  'fillAllFields': 'Please fill all fields',
+  'insufficientBalance': 'Insufficient Balance',
+  'amountExceedsBalance': 'Amount exceeds available balance',
+  'sentSuccessfully': 'Sent Successfully',
+  'sentToAddress': 'sent to',
+  
+  // Friends/Referral
+  'inviteFriendsEarn': 'Invite friends and earn $SPACE coins together',
+  'totalReferrals': 'Total Referrals',
+  'airdropBonus': 'Airdrop Bonus',
+  'getReferralLink': 'Get Your Referral Link',
+  'goToBot': 'Go to',
+  'onTelegram': 'on Telegram',
+  'sendCommand': 'Send the command',
+  'receiveLink': 'You will receive your personal referral link',
+  'openBot': 'Open @Spacelbot',
+  
+  // Premium/Subscription
+  'premiumPlan': 'Premium',
+  'vipPlan': 'VIP',
+  'perMonth': 'per month',
+  'fastSpeed': 'Fast speed (5x)',
+  'bonusPoints': '+25% bonus points on tasks',
+  'exclusiveBackgrounds': 'Exclusive backgrounds',
+  'priorityEvents': 'Priority access to events',
+  'vipBadge': 'VIP badge on profile',
+  'prioritySupport': 'Priority support',
+  'ultraFastMining': 'Ultra-fast mining (10x)',
+  'unlimitedAutoMining': 'Unlimited auto mining',
+  'exclusiveTasks': 'Exclusive VIP tasks',
+  'allBackgrounds': 'All backgrounds unlocked',
+  'vipSupport': '24/7 VIP support',
+  'specialRewards': 'Special rewards & bonuses',
+  'exclusiveFeatures': 'Exclusive features',
+  'earlyAccess': 'Early access to new features',
+  'unlockPremiumFeatures': 'Unlock premium features and boost your mining',
+  'popular': 'Popular',
+  'current': 'Current',
+  'subscribeNow': 'Subscribe Now',
+  'currentPlan': 'Current Plan',
+  'premiumBenefits': 'Premium Benefits',
+  
+  // Contests
+  'contests': 'Contests',
+  'joinContestsWinPrizes': 'Join contests and win amazing prizes',
+  'dailyContest': 'Daily Contest',
+  'weeklyContest': 'Weekly Contest',
+  'dailyPrize': 'Daily Prize',
+  'weeklyPrize': 'Weekly Prize',
+  'timeLeft': 'Time Left',
+  'hours': 'Hours',
+  'minutes': 'Minutes',
+  'seconds': 'Seconds',
+  'days': 'Days',
+  'participants': 'participants',
+  'increaseChances': 'Increase Your Chances',
+  'inviteFriends': 'Invite friends',
+  'completeTasks': 'Complete tasks',
+  'dailyMining': 'Daily mining activity',
+  'joinContest': 'Join Contest',
+  'lastWeekWinner': 'Last Week Winner',
+  'contestRules': 'Contest Rules',
+  'rule1': 'Winners are selected randomly from all participants',
+  'rule2': 'Complete tasks and invite friends to increase your chances',
+  'rule3': 'Prizes are distributed automatically to winners',
+  'rule4': 'Each user can participate once per contest period'
 };
 
 export { SUPPORTED_LANGUAGES, type Language };
 
 export const getStoredLanguage = (): Language => {
-  const stored = localStorage.getItem('selectedLanguage');
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      const found = SUPPORTED_LANGUAGES.find(lang => lang.code === parsed.code);
-      if (found) return found;
-    } catch (e) {
-      console.warn('Failed to parse stored language:', e);
-    }
-  }
-  return SUPPORTED_LANGUAGES[0]; // Default to English
+  return SUPPORTED_LANGUAGES[0]; // Always return English
 };
 
 export const setStoredLanguage = (language: Language): void => {
-  localStorage.setItem('selectedLanguage', JSON.stringify(language));
+  // Do nothing - we only support English now
 };
 
-export const getTranslation = (key: string, languageCode: string): string => {
-  // First check combined translations
-  const translation = translations[key];
-  if (translation && translation[languageCode]) {
-    return translation[languageCode];
-  }
-  
-  // Then check default translations
-  const defaultTranslation = defaultTranslations[key];
-  if (defaultTranslation && defaultTranslation[languageCode]) {
-    return defaultTranslation[languageCode];
-  }
-  
-  // Fallback to English from either source
-  if (translation && translation.en) {
-    return translation.en;
-  }
-  
-  if (defaultTranslation && defaultTranslation.en) {
-    return defaultTranslation.en;
-  }
-  
-  console.warn(`Translation key "${key}" not found`);
-  return key;
+export const getTranslation = (key: string): string => {
+  return translations[key] || key;
 };
 
 export const detectLanguage = (): Language => {
-  const browserLang = navigator.language.toLowerCase().split('-')[0];
-  const found = SUPPORTED_LANGUAGES.find(lang => lang.code === browserLang);
-  return found || SUPPORTED_LANGUAGES[0]; // Default to English
+  return SUPPORTED_LANGUAGES[0]; // Always return English
 };

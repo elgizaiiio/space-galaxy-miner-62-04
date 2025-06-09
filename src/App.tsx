@@ -14,7 +14,7 @@ import SubscriptionPage from './components/SubscriptionPage';
 import TaskAdminPage from './components/TaskAdminPage';
 import { Button } from '@/components/ui/button';
 import { Home, CheckSquare, Wallet, Users, Crown, Settings } from 'lucide-react';
-import { getStoredLanguage, getTranslation } from './utils/language';
+import { getTranslation } from './utils/language';
 
 const queryClient = new QueryClient();
 type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'subscription' | 'admin';
@@ -22,13 +22,10 @@ type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'subscription' | 'admin
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [currentPage, setCurrentPage] = useState<Page>('mining');
-  const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [showAdminAccess, setShowAdminAccess] = useState(false);
   const [taskClickCount, setTaskClickCount] = useState(0);
 
   useEffect(() => {
-    setCurrentLanguage(getStoredLanguage());
-
     let clickCount = 0;
     const handleLogoClick = () => {
       clickCount++;
@@ -77,41 +74,25 @@ const App = () => {
     setShowSplash(false);
   };
 
-  const t = (key: string) => {
-    const translation = getTranslation(key, currentLanguage.code);
-    // Fallback to English translations for missing keys
-    if (!translation) {
-      switch (key) {
-        case 'mining': return 'Mining';
-        case 'tasks': return 'Tasks';
-        case 'wallet': return 'Wallet';
-        case 'friends': return 'Friends';
-        case 'premium': return 'Premium';
-        default: return key;
-      }
-    }
-    return translation;
-  };
-
   const navigationItems = [{
     id: 'mining',
-    label: t('mining'),
+    label: getTranslation('mining'),
     icon: Home
   }, {
     id: 'tasks',
-    label: t('tasks'),
+    label: getTranslation('tasks'),
     icon: CheckSquare
   }, {
     id: 'wallet',
-    label: t('wallet'),
+    label: getTranslation('wallet'),
     icon: Wallet
   }, {
     id: 'referral',
-    label: t('friends'),
+    label: getTranslation('friends'),
     icon: Users
   }, {
     id: 'subscription',
-    label: t('premium'),
+    label: getTranslation('premium'),
     icon: Crown
   }];
 
