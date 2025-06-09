@@ -6,7 +6,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { useToast } from '@/hooks/use-toast';
 import SpaceLogo3D from './SpaceLogo3D';
-import LanguageSwitcher from './LanguageSwitcher';
 import { UPGRADE_OPTIONS, formatTON, type UpgradeOption } from '../utils/ton';
 import { hapticFeedback } from '../utils/telegram';
 import { getStoredLanguage, getTranslation } from '../utils/language';
@@ -452,11 +451,6 @@ const MiningPage: React.FC = () => {
             }}
           />
         ))}
-      </div>
-
-      {/* Language Switcher */}
-      <div className="absolute top-2 right-2 z-10">
-        <LanguageSwitcher onLanguageChange={() => setCurrentLanguage(getStoredLanguage())} />
       </div>
 
       {/* Compact Stats Bar */}
