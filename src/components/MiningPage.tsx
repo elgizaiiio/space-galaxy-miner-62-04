@@ -1,713 +1,200 @@
+
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useTonConnectUI } from '@tonconnect/ui-react';
-import { useToast } from '@/hooks/use-toast';
-import SpaceLogo3D from './SpaceLogo3D';
-import { UPGRADE_OPTIONS, formatTON, type UpgradeOption } from '../utils/ton';
-import { hapticFeedback } from '../utils/telegram';
+import { Badge } from '@/components/ui/badge';
+import { Play, Pause, Zap, TrendingUp, Star, Crown } from 'lucide-react';
 import { getTranslation } from '../utils/language';
-import { Palette, Crown, Zap, Timer, Play, Pause, TrendingUp, Clock, Coins } from 'lucide-react';
-import { Canvas } from '@react-three/fiber';
 
-const MINING_PHRASES = {
-  en: ['Mine $SPACE Coin', 'Start Earning Now', 'Explore the Galaxy of Rewards', 'Begin Your Space Mining Journey', 'Collect Cosmic Treasures', 'Unlock Universal Wealth']
-};
-const MINING_DURATION = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
-const AUTO_MINING_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
+const MiningPage = () => {
+  const [isMining, setIsMining] = useState(false);
+  const [miningSpeed, setMiningSpeed] = useState(1.2);
+  const [spaceBalance, setSpaceBalance] = useState(15420.5);
+  const [miningRate] = useState(0.012);
+  const [timeRemaining, setTimeRemaining] = useState(86400);
+  const [streak, setStreak] = useState(7);
 
-const BACKGROUND_OPTIONS = [
-  {
-    id: 'default',
-    name: 'Default Space',
-    gradient: 'from-indigo-950 via-purple-950 to-pink-950',
-    price: 0,
-    unlocked: true
-  },
-  {
-    id: 'cosmic-purple',
-    name: 'Cosmic Purple',
-    gradient: 'from-purple-900 via-violet-800 to-indigo-900',
-    price: 0.5,
-    unlocked: false
-  },
-  {
-    id: 'cyber-grid',
-    name: 'Cyber Grid',
-    gradient: 'from-green-900 via-cyan-800 to-blue-900',
-    price: 0.5,
-    unlocked: false
-  },
-  {
-    id: 'golden-nebula',
-    name: 'Golden Nebula',
-    gradient: 'from-yellow-900 via-orange-800 to-red-900',
-    price: 0.5,
-    unlocked: false
-  },
-  {
-    id: 'ocean-deep',
-    name: 'Ocean Deep',
-    gradient: 'from-blue-900 via-blue-800 to-cyan-900',
-    price: 0.5,
-    unlocked: false
-  },
-  {
-    id: 'mystic-forest',
-    name: 'Mystic Forest',
-    gradient: 'from-green-900 via-emerald-800 to-teal-900',
-    price: 0.5,
-    unlocked: false
-  }
-];
-
-const MiningPage: React.FC = () => {
-  const [currentPhrase, setCurrentPhrase] = useState(0);
-  const [miningActive, setMiningActive] = useState(false);
-  const [autoMiningActive, setAutoMiningActive] = useState(false);
-  const [autoMiningEndTime, setAutoMiningEndTime] = useState<number | null>(null);
-  const [spaceCoins, setSpaceCoins] = useState(0);
-  const [miningSpeed, setMiningSpeed] = useState(1);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [showAutoMiningModal, setShowAutoMiningModal] = useState(false);
-  const [showBackgroundModal, setShowBackgroundModal] = useState(false);
-  const [miningEndTime, setMiningEndTime] = useState<number | null>(null);
-  const [remainingTime, setRemainingTime] = useState<number>(0);
-  const [autoMiningRemainingTime, setAutoMiningRemainingTime] = useState<number>(0);
-  const [currentBackground, setCurrentBackground] = useState('default');
-  const [unlockedBackgrounds, setUnlockedBackgrounds] = useState<string[]>(['default']);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [totalEarned, setTotalEarned] = useState(0);
-  const [tonConnectUI] = useTonConnectUI();
-  const { toast } = useToast();
-
-  // Get translation function
   const t = (key: string) => getTranslation(key);
 
-  // Get phrases for English
-  const currentPhrases = MINING_PHRASES.en;
-
-  // Helper function to format $SPACE text with white styling
-  const formatSpaceText = (text: string) => {
-    const parts = text.split('$SPACE');
-    if (parts.length === 1) return text;
-    
-    return (
-      <>
-        {parts[0]}
-        <span className="text-white font-extrabold animate-pulse">
-          $SPACE
-        </span>
-        {parts[1]}
-      </>
-    );
-  };
-
-  // Load saved state on mount
-  useEffect(() => {
-    const savedEndTime = localStorage.getItem('miningEndTime');
-    const savedActive = localStorage.getItem('miningActive');
-    const savedAutoMining = localStorage.getItem('autoMiningActive');
-    const savedAutoMiningEndTime = localStorage.getItem('autoMiningEndTime');
-    const savedBackground = localStorage.getItem('selectedBackground');
-    const savedUnlockedBackgrounds = localStorage.getItem('unlockedBackgrounds');
-    const savedTotalEarned = localStorage.getItem('totalEarned');
-    const savedSpaceCoins = localStorage.getItem('spaceCoins');
-    const savedMiningSpeed = localStorage.getItem('miningSpeed');
-
-    if (savedSpaceCoins) {
-      setSpaceCoins(parseInt(savedSpaceCoins));
-    }
-    if (savedTotalEarned) {
-      setTotalEarned(parseInt(savedTotalEarned));
-    }
-    if (savedMiningSpeed) {
-      setMiningSpeed(parseInt(savedMiningSpeed));
-    }
-
-    if (savedEndTime && savedActive === 'true') {
-      const endTime = parseInt(savedEndTime);
-      const now = Date.now();
-      if (now < endTime) {
-        setMiningActive(true);
-        setMiningEndTime(endTime);
-        setRemainingTime(endTime - now);
-      } else {
-        localStorage.removeItem('miningEndTime');
-        localStorage.removeItem('miningActive');
-      }
-    }
-
-    if (savedAutoMining === 'true' && savedAutoMiningEndTime) {
-      const autoEndTime = parseInt(savedAutoMiningEndTime);
-      const now = Date.now();
-      if (now < autoEndTime) {
-        setAutoMiningActive(true);
-        setAutoMiningEndTime(autoEndTime);
-        setAutoMiningRemainingTime(autoEndTime - now);
-      } else {
-        localStorage.removeItem('autoMiningActive');
-        localStorage.removeItem('autoMiningEndTime');
-      }
-    }
-
-    if (savedBackground) {
-      setCurrentBackground(savedBackground);
-    }
-    if (savedUnlockedBackgrounds) {
-      setUnlockedBackgrounds(JSON.parse(savedUnlockedBackgrounds));
-    }
-  }, []);
-
-  // Rotate phrases
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPhrase((prev) => (prev + 1) % currentPhrases.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [currentPhrases.length]);
-
-  // Update remaining time for regular mining
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (miningActive && miningEndTime) {
+    if (isMining) {
       interval = setInterval(() => {
-        const now = Date.now();
-        const remaining = miningEndTime - now;
-        if (remaining <= 0) {
-          setMiningActive(false);
-          setMiningEndTime(null);
-          setRemainingTime(0);
-          localStorage.removeItem('miningEndTime');
-          localStorage.removeItem('miningActive');
-          toast({
-            title: t('miningCompleted') || 'Mining Completed',
-            description: t('miningCompletedDesc') || 'Your 8-hour mining session has finished'
-          });
-          if (autoMiningActive) {
-            setTimeout(() => {
-              handleStartMining();
-            }, 1000);
-          }
-        } else {
-          setRemainingTime(remaining);
-        }
+        setSpaceBalance(prev => prev + miningRate);
+        setTimeRemaining(prev => Math.max(0, prev - 1));
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [miningActive, miningEndTime, autoMiningActive, toast, t]);
+  }, [isMining, miningRate]);
 
-  // Update remaining time for auto mining
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (autoMiningActive && autoMiningEndTime) {
-      interval = setInterval(() => {
-        const now = Date.now();
-        const remaining = autoMiningEndTime - now;
-        if (remaining <= 0) {
-          setAutoMiningActive(false);
-          setAutoMiningEndTime(null);
-          setAutoMiningRemainingTime(0);
-          localStorage.removeItem('autoMiningActive');
-          localStorage.removeItem('autoMiningEndTime');
-          toast({
-            title: t('autoMiningExpired') || 'Auto Mining Expired',
-            description: t('autoMiningExpiredDesc') || 'Your auto mining period has ended'
-          });
-        } else {
-          setAutoMiningRemainingTime(remaining);
-        }
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [autoMiningActive, autoMiningEndTime, toast, t]);
-
-  // Mining logic for coins
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (miningActive || autoMiningActive) {
-      interval = setInterval(() => {
-        const earnedAmount = miningSpeed;
-        setSpaceCoins((prev) => {
-          const newAmount = prev + earnedAmount;
-          localStorage.setItem('spaceCoins', newAmount.toString());
-          return newAmount;
-        });
-        setTotalEarned((prev) => {
-          const newTotal = prev + earnedAmount;
-          localStorage.setItem('totalEarned', newTotal.toString());
-          return newTotal;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [miningActive, autoMiningActive, miningSpeed]);
-
-  const handleStartMining = () => {
-    if (!miningActive) {
-      const endTime = Date.now() + MINING_DURATION;
-      setMiningActive(true);
-      setMiningEndTime(endTime);
-      setRemainingTime(MINING_DURATION);
-      localStorage.setItem('miningEndTime', endTime.toString());
-      localStorage.setItem('miningActive', 'true');
-      hapticFeedback('success');
-      toast({
-        title: t('miningStarted') || 'Mining Started',
-        description: t('miningStartedDesc') || 'Mining will automatically stop after 8 hours'
-      });
-    }
+  const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handlePurchaseUpgrade = async (upgrade: UpgradeOption) => {
-    if (!tonConnectUI.wallet) {
-      toast({
-        title: t('walletRequired') || 'Wallet Required',
-        description: t('connectWalletFirst') || 'Please connect your TON wallet first',
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsProcessing(true);
-    try {
-      const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 300,
-        messages: [{
-          address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
-          amount: (upgrade.price * 1e9).toString()
-        }]
-      };
-
-      await tonConnectUI.sendTransaction(transaction);
-      setMiningSpeed(upgrade.multiplier);
-      localStorage.setItem('miningSpeed', upgrade.multiplier.toString());
-      setShowUpgradeModal(false);
-      hapticFeedback('success');
-      toast({
-        title: t('upgradeSuccess') || 'Upgrade Successful',
-        description: t('miningSpeedIncreased') || `Mining speed increased to ${upgrade.label}!`
-      });
-    } catch (error) {
-      console.error('Mining upgrade purchase failed:', error);
-      toast({
-        title: t('paymentFailed') || 'Payment Failed',
-        description: t('upgradePaymentError') || 'Failed to purchase mining upgrade',
-        variant: "destructive"
-      });
-    } finally {
-      setIsProcessing(false);
-    }
+  const toggleMining = () => {
+    setIsMining(!isMining);
   };
 
-  const handlePurchaseAutoMining = async () => {
-    if (!tonConnectUI.wallet) {
-      toast({
-        title: t('walletRequired') || 'Wallet Required',
-        description: t('connectWalletFirst') || 'Please connect your TON wallet first',
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsProcessing(true);
-    try {
-      const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 300,
-        messages: [{
-          address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
-          amount: (0.5 * 1e9).toString()
-        }]
-      };
-
-      await tonConnectUI.sendTransaction(transaction);
-      const endTime = Date.now() + AUTO_MINING_DURATION;
-      setAutoMiningActive(true);
-      setAutoMiningEndTime(endTime);
-      setAutoMiningRemainingTime(AUTO_MINING_DURATION);
-      localStorage.setItem('autoMiningActive', 'true');
-      localStorage.setItem('autoMiningEndTime', endTime.toString());
-      setShowAutoMiningModal(false);
-      hapticFeedback('success');
-      toast({
-        title: t('autoMiningActivated') || 'Auto Mining Activated',
-        description: t('autoMiningActivatedDesc') || 'Auto mining activated for 3 days!'
-      });
-    } catch (error) {
-      console.error('Auto mining purchase failed:', error);
-      toast({
-        title: t('paymentFailed') || 'Payment Failed',
-        description: t('autoMiningPaymentError') || 'Failed to purchase auto mining',
-        variant: "destructive"
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handlePurchaseBackground = async (backgroundId: string) => {
-    const background = BACKGROUND_OPTIONS.find(bg => bg.id === backgroundId);
-    if (!background) return;
-
-    if (background.price === 0 || unlockedBackgrounds.includes(backgroundId)) {
-      setCurrentBackground(backgroundId);
-      localStorage.setItem('selectedBackground', backgroundId);
-      setShowBackgroundModal(false);
-      hapticFeedback('success');
-      return;
-    }
-
-    if (!tonConnectUI.wallet) {
-      toast({
-        title: t('walletRequired') || 'Wallet Required',
-        description: t('connectWalletFirst') || 'Please connect your TON wallet first',
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsProcessing(true);
-    try {
-      const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 300,
-        messages: [{
-          address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
-          amount: (background.price * 1e9).toString()
-        }]
-      };
-
-      await tonConnectUI.sendTransaction(transaction);
-      const newUnlockedBackgrounds = [...unlockedBackgrounds, backgroundId];
-      setUnlockedBackgrounds(newUnlockedBackgrounds);
-      setCurrentBackground(backgroundId);
-      localStorage.setItem('selectedBackground', backgroundId);
-      localStorage.setItem('unlockedBackgrounds', JSON.stringify(newUnlockedBackgrounds));
-      setShowBackgroundModal(false);
-      hapticFeedback('success');
-      toast({
-        title: t('backgroundUnlocked') || 'Background Unlocked',
-        description: t('backgroundUnlockedDesc') || `${background.name} unlocked and applied!`
-      });
-    } catch (error) {
-      console.error('Background purchase failed:', error);
-      toast({
-        title: t('paymentFailed') || 'Payment Failed',
-        description: t('backgroundPaymentError') || 'Failed to purchase background',
-        variant: "destructive"
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const formatTime = (milliseconds: number): string => {
-    const days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((milliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
-
-    if (days > 0) {
-      return `${days}d ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  const currentBg = BACKGROUND_OPTIONS.find(bg => bg.id === currentBackground) || BACKGROUND_OPTIONS[0];
+  const achievements = [
+    { icon: Zap, title: 'Speed Booster', description: 'Mining at 2x speed', unlocked: true },
+    { icon: TrendingUp, title: 'Profit Master', description: 'Earned 10,000 $SPACE', unlocked: true },
+    { icon: Star, title: 'Daily Streak', description: '7 days in a row', unlocked: true },
+    { icon: Crown, title: 'VIP Miner', description: 'Premium subscriber', unlocked: false }
+  ];
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${currentBg.gradient} flex flex-col items-center justify-center p-3 space-y-3 relative overflow-hidden`}>
-      {/* Enhanced particles background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(10)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-white/20 rounded-full"
-            animate={{
-              y: [0, -80, 0],
-              opacity: [0, 1, 0],
-              scale: [0, 1, 0],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              delay: i * 0.3,
-            }}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: '100%',
-            }}
-          />
-        ))}
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-2 pb-20">
+      <div className="max-w-md mx-auto space-y-2">
+        {/* Header */}
+        <div className="text-center mb-2">
+          <div className="flex items-center justify-center mb-1">
+            <div className="p-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
+              <Zap className="w-4 h-4 text-white" />
+            </div>
+          </div>
+          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-0.5">
+            {t('spaceMining')}
+          </h1>
+          <p className="text-gray-300 text-xs">
+            {t('mineSpaceTokens')}
+          </p>
+        </div>
 
-      {/* Compact Top Stats Bar */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-sm"
-      >
-        <Card className="bg-black/25 backdrop-blur-md border border-white/15 rounded-lg shadow-lg">
+        {/* Main Balance Card */}
+        <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-2xl overflow-hidden">
+          <CardHeader className="text-center pb-2">
+            <div className="relative">
+              <div className="flex items-center justify-center mb-2">
+                <div className={`p-3 rounded-full transition-all duration-300 ${
+                  isMining 
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 animate-pulse-glow' 
+                    : 'bg-gradient-to-r from-gray-500 to-gray-600'
+                }`}>
+                  <Zap className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              
+              <div className="text-center mb-3">
+                <p className="text-xs text-gray-300 mb-1">{t('currentBalance')}</p>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-2xl font-bold text-white animate-pulse">
+                    {spaceBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                  <span className="text-sm text-blue-300 font-medium">$SPACE</span>
+                </div>
+              </div>
+
+              <Button 
+                onClick={toggleMining} 
+                size="lg" 
+                className={`w-full h-12 text-base font-bold rounded-xl transition-all duration-300 ${
+                  isMining 
+                    ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700' 
+                    : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700'
+                }`}
+              >
+                {isMining ? (
+                  <>
+                    <Pause className="w-5 h-5 mr-2" />
+                    {t('stopMining')}
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-5 h-5 mr-2" />
+                    {t('startMining')}
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardHeader>
+        </Card>
+
+        {/* Mining Stats - Compact Grid */}
+        <div className="grid grid-cols-2 gap-2">
+          <Card className="bg-gradient-to-br from-green-500/15 to-emerald-500/15 backdrop-blur-xl border border-green-500/40 rounded-xl">
+            <CardContent className="p-3 text-center">
+              <p className="text-xs text-green-200 font-medium">{t('miningRate')}</p>
+              <p className="text-sm font-bold text-white">{miningRate}/sec</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-br from-blue-500/15 to-cyan-500/15 backdrop-blur-xl border border-blue-500/40 rounded-xl">
+            <CardContent className="p-3 text-center">
+              <p className="text-xs text-blue-200 font-medium">{t('miningSpeed')}</p>
+              <p className="text-sm font-bold text-white">{miningSpeed}x</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Mining Timer */}
+        {isMining && (
+          <Card className="bg-gradient-to-br from-orange-500/15 to-red-500/15 backdrop-blur-xl border border-orange-500/40 rounded-xl">
+            <CardContent className="p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-orange-200 font-medium text-sm">{t('timeRemaining')}</span>
+                <span className="font-bold text-white text-sm">{formatTime(timeRemaining)}</span>
+              </div>
+              <div className="w-full bg-orange-900/30 rounded-full h-1.5 mt-2">
+                <div 
+                  className="bg-gradient-to-r from-orange-400 to-red-500 h-1.5 rounded-full transition-all duration-1000"
+                  style={{ width: `${((86400 - timeRemaining) / 86400) * 100}%` }}
+                ></div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Daily Streak */}
+        <Card className="bg-gradient-to-br from-yellow-500/15 to-orange-500/15 backdrop-blur-xl border border-yellow-500/40 rounded-xl">
           <CardContent className="p-3">
-            <div className="flex justify-between items-center text-white/90">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-green-400" />
-                <div>
-                  <p className="text-xs text-white/70">Total Earned</p>
-                  <p className="font-bold text-sm">{totalEarned.toLocaleString()}</p>
-                </div>
+                <Star className="w-4 h-4 text-yellow-400" />
+                <span className="text-yellow-200 font-medium text-sm">{t('dailyStreak')}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-yellow-400" />
-                <div>
-                  <p className="text-xs text-white/70">Speed</p>
-                  <p className="font-bold text-sm">{miningSpeed}x</p>
-                </div>
-              </div>
+              <Badge className="bg-yellow-500/20 text-yellow-300 text-xs">
+                {streak} {t('days')}
+              </Badge>
             </div>
           </CardContent>
         </Card>
-      </motion.div>
 
-      {/* 3D Logo */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, type: "spring", bounce: 0.3 }}
-        className="my-2 w-48 h-24"
-      >
-        <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-          <ambientLight intensity={0.1} />
-          <pointLight position={[10, 10, 10]} intensity={0.5} color="#ec4899" />
-          <SpaceLogo3D size={0.6} />
-        </Canvas>
-      </motion.div>
-
-      {/* Compact Phrase Display */}
-      <div className="h-12 flex items-center justify-center">
-        <AnimatePresence mode="wait">
-          <motion.h1
-            key={currentPhrase}
-            initial={{ opacity: 0, y: 20, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.8 }}
-            transition={{ duration: 0.5 }}
-            className="text-lg md:text-xl font-bold text-white text-center max-w-sm leading-tight"
-          >
-            {formatSpaceText(currentPhrases[currentPhrase])}
-          </motion.h1>
-        </AnimatePresence>
-      </div>
-
-      {/* Compact Balance Card */}
-      <Card className="bg-black/25 backdrop-blur-md border border-white/15 rounded-xl w-full max-w-sm shadow-lg">
-        <CardContent className="p-4 text-center">
-          <motion.div
-            key={spaceCoins}
-            initial={{ scale: 1.1, rotateY: 5 }}
-            animate={{ scale: 1, rotateY: 0 }}
-            transition={{ duration: 0.3 }}
-            className="text-2xl md:text-3xl font-black text-white mb-2"
-          >
-            {spaceCoins.toLocaleString()} <span className="text-white font-extrabold">$SPACE</span>
-          </motion.div>
-          {autoMiningActive && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-xs text-yellow-300 mt-2 p-2 bg-yellow-500/20 rounded-lg border border-yellow-500/30"
-            >
-              <Crown className="w-3 h-3 inline mr-1" />
-              Auto mining: {formatTime(autoMiningRemainingTime)}
-            </motion.div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Compact Action Buttons */}
-      <div className="space-y-3 w-full max-w-sm">
-        {/* Main Mining Button */}
-        <motion.div
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <Button
-            onClick={handleStartMining}
-            disabled={miningActive || autoMiningActive}
-            className={`w-full h-12 text-base font-bold rounded-lg transition-all duration-300 shadow-md ${
-              miningActive || autoMiningActive
-                ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-green-500/30'
-                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-blue-500/30'
-            }`}
-          >
-            {autoMiningActive ? (
-              <>
-                <Crown className="w-4 h-4 mr-2" />
-                Auto Mining Active
-              </>
-            ) : miningActive ? (
-              <>
-                <Coins className="w-4 h-4 mr-2 animate-pulse" />
-                {formatTime(remainingTime)}
-              </>
-            ) : (
-              <>
-                <Play className="w-4 h-4 mr-2" />
-                Start Mining Session
-              </>
-            )}
-          </Button>
-        </motion.div>
-
-        {/* Compact Feature Buttons Grid */}
-        <div className="grid grid-cols-3 gap-2">
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button
-              onClick={() => setShowUpgradeModal(true)}
-              variant="outline"
-              className="h-16 flex flex-col items-center gap-1 border-yellow-500/30 text-white bg-black/20 hover:bg-yellow-500/20 rounded-lg backdrop-blur-md transition-all duration-300"
-            >
-              <Zap className="w-5 h-5 text-yellow-400" />
-              <span className="text-xs font-semibold">Upgrade</span>
-            </Button>
-          </motion.div>
-          
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button
-              onClick={() => setShowAutoMiningModal(true)}
-              variant="outline"
-              disabled={autoMiningActive}
-              className="h-16 flex flex-col items-center gap-1 border-green-500/30 text-white bg-black/20 hover:bg-green-500/20 rounded-lg backdrop-blur-md transition-all duration-300"
-            >
-              <Timer className="w-5 h-5 text-green-400" />
-              <span className="text-xs font-semibold">Auto Mine</span>
-            </Button>
-          </motion.div>
-          
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button
-              onClick={() => setShowBackgroundModal(true)}
-              variant="outline"
-              className="h-16 flex flex-col items-center gap-1 border-purple-500/30 text-white bg-black/20 hover:bg-purple-500/20 rounded-lg backdrop-blur-md transition-all duration-300"
-            >
-              <Palette className="w-5 h-5 text-purple-400" />
-              <span className="text-xs font-semibold">Themes</span>
-            </Button>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Compact Modals */}
-      {/* Upgrade Modal */}
-      <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
-        <DialogContent className="bg-gradient-to-br from-indigo-900/95 to-purple-900/95 backdrop-blur-xl border border-white/20 text-white max-w-sm rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-center">
-              <Zap className="w-6 h-6 text-yellow-400 inline mr-2" />
-              Mining Speed Upgrades
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 max-h-64 overflow-y-auto">
-            {UPGRADE_OPTIONS.map((upgrade) => (
-              <motion.div key={upgrade.id} whileHover={{ scale: 1.02 }}>
-                <Button
-                  onClick={() => handlePurchaseUpgrade(upgrade)}
-                  disabled={isProcessing}
-                  className="w-full p-4 h-auto flex justify-between bg-white/10 hover:bg-white/20 border border-white/30 rounded-xl transition-all duration-300"
-                  variant="ghost"
-                >
-                  <div className="text-left">
-                    <div className="font-bold text-white text-base">{upgrade.label}</div>
-                    <div className="text-sm text-blue-200">{upgrade.multiplier}x faster mining</div>
+        {/* Achievements */}
+        <Card className="bg-gradient-to-br from-purple-500/15 to-pink-500/15 backdrop-blur-xl border border-purple-500/40 rounded-xl">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-white text-sm flex items-center gap-2">
+              <Crown className="w-4 h-4" />
+              {t('achievements')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0 pb-3">
+            <div className="grid grid-cols-2 gap-2">
+              {achievements.map((achievement, index) => {
+                const Icon = achievement.icon;
+                return (
+                  <div key={index} className={`p-2 rounded-lg border ${
+                    achievement.unlocked 
+                      ? 'bg-purple-500/20 border-purple-500/50' 
+                      : 'bg-gray-500/10 border-gray-500/30'
+                  }`}>
+                    <Icon className={`w-4 h-4 mx-auto mb-1 ${
+                      achievement.unlocked ? 'text-purple-400' : 'text-gray-500'
+                    }`} />
+                    <p className={`text-xs text-center font-medium ${
+                      achievement.unlocked ? 'text-purple-200' : 'text-gray-400'
+                    }`}>
+                      {achievement.title}
+                    </p>
                   </div>
-                  <div className="font-bold text-yellow-400 text-base">{formatTON(upgrade.price)}</div>
-                </Button>
-              </motion.div>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Auto Mining Modal */}
-      <Dialog open={showAutoMiningModal} onOpenChange={setShowAutoMiningModal}>
-        <DialogContent className="bg-gradient-to-br from-green-900/95 to-emerald-900/95 backdrop-blur-xl border border-green-500/30 text-white max-w-sm rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-center">
-              <Crown className="w-6 h-6 text-yellow-400 inline mr-2" />
-              Auto Mining Premium
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-6 text-center">
-            <motion.div 
-              className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-            >
-              <Timer className="w-10 h-10 text-green-400" />
-            </motion.div>
-            <div>
-              <p className="text-green-200 mb-4 text-base">Activate auto mining for 3 continuous days</p>
-              <div className="text-3xl font-bold text-green-300 mb-2">{formatTON(0.5)}</div>
-              <p className="text-sm text-green-300/80">One-time payment</p>
+                );
+              })}
             </div>
-            <Button
-              onClick={handlePurchaseAutoMining}
-              disabled={isProcessing}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 rounded-xl text-base shadow-lg"
-            >
-              {isProcessing ? 'Processing...' : 'Activate Auto Mining'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Background Modal */}
-      <Dialog open={showBackgroundModal} onOpenChange={setShowBackgroundModal}>
-        <DialogContent className="bg-gradient-to-br from-purple-900/95 to-pink-900/95 backdrop-blur-xl border border-purple-500/30 text-white max-w-sm rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-center">
-              <Palette className="w-6 h-6 text-pink-400 inline mr-2" />
-              Background Themes
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3 max-h-64 overflow-y-auto">
-            {BACKGROUND_OPTIONS.map((bg) => {
-              const isUnlocked = unlockedBackgrounds.includes(bg.id);
-              const isCurrent = currentBackground === bg.id;
-              
-              return (
-                <motion.div key={bg.id} whileHover={{ scale: 1.02 }}>
-                  <Button
-                    onClick={() => handlePurchaseBackground(bg.id)}
-                    disabled={isCurrent || (isProcessing && bg.price > 0)}
-                    className={`w-full p-4 h-auto flex justify-between border border-white/30 rounded-xl transition-all duration-300 ${
-                      isCurrent ? 'bg-green-600/30 border-green-500/50' : 'bg-white/10 hover:bg-white/20'
-                    }`}
-                    variant="ghost"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${bg.gradient} border-2 border-white/30`}></div>
-                      <div className="text-left">
-                        <div className="font-bold text-white text-base">{bg.name}</div>
-                        {isCurrent && <div className="text-sm text-green-200">Currently active</div>}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      {bg.price === 0 || isUnlocked ? (
-                        <span className="text-green-400 font-bold text-base">
-                          {isCurrent ? '✓ Active' : 'Select'}
-                        </span>
-                      ) : (
-                        <div className="font-bold text-purple-300 text-base">{formatTON(bg.price)}</div>
-                      )}
-                    </div>
-                  </Button>
-                </motion.div>
-              );
-            })}
-          </div>
-        </DialogContent>
-      </Dialog>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

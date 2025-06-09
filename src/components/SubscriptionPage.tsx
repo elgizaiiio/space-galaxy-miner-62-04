@@ -93,68 +93,68 @@ const SubscriptionPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-3 pb-24">
-      <div className="max-w-md mx-auto space-y-4">
-        {/* Compact Header */}
-        <div className="text-center mb-4">
-          <div className="flex items-center justify-center mb-2">
-            <div className="p-2 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full">
-              <Crown className="w-5 h-5 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-2 pb-20">
+      <div className="max-w-md mx-auto space-y-3">
+        {/* Header */}
+        <div className="text-center mb-3">
+          <div className="flex items-center justify-center mb-1">
+            <div className="p-1.5 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full">
+              <Crown className="w-4 h-4 text-white" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent mb-1">
+          <h1 className="text-xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent mb-0.5">
             {t('premium') || 'Premium'}
           </h1>
-          <p className="text-zinc-50 text-sm">
+          <p className="text-zinc-50 text-xs">
             {t('unlockPremiumFeatures') || 'Unlock premium features and boost your mining'}
           </p>
         </div>
 
-        {/* Compact Subscription Plans */}
-        <div className="space-y-3">
+        {/* Subscription Plans */}
+        <div className="space-y-2">
           {plans.map(plan => {
             const Icon = plan.icon;
             const isCurrentPlan = currentPlan === plan.id;
             return (
               <Card key={plan.id} className="bg-pink-900 relative">
                 {plan.popular && (
-                  <Badge className="absolute top-2 right-2 bg-yellow-500 text-black font-bold text-xs">
+                  <Badge className="absolute top-1.5 right-1.5 bg-yellow-500 text-black font-bold text-xs">
                     {t('popular') || 'Popular'}
                   </Badge>
                 )}
                 
                 {isCurrentPlan && (
-                  <Badge className="absolute top-2 left-2 bg-green-500 text-white font-bold text-xs">
+                  <Badge className="absolute top-1.5 left-1.5 bg-green-500 text-white font-bold text-xs">
                     {t('current') || 'Current'}
                   </Badge>
                 )}
 
-                <CardHeader className="text-center pb-2">
-                  <div className="flex justify-center mb-2">
-                    <div className={`p-2 rounded-full ${
+                <CardHeader className="text-center pb-1">
+                  <div className="flex justify-center mb-1">
+                    <div className={`p-1.5 rounded-full ${
                       plan.color === 'yellow' ? 'bg-yellow-500/20' : 'bg-purple-500/20'
                     }`}>
-                      <Icon className="w-5 h-5" />
+                      <Icon className="w-4 h-4" />
                     </div>
                   </div>
-                  <CardTitle className="text-white text-lg font-bold">
+                  <CardTitle className="text-white text-sm font-bold">
                     {plan.name}
                   </CardTitle>
                   <div className="text-center">
-                    <span className="text-2xl font-bold text-white">
+                    <span className="text-lg font-bold text-white">
                       {formatTON(plan.price)}
                     </span>
-                    <span className="text-xs ml-2 text-zinc-50 font-bold">
+                    <span className="text-xs ml-1 text-zinc-50 font-bold">
                       {plan.period}
                     </span>
                   </div>
                 </CardHeader>
 
-                <CardContent className="space-y-3">
-                  <div className="space-y-2">
+                <CardContent className="space-y-2">
+                  <div className="space-y-1">
                     {plan.features.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                      <div key={index} className="flex items-center gap-1.5">
+                        <CheckCircle className="w-3 h-3 text-green-400 flex-shrink-0" />
                         <span className="text-xs text-zinc-50 font-bold">{feature}</span>
                       </div>
                     ))}
@@ -163,13 +163,13 @@ const SubscriptionPage = () => {
                   <Button 
                     onClick={() => handleSubscribe(plan.id, plan.price)} 
                     disabled={isCurrentPlan || isProcessing} 
-                    className={`w-full mt-4 ${
+                    className={`w-full mt-2 ${
                       isCurrentPlan 
                         ? 'bg-green-600 hover:bg-green-600 cursor-default' 
                         : plan.popular 
                           ? 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700' 
                           : 'bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700'
-                    } rounded-xl font-bold py-2 text-sm`}
+                    } rounded-lg font-bold py-1.5 text-xs`}
                   >
                     {isProcessing 
                       ? t('processing') || 'Processing...' 
