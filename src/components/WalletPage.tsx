@@ -116,38 +116,38 @@ const WalletPage = () => {
   // If no wallet connected, show connection screen
   if (!isWalletConnected) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-2 pb-20">
-        <div className="max-w-md mx-auto space-y-3">
-          {/* Header */}
-          <div className="text-center mb-3">
-            <div className="flex items-center justify-center mb-1">
-              <div className="p-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
-                <Wallet className="w-4 h-4 text-white" />
+      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-3 pb-24">
+        <div className="max-w-md mx-auto space-y-4">
+          {/* Compact Header */}
+          <div className="text-center mb-4">
+            <div className="flex items-center justify-center mb-2">
+              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
+                <Wallet className="w-5 h-5 text-white" />
               </div>
             </div>
-            <h1 className="text-xl font-bold text-zinc-50 mb-0.5">
+            <h1 className="text-2xl font-bold text-zinc-50 mb-1">
               {t('smartWallet')}
             </h1>
-            <p className="text-gray-300 text-xs px-2">{t('walletDescription')}</p>
+            <p className="text-gray-300 text-sm px-2">{t('walletDescription')}</p>
           </div>
 
           {/* Connection Card */}
-          <Card className="bg-gradient-to-br from-purple-500/15 to-pink-500/15 backdrop-blur-xl border border-purple-500/40 rounded-xl">
-            <CardContent className="p-3 text-center">
-              <div className="mb-2">
-                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-1">
-                  <Wallet className="w-5 h-5 text-white" />
+          <Card className="bg-gradient-to-br from-purple-500/15 to-pink-500/15 backdrop-blur-xl border border-purple-500/40 rounded-2xl">
+            <CardContent className="p-4 text-center">
+              <div className="mb-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Wallet className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="text-sm font-bold text-white mb-0.5">{t('connectWallet')}</h2>
-                <p className="text-gray-300 text-xs">{t('connectWalletToAccess')}</p>
+                <h2 className="text-lg font-bold text-white mb-1">{t('connectWallet')}</h2>
+                <p className="text-gray-300 text-sm">{t('connectWalletToAccess')}</p>
               </div>
               
               <Button 
                 onClick={connectWallet} 
                 disabled={isConnecting} 
-                className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 h-8 text-xs font-semibold rounded-lg w-full"
+                className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 h-10 text-sm font-semibold rounded-xl w-full"
               >
-                <LogIn className="w-3 h-3 mr-1" />
+                <LogIn className="w-4 h-4 mr-2" />
                 {isConnecting ? t('connecting') : t('connectWallet')}
               </Button>
             </CardContent>
@@ -158,49 +158,49 @@ const WalletPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-2 pb-20">
-      <div className="max-w-md mx-auto space-y-3">
-        {/* Header */}
-        <div className="text-center mb-3">
-          <div className="flex items-center justify-center mb-1">
-            <div className="p-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
-              <Wallet className="w-4 h-4 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-3 pb-24">
+      <div className="max-w-md mx-auto space-y-4">
+        {/* Compact Header */}
+        <div className="text-center mb-4">
+          <div className="flex items-center justify-center mb-2">
+            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
+              <Wallet className="w-5 h-5 text-white" />
             </div>
           </div>
-          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-0.5">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-1">
             {t('smartWallet')}
           </h1>
-          <p className="text-gray-300 text-xs px-2">{t('walletDescription')}</p>
+          <p className="text-gray-300 text-sm px-2">{t('walletDescription')}</p>
         </div>
 
         {/* Wallet Connection Status */}
-        <Card className="bg-gradient-to-br from-green-500/15 to-emerald-500/15 backdrop-blur-xl border border-green-500/40 rounded-xl">
-          <CardContent className="p-2">
+        <Card className="bg-gradient-to-br from-green-500/15 to-emerald-500/15 backdrop-blur-xl border border-green-500/40 rounded-2xl">
+          <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-green-200 font-medium text-xs">{t('walletConnected')}</span>
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-green-200 font-medium text-sm">{t('walletConnected')}</span>
               </div>
               <Button 
                 onClick={disconnectWallet} 
                 variant="outline" 
                 size="sm" 
-                className="border-red-500/50 text-xs h-6 px-2 bg-violet-700 hover:bg-violet-600 text-slate-50"
+                className="border-red-500/50 text-xs h-7 px-2 bg-violet-700 hover:bg-violet-600 text-slate-50"
               >
-                <LogOut className="w-2.5 h-2.5 mr-1" />
+                <LogOut className="w-3 h-3 mr-1" />
                 {t('disconnectWallet')}
               </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Balance Cards */}
-        <div className="space-y-2">
+        {/* Compact Balance Cards */}
+        <div className="space-y-3">
           {/* $SPACE Balance */}
-          <Card className="bg-gradient-to-br from-blue-500/15 to-purple-500/15 backdrop-blur-xl border border-blue-500/40 rounded-xl">
-            <CardHeader className="pb-1">
+          <Card className="bg-gradient-to-br from-blue-500/15 to-purple-500/15 backdrop-blur-xl border border-blue-500/40 rounded-2xl">
+            <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-white flex items-center gap-2 text-sm">
+                <CardTitle className="text-white flex items-center gap-2 text-base">
                   <div>
                     <span className="block">$SPACE</span>
                     <span className="text-xs text-blue-300 font-normal">{t('mainCurrency')}</span>
@@ -210,13 +210,13 @@ const WalletPage = () => {
                   variant="ghost" 
                   size="sm" 
                   onClick={() => setShowBalance(!showBalance)} 
-                  className="text-blue-300 hover:text-white hover:bg-blue-500/20 h-6 w-6 p-0 rounded-lg"
+                  className="text-blue-300 hover:text-white hover:bg-blue-500/20 h-7 w-7 p-0 rounded-lg"
                 >
                   {showBalance ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="pt-0 pb-2">
+            <CardContent className="pt-0 pb-3">
               <p className="font-bold text-white text-lg">
                 {showBalance ? spaceBalance.toLocaleString() : '••••••'}
               </p>
@@ -224,10 +224,10 @@ const WalletPage = () => {
           </Card>
 
           {/* TON Balance */}
-          <Card className="bg-gradient-to-br from-purple-500/15 to-pink-500/15 backdrop-blur-xl border border-purple-500/40 rounded-xl">
-            <CardHeader className="pb-1">
+          <Card className="bg-gradient-to-br from-purple-500/15 to-pink-500/15 backdrop-blur-xl border border-purple-500/40 rounded-2xl">
+            <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-white flex items-center gap-2 text-sm">
+                <CardTitle className="text-white flex items-center gap-2 text-base">
                   <div>
                     <span className="block">TON</span>
                   </div>
@@ -237,13 +237,13 @@ const WalletPage = () => {
                   size="sm" 
                   onClick={() => loadWalletData(connectedAddress!)} 
                   disabled={isLoading} 
-                  className="text-purple-300 hover:text-white hover:bg-purple-500/20 h-6 w-6 p-0 rounded-lg"
+                  className="text-purple-300 hover:text-white hover:bg-purple-500/20 h-7 w-7 p-0 rounded-lg"
                 >
                   <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="pt-0 pb-2">
+            <CardContent className="pt-0 pb-3">
               <p className="font-bold text-white text-lg">
                 {showBalance ? tonBalance.toFixed(4) : '••••'}
               </p>
