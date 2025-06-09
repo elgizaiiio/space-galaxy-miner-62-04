@@ -5,12 +5,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { useToast } from '@/hooks/use-toast';
-import SpaceLogo3D from './SpaceLogo3D';
 import { UPGRADE_OPTIONS, formatTON, type UpgradeOption } from '../utils/ton';
 import { hapticFeedback } from '../utils/telegram';
 import { getTranslation } from '../utils/language';
-import { Palette, Crown, Zap, Timer, Play, Pause, TrendingUp, Clock, Coins, Trophy, Users } from 'lucide-react';
-import { Canvas } from '@react-three/fiber';
+import { Palette, Crown, Zap, Timer, Play, Pause, TrendingUp, Clock, Coins } from 'lucide-react';
 
 const MINING_PHRASES = {
   en: ['Mine $SPACE Coin', 'Start Earning Now', 'Explore the Galaxy of Rewards', 'Begin Your Space Mining Journey', 'Collect Cosmic Treasures', 'Unlock Universal Wealth']
@@ -442,58 +440,20 @@ const MiningPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Header Section with User Info */}
-      <div className="w-full max-w-sm flex justify-between items-center mb-4">
-        {/* User Profile */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-            <Users className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <p className="text-white font-semibold text-sm">مستخدم</p>
-            <p className="text-white/70 text-xs">المستوى 1</p>
-          </div>
-        </div>
-
-        {/* Ranking */}
-        <div className="flex items-center gap-2 bg-black/25 backdrop-blur-md border border-white/15 rounded-lg px-3 py-1">
-          <Trophy className="w-4 h-4 text-yellow-400" />
-          <span className="text-white text-sm font-bold">#1247</span>
-        </div>
-      </div>
-
       {/* Central Mining Circle */}
-      <div className="relative flex flex-col items-center justify-center">
-        {/* Large Central Circle */}
-        <motion.div
-          className="w-64 h-64 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-md border-4 border-white/20 flex flex-col items-center justify-center relative overflow-hidden"
-          animate={{
-            rotate: miningActive || autoMiningActive ? 360 : 0,
-            scale: miningActive || autoMiningActive ? [1, 1.05, 1] : 1,
-          }}
-          transition={{
-            rotate: {
-              duration: 8,
-              repeat: Infinity,
-              ease: "linear"
-            },
-            scale: {
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }
-          }}
-        >
+      <div className="relative flex flex-col items-center justify-center mt-16">
+        {/* Smaller Central Circle - Fixed (no rotation) */}
+        <div className="w-48 h-48 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-md border-4 border-white/20 flex flex-col items-center justify-center relative overflow-hidden">
           {/* Inner glow effect */}
           <div className="absolute inset-4 rounded-full bg-gradient-to-br from-blue-400/10 to-purple-400/10 blur-xl"></div>
           
-          {/* 3D Logo in center */}
-          <div className="w-20 h-20 mb-2 z-10">
-            <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-              <ambientLight intensity={0.2} />
-              <pointLight position={[10, 10, 10]} intensity={0.8} color="#ec4899" />
-              <SpaceLogo3D size={0.4} />
-            </Canvas>
+          {/* SPACE AI Logo in center */}
+          <div className="w-24 h-16 mb-2 z-10 flex items-center justify-center">
+            <img 
+              src="/lovable-uploads/152a862d-1671-4b8b-a0fd-b17469ade7e4.png" 
+              alt="SPACE AI" 
+              className="w-full h-full object-contain"
+            />
           </div>
 
           {/* Balance Display */}
@@ -518,46 +478,16 @@ const MiningPage: React.FC = () => {
               className="absolute bottom-4 text-center z-10"
             >
               <div className="text-xs text-green-300 font-semibold">
-                {autoMiningActive ? 'تعدين تلقائي' : 'التعدين نشط'}
+                {autoMiningActive ? 'Auto Mining' : 'Mining Active'}
               </div>
               <div className="text-xs text-white/70">
                 {formatTime(autoMiningActive ? autoMiningRemainingTime : remainingTime)}
               </div>
             </motion.div>
           )}
+        </div>
 
-          {/* Orbiting elements */}
-          <motion.div
-            className="absolute w-8 h-8 bg-yellow-400/60 rounded-full blur-sm"
-            animate={{
-              rotate: 360
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            style={{
-              transformOrigin: "120px center"
-            }}
-          />
-          <motion.div
-            className="absolute w-6 h-6 bg-blue-400/60 rounded-full blur-sm"
-            animate={{
-              rotate: -360
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            style={{
-              transformOrigin: "100px center"
-            }}
-          />
-        </motion.div>
-
-        {/* Tap to Mine Button */}
+        {/* Start Mining Button */}
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -575,17 +505,17 @@ const MiningPage: React.FC = () => {
             {autoMiningActive ? (
               <>
                 <Crown className="w-5 h-5 mr-2" />
-                تعدين تلقائي نشط
+                Auto Mining Active
               </>
             ) : miningActive ? (
               <>
                 <Pause className="w-5 h-5 mr-2" />
-                التعدين نشط
+                Mining Active
               </>
             ) : (
               <>
                 <Play className="w-5 h-5 mr-2" />
-                ابدأ التعدين
+                Start Mining
               </>
             )}
           </Button>
@@ -599,7 +529,7 @@ const MiningPage: React.FC = () => {
           <Card className="bg-black/25 backdrop-blur-md border border-white/15 rounded-lg">
             <CardContent className="p-3 text-center">
               <TrendingUp className="w-4 h-4 text-green-400 mx-auto mb-1" />
-              <p className="text-xs text-white/70">إجمالي الأرباح</p>
+              <p className="text-xs text-white/70">Total Earned</p>
               <p className="font-bold text-white text-sm">{totalEarned.toLocaleString()}</p>
             </CardContent>
           </Card>
@@ -607,7 +537,7 @@ const MiningPage: React.FC = () => {
           <Card className="bg-black/25 backdrop-blur-md border border-white/15 rounded-lg">
             <CardContent className="p-3 text-center">
               <Zap className="w-4 h-4 text-yellow-400 mx-auto mb-1" />
-              <p className="text-xs text-white/70">سرعة التعدين</p>
+              <p className="text-xs text-white/70">Mining Speed</p>
               <p className="font-bold text-white text-sm">{miningSpeed}x</p>
             </CardContent>
           </Card>
@@ -622,7 +552,7 @@ const MiningPage: React.FC = () => {
               className="h-16 flex flex-col items-center gap-1 border-yellow-500/30 text-white bg-black/20 hover:bg-yellow-500/20 rounded-lg backdrop-blur-md"
             >
               <Zap className="w-5 h-5 text-yellow-400" />
-              <span className="text-xs font-semibold">ترقية</span>
+              <span className="text-xs font-semibold">Upgrade</span>
             </Button>
           </motion.div>
           
@@ -634,7 +564,7 @@ const MiningPage: React.FC = () => {
               className="h-16 flex flex-col items-center gap-1 border-green-500/30 text-white bg-black/20 hover:bg-green-500/20 rounded-lg backdrop-blur-md"
             >
               <Timer className="w-5 h-5 text-green-400" />
-              <span className="text-xs font-semibold">تلقائي</span>
+              <span className="text-xs font-semibold">Auto</span>
             </Button>
           </motion.div>
           
@@ -645,7 +575,7 @@ const MiningPage: React.FC = () => {
               className="h-16 flex flex-col items-center gap-1 border-purple-500/30 text-white bg-black/20 hover:bg-purple-500/20 rounded-lg backdrop-blur-md"
             >
               <Palette className="w-5 h-5 text-purple-400" />
-              <span className="text-xs font-semibold">الخلفيات</span>
+              <span className="text-xs font-semibold">Themes</span>
             </Button>
           </motion.div>
         </div>
@@ -659,7 +589,7 @@ const MiningPage: React.FC = () => {
           >
             <Crown className="w-4 h-4 inline text-yellow-300 mr-2" />
             <span className="text-yellow-300 text-sm font-semibold">
-              التعدين التلقائي: {formatTime(autoMiningRemainingTime)}
+              Auto Mining: {formatTime(autoMiningRemainingTime)}
             </span>
           </motion.div>
         )}
@@ -672,7 +602,7 @@ const MiningPage: React.FC = () => {
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
               <Zap className="w-6 h-6 text-yellow-400 inline mr-2" />
-              ترقيات سرعة التعدين
+              Mining Speed Upgrades
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3 max-h-64 overflow-y-auto">
@@ -686,7 +616,7 @@ const MiningPage: React.FC = () => {
                 >
                   <div className="text-left">
                     <div className="font-bold text-white text-base">{upgrade.label}</div>
-                    <div className="text-sm text-blue-200">{upgrade.multiplier}x أسرع في التعدين</div>
+                    <div className="text-sm text-blue-200">{upgrade.multiplier}x faster mining</div>
                   </div>
                   <div className="font-bold text-yellow-400 text-base">{formatTON(upgrade.price)}</div>
                 </Button>
@@ -702,7 +632,7 @@ const MiningPage: React.FC = () => {
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
               <Crown className="w-6 h-6 text-yellow-400 inline mr-2" />
-              التعدين التلقائي المميز
+              Premium Auto Mining
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-6 text-center">
@@ -713,16 +643,16 @@ const MiningPage: React.FC = () => {
               <Timer className="w-10 h-10 text-green-400" />
             </motion.div>
             <div>
-              <p className="text-green-200 mb-4 text-base">تفعيل التعدين التلقائي لمدة 3 أيام متواصلة</p>
+              <p className="text-green-200 mb-4 text-base">Activate auto mining for 3 consecutive days</p>
               <div className="text-3xl font-bold text-green-300 mb-2">{formatTON(0.5)}</div>
-              <p className="text-sm text-green-300/80">دفعة واحدة</p>
+              <p className="text-sm text-green-300/80">One-time payment</p>
             </div>
             <Button
               onClick={handlePurchaseAutoMining}
               disabled={isProcessing}
               className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 rounded-xl text-base shadow-lg"
             >
-              {isProcessing ? 'جاري المعالجة...' : 'تفعيل التعدين التلقائي'}
+              {isProcessing ? 'Processing...' : 'Activate Auto Mining'}
             </Button>
           </div>
         </DialogContent>
@@ -734,7 +664,7 @@ const MiningPage: React.FC = () => {
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-center">
               <Palette className="w-6 h-6 text-pink-400 inline mr-2" />
-              خلفيات الواجهة
+              Background Themes
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3 max-h-64 overflow-y-auto">
@@ -756,13 +686,13 @@ const MiningPage: React.FC = () => {
                       <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${bg.gradient} border-2 border-white/30`}></div>
                       <div className="text-left">
                         <div className="font-bold text-white text-base">{bg.name}</div>
-                        {isCurrent && <div className="text-sm text-green-200">نشط حالياً</div>}
+                        {isCurrent && <div className="text-sm text-green-200">Currently Active</div>}
                       </div>
                     </div>
                     <div className="text-right">
                       {bg.price === 0 || isUnlocked ? (
                         <span className="text-green-400 font-bold text-base">
-                          {isCurrent ? '✓ نشط' : 'اختر'}
+                          {isCurrent ? '✓ Active' : 'Select'}
                         </span>
                       ) : (
                         <div className="font-bold text-purple-300 text-base">{formatTON(bg.price)}</div>
