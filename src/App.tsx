@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
+import SplashScreen from './components/SplashScreen';
 import MiningPage from './components/MiningPage';
 import TasksPage from './components/TasksPage';
 import WalletPage from './components/WalletPage';
@@ -19,6 +19,7 @@ const queryClient = new QueryClient();
 type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'subscription' | 'admin';
 
 const App = () => {
+  const [showSplash, setShowSplash] = useState(true);
   const [currentPage, setCurrentPage] = useState<Page>('mining');
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [showAdminAccess, setShowAdminAccess] = useState(false);
@@ -71,6 +72,10 @@ const App = () => {
     }
   };
 
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+  };
+
   const t = (key: string) => getTranslation(key, currentLanguage.code);
 
   const navigationItems = [{
@@ -121,6 +126,10 @@ const App = () => {
         return <MiningPage />;
     }
   };
+
+  if (showSplash) {
+    return <SplashScreen onComplete={handleSplashComplete} />;
+  }
 
   return (
     <TonConnectUIProvider manifestUrl={window.location.origin + '/tonconnect-manifest.json'}>
