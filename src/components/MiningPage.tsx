@@ -101,7 +101,7 @@ const MiningPage: React.FC = () => {
   // Get phrases for current language
   const currentPhrases = MINING_PHRASES[currentLanguage.code as keyof typeof MINING_PHRASES] || MINING_PHRASES.en;
 
-  // Helper function to format $SPACE text with special styling
+  // Helper function to format $SPACE text with white styling
   const formatSpaceText = (text: string) => {
     const parts = text.split('$SPACE');
     if (parts.length === 1) return text;
@@ -109,7 +109,7 @@ const MiningPage: React.FC = () => {
     return (
       <>
         {parts[0]}
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 font-extrabold animate-pulse">
+        <span className="text-white font-extrabold animate-pulse">
           $SPACE
         </span>
         {parts[1]}
@@ -520,9 +520,9 @@ const MiningPage: React.FC = () => {
             initial={{ scale: 1.1, rotateY: 5 }}
             animate={{ scale: 1, rotateY: 0 }}
             transition={{ duration: 0.3 }}
-            className="text-2xl md:text-3xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2"
+            className="text-2xl md:text-3xl font-black text-white mb-2"
           >
-            {spaceCoins.toLocaleString()} $SPACE
+            {spaceCoins.toLocaleString()} <span className="text-white font-extrabold">$SPACE</span>
           </motion.div>
           {autoMiningActive && (
             <motion.div 
