@@ -1,29 +1,31 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Trophy, ExternalLink } from 'lucide-react';
-import LanguageSwitcher from './LanguageSwitcher';
 import { getStoredLanguage, getTranslation } from '../utils/language';
 import { taskService } from '@/services/taskService';
 import { useToast } from '@/hooks/use-toast';
 import type { Database } from '@/integrations/supabase/types';
+
 type Task = Database['public']['Tables']['tasks']['Row'];
+
 const TasksPage = () => {
   const [currentLanguage, setCurrentLanguage] = useState(getStoredLanguage());
   const [tasks, setTasks] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
 
   // Get translation function for current language
   const t = (key: string) => getTranslation(key, currentLanguage.code);
+
   useEffect(() => {
     loadTasks();
     loadCompletedTasks();
   }, []);
+
   const loadTasks = async () => {
     try {
       const data = await taskService.getAllTasks();
@@ -34,12 +36,14 @@ const TasksPage = () => {
       setIsLoading(false);
     }
   };
+
   const loadCompletedTasks = () => {
     const completed = localStorage.getItem('completed-tasks');
     if (completed) {
       setCompletedTasks(JSON.parse(completed));
     }
   };
+
   const handleTaskComplete = (taskId: string, actionUrl?: string) => {
     if (actionUrl) {
       window.open(actionUrl, '_blank');
@@ -52,6 +56,7 @@ const TasksPage = () => {
       description: "You've earned $SPACE tokens!"
     });
   };
+
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'daily':
@@ -66,101 +71,110 @@ const TasksPage = () => {
         return 'bg-gray-500/20 text-gray-300';
     }
   };
-  return <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-4 pb-24">
-      <div className="max-w-md mx-auto space-y-6">
-        {/* Header */}
-        <div className="text-center mb-8 relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-xl"></div>
-          <div className="relative">
-            {/* Language Switcher */}
-            <div className="absolute top-0 right-0">
-              <LanguageSwitcher onLanguageChange={() => setCurrentLanguage(getStoredLanguage())} />
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-3 pb-24">
+      <div className="max-w-md mx-auto space-y-4">
+        {/* Compact Header */}
+        <div className="text-center mb-4">
+          <div className="flex items-center justify-center mb-2">
+            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
+              <Trophy className="w-5 h-5 text-white" />
             </div>
-            
-            <div className="flex items-center justify-center mb-4">
-              <div className="p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-2xl animate-pulse-glow">
-                <Trophy className="w-8 h-8 text-white" />
-              </div>
-            </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-3">
-              {t('tasks') || 'Tasks'}
-            </h1>
-            <p className="text-gray-300 text-base leading-relaxed">
-              {t('completeTasksEarn') || 'Complete tasks to earn $SPACE coins'}
-            </p>
           </div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-1">
+            {t('tasks') || 'Tasks'}
+          </h1>
+          <p className="text-gray-300 text-sm">
+            {t('completeTasksEarn') || 'Complete tasks to earn $SPACE coins'}
+          </p>
         </div>
 
-        {/* Stats Card */}
-        <Card className="bg-gradient-to-br from-green-500/15 to-emerald-500/15 backdrop-blur-xl border-2 border-green-500/40 rounded-3xl overflow-hidden">
-          <CardContent className="p-6 bg-fuchsia-800">
+        {/* Compact Stats Card */}
+        <Card className="bg-gradient-to-br from-green-500/15 to-emerald-500/15 backdrop-blur-xl border border-green-500/40 rounded-2xl">
+          <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-zinc-50 font-bold">{t('tasksCompleted') || 'Tasks Completed'}</p>
-                <p className="text-white text-2xl font-bold">{completedTasks.length}/{tasks.length}</p>
+                <p className="text-xs text-zinc-50 font-bold">{t('tasksCompleted') || 'Tasks Completed'}</p>
+                <p className="text-white text-lg font-bold">{completedTasks.length}/{tasks.length}</p>
               </div>
-              <div className="p-3 bg-green-500/20 rounded-full">
-                <CheckCircle className="w-8 h-8 text-green-400 bg-transparent" />
-              </div>
+              <CheckCircle className="w-6 h-6 text-green-400" />
             </div>
           </CardContent>
         </Card>
 
         {/* Tasks List */}
-        {isLoading ? <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-3xl overflow-hidden">
-            <CardContent className="p-8 text-center">
+        {isLoading ? (
+          <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-2xl">
+            <CardContent className="p-6 text-center">
               <p className="text-gray-300">Loading tasks...</p>
             </CardContent>
-          </Card> : tasks.length === 0 ? <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-3xl overflow-hidden">
-            <CardContent className="p-8 text-center">
-              <div className="space-y-4">
-                <div className="p-4 bg-indigo-500/20 rounded-full mx-auto w-fit">
-                  <Trophy className="w-12 h-12 text-indigo-400" />
-                </div>
-                <h3 className="text-white text-xl font-bold">{t('noTasksAvailable') || 'No Tasks Available'}</h3>
-                <p className="text-gray-300">{t('noTasksDesc') || 'New tasks will be added soon. Stay tuned!'}</p>
+          </Card>
+        ) : tasks.length === 0 ? (
+          <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-2xl">
+            <CardContent className="p-6 text-center">
+              <div className="space-y-3">
+                <Trophy className="w-8 h-8 text-indigo-400 mx-auto" />
+                <h3 className="text-white text-lg font-bold">{t('noTasksAvailable') || 'No Tasks Available'}</h3>
+                <p className="text-gray-300 text-sm">{t('noTasksDesc') || 'New tasks will be added soon!'}</p>
               </div>
             </CardContent>
-          </Card> : <div className="space-y-4">
+          </Card>
+        ) : (
+          <div className="space-y-3">
             {tasks.map(task => {
-          const isCompleted = completedTasks.includes(task.id);
-          return <Card key={task.id} className={`bg-gradient-to-br backdrop-blur-xl border-2 rounded-3xl overflow-hidden transition-all ${isCompleted ? 'from-green-500/10 to-emerald-500/10 border-green-500/30' : 'from-indigo-500/10 to-purple-500/10 border-indigo-500/30'}`}>
-                  <CardHeader className="pb-3 bg-violet-800">
+              const isCompleted = completedTasks.includes(task.id);
+              return (
+                <Card key={task.id} className={`bg-gradient-to-br backdrop-blur-xl border rounded-2xl ${
+                  isCompleted 
+                    ? 'from-green-500/10 to-emerald-500/10 border-green-500/30' 
+                    : 'from-indigo-500/10 to-purple-500/10 border-indigo-500/30'
+                }`}>
+                  <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-transparent">
-                          {isCompleted ? <CheckCircle className="w-6 h-6 text-green-400 bg-transparent" /> : <Trophy className="w-6 h-6 text-indigo-400" />}
-                        </div>
+                      <div className="flex items-center gap-2">
+                        {isCompleted ? 
+                          <CheckCircle className="w-5 h-5 text-green-400" /> : 
+                          <Trophy className="w-5 h-5 text-indigo-400" />
+                        }
                         <div>
-                          <CardTitle className="text-white text-lg">
+                          <CardTitle className="text-white text-base">
                             {t(task.title_key) || task.title_key}
                           </CardTitle>
-                          <div className="flex gap-2 mt-1">
-                            <Badge className={getTypeColor(task.task_type)}>
-                              {task.task_type}
-                            </Badge>
-                          </div>
+                          <Badge className={getTypeColor(task.task_type)} size="sm">
+                            {task.task_type}
+                          </Badge>
                         </div>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="pt-0 bg-violet-800">
-                    
+                  <CardContent className="pt-0">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-zinc-50">+{task.reward_amount} $SPACE</span>
-                      {!isCompleted && <Button onClick={() => handleTaskComplete(task.id, task.action_url || undefined)} className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 font-normal text-base rounded-full">
-                          {task.action_url && <ExternalLink className="w-4 h-4 mr-2" />}
+                      <span className="font-bold text-zinc-50 text-sm">+{task.reward_amount} $SPACE</span>
+                      {!isCompleted ? (
+                        <Button 
+                          onClick={() => handleTaskComplete(task.id, task.action_url || undefined)} 
+                          size="sm"
+                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-xs rounded-full"
+                        >
+                          {task.action_url && <ExternalLink className="w-3 h-3 mr-1" />}
                           Complete
-                        </Button>}
-                      {isCompleted && <Badge className="bg-green-500/20 text-green-300">
+                        </Button>
+                      ) : (
+                        <Badge className="bg-green-500/20 text-green-300 text-xs">
                           Completed
-                        </Badge>}
+                        </Badge>
+                      )}
                     </div>
                   </CardContent>
-                </Card>;
-        })}
-          </div>}
+                </Card>
+              );
+            })}
+          </div>
+        )}
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default TasksPage;
