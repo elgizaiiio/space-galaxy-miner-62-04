@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -76,7 +77,21 @@ const App = () => {
     setShowSplash(false);
   };
 
-  const t = (key: string) => getTranslation(key, currentLanguage.code);
+  const t = (key: string) => {
+    const translation = getTranslation(key, currentLanguage.code);
+    // Fallback to English translations for missing keys
+    if (!translation) {
+      switch (key) {
+        case 'mining': return 'Mining';
+        case 'tasks': return 'Tasks';
+        case 'wallet': return 'Wallet';
+        case 'friends': return 'Friends';
+        case 'premium': return 'Premium';
+        default: return key;
+      }
+    }
+    return translation;
+  };
 
   const navigationItems = [{
     id: 'mining',

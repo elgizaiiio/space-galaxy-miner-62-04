@@ -84,6 +84,8 @@ const StarField = () => {
 };
 
 const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
+  const [hasError, setHasError] = React.useState(false);
+
   React.useEffect(() => {
     const timer = setTimeout(() => {
       onComplete();
@@ -92,16 +94,55 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
     return () => clearTimeout(timer);
   }, [onComplete]);
 
+  // Fallback UI in case of Canvas errors
+  if (hasError) {
+    return (
+      <div className="fixed inset-0 z-50 bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
+            $SPACE
+          </div>
+          <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="w-16 h-1 bg-white/20 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-pink-500 to-blue-500 rounded-full animate-pulse"></div>
+              </div>
+              <p className="text-white/80 text-sm font-medium">Loading Space...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-50 bg-black overflow-hidden">
-      <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-        <ambientLight intensity={0.1} />
-        <pointLight position={[10, 10, 10]} intensity={0.5} color="#ec4899" />
-        <StarField />
-        <group position={[0, 0, 0]}>
-          <SpaceLogo3D text="$SPACE" size={0.8} />
-        </group>
-      </Canvas>
+      <React.Suspense fallback={
+        <div className="fixed inset-0 z-50 bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 flex items-center justify-center">
+          <div className="text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            $SPACE
+          </div>
+        </div>
+      }>
+        <Canvas 
+          camera={{ position: [0, 0, 5], fov: 75 }}
+          onCreated={({ gl }) => {
+            // Ensure WebGL context is properly initialized
+            gl.setClearColor('#000000');
+          }}
+          onError={(error) => {
+            console.error('Canvas error:', error);
+            setHasError(true);
+          }}
+        >
+          <ambientLight intensity={0.1} />
+          <pointLight position={[10, 10, 10]} intensity={0.5} color="#ec4899" />
+          <StarField />
+          <group position={[0, 0, 0]}>
+            <SpaceLogo3D text="$SPACE" size={0.8} />
+          </group>
+        </Canvas>
+      </React.Suspense>
       
       {/* Loading indicator */}
       <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2">
