@@ -73,95 +73,95 @@ const TasksPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-3 pb-24">
-      <div className="max-w-md mx-auto space-y-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-2 pb-20">
+      <div className="max-w-md mx-auto space-y-3">
         {/* Compact Header */}
-        <div className="text-center mb-4">
-          <div className="flex items-center justify-center mb-2">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
-              <Trophy className="w-5 h-5 text-white" />
+        <div className="text-center mb-3">
+          <div className="flex items-center justify-center mb-1">
+            <div className="p-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
+              <Trophy className="w-4 h-4 text-white" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-1">
+          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-0.5">
             {t('tasks') || 'Tasks'}
           </h1>
-          <p className="text-gray-300 text-sm">
+          <p className="text-gray-300 text-xs">
             {t('completeTasksEarn') || 'Complete tasks to earn $SPACE coins'}
           </p>
         </div>
 
         {/* Compact Stats Card */}
-        <Card className="bg-gradient-to-br from-green-500/15 to-emerald-500/15 backdrop-blur-xl border border-green-500/40 rounded-2xl">
-          <CardContent className="p-4">
+        <Card className="bg-gradient-to-br from-green-500/15 to-emerald-500/15 backdrop-blur-xl border border-green-500/40 rounded-xl">
+          <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-zinc-50 font-bold">{t('tasksCompleted') || 'Tasks Completed'}</p>
-                <p className="text-white text-lg font-bold">{completedTasks.length}/{tasks.length}</p>
+                <p className="text-white text-base font-bold">{completedTasks.length}/{tasks.length}</p>
               </div>
-              <CheckCircle className="w-6 h-6 text-green-400" />
+              <CheckCircle className="w-5 h-5 text-green-400" />
             </div>
           </CardContent>
         </Card>
 
         {/* Tasks List */}
         {isLoading ? (
-          <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-2xl">
-            <CardContent className="p-6 text-center">
-              <p className="text-gray-300">Loading tasks...</p>
+          <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-xl">
+            <CardContent className="p-4 text-center">
+              <p className="text-gray-300 text-sm">Loading tasks...</p>
             </CardContent>
           </Card>
         ) : tasks.length === 0 ? (
-          <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-2xl">
-            <CardContent className="p-6 text-center">
-              <div className="space-y-3">
-                <Trophy className="w-8 h-8 text-indigo-400 mx-auto" />
-                <h3 className="text-white text-lg font-bold">{t('noTasksAvailable') || 'No Tasks Available'}</h3>
-                <p className="text-gray-300 text-sm">{t('noTasksDesc') || 'New tasks will be added soon!'}</p>
+          <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-xl">
+            <CardContent className="p-4 text-center">
+              <div className="space-y-2">
+                <Trophy className="w-6 h-6 text-indigo-400 mx-auto" />
+                <h3 className="text-white text-base font-bold">{t('noTasksAvailable') || 'No Tasks Available'}</h3>
+                <p className="text-gray-300 text-xs">{t('noTasksDesc') || 'New tasks will be added soon!'}</p>
               </div>
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {tasks.map(task => {
               const isCompleted = completedTasks.includes(task.id);
               return (
-                <Card key={task.id} className={`bg-gradient-to-br backdrop-blur-xl border rounded-2xl ${
+                <Card key={task.id} className={`bg-gradient-to-br backdrop-blur-xl border rounded-xl ${
                   isCompleted 
                     ? 'from-green-500/10 to-emerald-500/10 border-green-500/30' 
                     : 'from-indigo-500/10 to-purple-500/10 border-indigo-500/30'
                 }`}>
-                  <CardHeader className="pb-2">
+                  <CardHeader className="pb-1">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2">
                         {isCompleted ? 
-                          <CheckCircle className="w-5 h-5 text-green-400" /> : 
-                          <Trophy className="w-5 h-5 text-indigo-400" />
+                          <CheckCircle className="w-4 h-4 text-green-400" /> : 
+                          <Trophy className="w-4 h-4 text-indigo-400" />
                         }
                         <div>
-                          <CardTitle className="text-white text-base">
+                          <CardTitle className="text-white text-sm">
                             {t(task.title_key) || task.title_key}
                           </CardTitle>
-                          <Badge className={getTypeColor(task.task_type)}>
+                          <Badge className={`${getTypeColor(task.task_type)} text-xs px-1.5 py-0.5`}>
                             {task.task_type}
                           </Badge>
                         </div>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="pt-0">
+                  <CardContent className="pt-0 pb-3">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-zinc-50 text-sm">+{task.reward_amount} $SPACE</span>
+                      <span className="font-bold text-zinc-50 text-xs">+{task.reward_amount} $SPACE</span>
                       {!isCompleted ? (
                         <Button 
                           onClick={() => handleTaskComplete(task.id, task.action_url || undefined)} 
                           size="sm"
-                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-xs rounded-full"
+                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-xs rounded-full px-3 py-1.5 h-auto"
                         >
                           {task.action_url && <ExternalLink className="w-3 h-3 mr-1" />}
                           Complete
                         </Button>
                       ) : (
-                        <Badge className="bg-green-500/20 text-green-300 text-xs">
+                        <Badge className="bg-green-500/20 text-green-300 text-xs px-2 py-0.5">
                           Completed
                         </Badge>
                       )}
