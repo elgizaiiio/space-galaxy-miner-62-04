@@ -442,17 +442,17 @@ const MiningPage: React.FC = () => {
 
       {/* Central Mining Circle */}
       <div className="relative flex flex-col items-center justify-center mt-16">
-        {/* Smaller Central Circle - Fixed (no rotation) */}
+        {/* Central Circle - Fixed (no rotation) */}
         <div className="w-48 h-48 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-md border-4 border-white/20 flex flex-col items-center justify-center relative overflow-hidden">
           {/* Inner glow effect */}
           <div className="absolute inset-4 rounded-full bg-gradient-to-br from-blue-400/10 to-purple-400/10 blur-xl"></div>
           
-          {/* SPACE AI Logo in center */}
-          <div className="w-24 h-16 mb-2 z-10 flex items-center justify-center">
+          {/* SPACE AI Logo in center - Full circular logo */}
+          <div className="w-32 h-32 mb-2 z-10 flex items-center justify-center">
             <img 
-              src="/lovable-uploads/152a862d-1671-4b8b-a0fd-b17469ade7e4.png" 
+              src="/lovable-uploads/d391ae90-26f4-41e1-b5c8-5451cc3c1664.png" 
               alt="SPACE AI" 
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain rounded-full"
             />
           </div>
 
@@ -462,9 +462,9 @@ const MiningPage: React.FC = () => {
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="text-center z-10"
+            className="text-center z-10 absolute bottom-8"
           >
-            <div className="text-2xl font-black text-white mb-1">
+            <div className="text-xl font-black text-white mb-1">
               {spaceCoins.toLocaleString()}
             </div>
             <div className="text-white/80 font-bold text-sm">$SPACE</div>
@@ -475,7 +475,7 @@ const MiningPage: React.FC = () => {
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="absolute bottom-4 text-center z-10"
+              className="absolute bottom-2 text-center z-10"
             >
               <div className="text-xs text-green-300 font-semibold">
                 {autoMiningActive ? 'Auto Mining' : 'Mining Active'}
