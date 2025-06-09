@@ -1,18 +1,17 @@
+
 import { Language, TranslationMap } from './languages/types';
 import { SUPPORTED_LANGUAGES } from './languages/supportedLanguages';
 import { commonTranslations } from './languages/commonTranslations';
 import { miningTranslations } from './languages/miningTranslations';
 import { subscriptionTranslations } from './languages/subscriptionTranslations';
 import { contestTranslations } from './languages/contestTranslations';
-import { gameTranslations } from './languages/gameTranslations';
 
 // Combine all translations
 const translations: TranslationMap = {
   ...miningTranslations,
   ...commonTranslations,
   ...subscriptionTranslations,
-  ...contestTranslations,
-  ...gameTranslations
+  ...contestTranslations
 };
 
 export { SUPPORTED_LANGUAGES, type Language };

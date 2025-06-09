@@ -12,16 +12,14 @@ import TasksPage from './components/TasksPage';
 import WalletPage from './components/WalletPage';
 import ReferralPage from './components/ReferralPage';
 import SubscriptionPage from './components/SubscriptionPage';
-import ContestsPage from './components/ContestsPage';
 import TaskAdminPage from './components/TaskAdminPage';
-import GamePage from './components/GamePage';
 import { Button } from '@/components/ui/button';
-import { Home, CheckSquare, Wallet, Users, Crown, Trophy, Settings, Gamepad2 } from 'lucide-react';
+import { Home, CheckSquare, Wallet, Users, Crown, Settings } from 'lucide-react';
 import { getStoredLanguage, getTranslation } from './utils/language';
 
 const queryClient = new QueryClient();
 type AppState = 'splash' | 'onboarding' | 'main';
-type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'subscription' | 'contests' | 'game' | 'admin';
+type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'subscription' | 'admin';
 
 const App = () => {
   const [appState, setAppState] = useState<AppState>('splash');
@@ -97,14 +95,6 @@ const App = () => {
     label: t('tasks'),
     icon: CheckSquare
   }, {
-    id: 'game',
-    label: t('game') || 'Game',
-    icon: Gamepad2
-  }, {
-    id: 'contests',
-    label: t('contests') || 'Contests',
-    icon: Trophy
-  }, {
     id: 'wallet',
     label: t('wallet'),
     icon: Wallet
@@ -132,16 +122,12 @@ const App = () => {
         return <MiningPage />;
       case 'tasks':
         return <TasksPage />;
-      case 'game':
-        return <GamePage />;
       case 'wallet':
         return <WalletPage />;
       case 'referral':
         return <ReferralPage />;
       case 'subscription':
         return <SubscriptionPage />;
-      case 'contests':
-        return <ContestsPage />;
       case 'admin':
         return showAdminAccess ? <TaskAdminPage /> : <MiningPage />;
       default:
@@ -164,9 +150,9 @@ const App = () => {
                 {renderCurrentPage()}
               </div>
 
-              <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/20 p-4 z-50 py-[5px]">
+              <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/20 p-4 z-50">
                 <div className="max-w-md mx-auto">
-                  <div className={`grid gap-2 ${showAdminAccess ? 'grid-cols-8' : 'grid-cols-7'}`}>
+                  <div className={`grid gap-2 ${showAdminAccess ? 'grid-cols-6' : 'grid-cols-5'}`}>
                     {navigationItems.map(item => {
                   const Icon = item.icon;
                   return <Button key={item.id} variant="ghost" onClick={() => {
