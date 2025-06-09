@@ -22,18 +22,35 @@ const StarField = () => {
       {[...Array(50)].map((_, i) => (
         <div
           key={i}
-          className="absolute bg-white rounded-full animate-pulse"
+          className="absolute"
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-            width: `${Math.random() * 1.5 + 0.5}px`,
-            height: `${Math.random() * 1.5 + 0.5}px`,
-            animationDelay: `${Math.random() * 3}s`,
-            animationDuration: `${Math.random() * 2 + 1}s`,
-            boxShadow: `0 0 ${Math.random() * 4 + 2}px rgba(255, 255, 255, 0.3)`,
+            width: `${Math.random() * 6 + 3}px`,
+            height: `${Math.random() * 6 + 3}px`,
+            background: `linear-gradient(45deg, #ffffff, #ec4899, #8b5cf6)`,
+            clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+            animation: `twinkle-${i % 3} ${Math.random() * 3 + 2}s ease-in-out infinite`,
+            filter: `hue-rotate(${Math.random() * 360}deg)`,
           }}
         />
       ))}
+      <style jsx>{`
+        @keyframes twinkle-0 {
+          0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+          50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+        }
+        @keyframes twinkle-1 {
+          0%, 100% { opacity: 0.5; transform: scale(1) rotate(0deg); }
+          33% { opacity: 0.8; transform: scale(1.3) rotate(120deg); }
+          66% { opacity: 0.2; transform: scale(0.7) rotate(240deg); }
+        }
+        @keyframes twinkle-2 {
+          0%, 100% { opacity: 0.4; transform: scale(0.9) rotate(0deg); }
+          25% { opacity: 1; transform: scale(1.1) rotate(90deg); }
+          75% { opacity: 0.6; transform: scale(1.4) rotate(270deg); }
+        }
+      `}</style>
     </div>
   );
 };
@@ -151,20 +168,17 @@ const MiningPage = () => {
           </p>
         </div>
 
-        {/* Mining Circle - Smaller Logo */}
+        {/* Mining Circle - Clean Logo without borders */}
         <div className="relative flex justify-center items-center mb-4">
           <div className="relative w-32 h-32">
-            {/* Outer glow ring */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-lg animate-pulse"></div>
-            
-            {/* Main circle with no border */}
-            <div className="relative w-full h-full rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-lg shadow-xl overflow-hidden">
-              {/* SPACE AI Logo in center - smaller size */}
-              <div className="absolute inset-2 z-10 flex items-center justify-center">
+            {/* Removed outer glow ring and borders */}
+            <div className="relative w-full h-full overflow-hidden">
+              {/* SPACE AI Logo in center - clean without borders */}
+              <div className="w-full h-full z-10 flex items-center justify-center">
                 <img 
                   src="/lovable-uploads/d391ae90-26f4-41e1-b5c8-5451cc3c1664.png" 
                   alt="SPACE AI Logo"
-                  className="w-full h-full object-cover rounded-full"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </div>
@@ -247,30 +261,18 @@ const MiningPage = () => {
             </div>
           </div>
 
-          {/* Enhanced Action Button */}
-          <Button
-            onClick={handleStartMining}
-            disabled={miningActive || autoMiningActive}
-            className={`w-full py-2 text-sm font-bold rounded-xl transition-all duration-300 shadow-lg ${
-              miningActive || autoMiningActive
-                ? 'bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 shadow-red-500/30'
-                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-blue-500/30'
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              {miningActive || autoMiningActive ? (
-                <>
-                  <Pause className="w-4 h-4" />
-                  <span>Stop Mining</span>
-                </>
-              ) : (
-                <>
-                  <Play className="w-4 h-4" />
-                  <span>Start Mining</span>
-                </>
-              )}
-            </div>
-          </Button>
+          {/* Enhanced Action Button - Only show Start Mining */}
+          {!miningActive && !autoMiningActive && (
+            <Button
+              onClick={handleStartMining}
+              className="w-full py-2 text-sm font-bold rounded-xl transition-all duration-300 shadow-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-blue-500/30"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Play className="w-4 h-4" />
+                <span>Start Mining</span>
+              </div>
+            </Button>
+          )}
         </motion.div>
       </div>
     </div>
