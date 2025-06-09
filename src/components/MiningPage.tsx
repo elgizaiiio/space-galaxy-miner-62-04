@@ -488,7 +488,7 @@ const MiningPage: React.FC = () => {
         transition={{ duration: 1, type: "spring", bounce: 0.3 }}
         className="my-2"
       >
-        <SpaceLogo3D size={0.6} className="w-48 h-24" />
+        <SpaceLogo3D size={0.6} />
       </motion.div>
 
       {/* Compact Phrase Display */}
