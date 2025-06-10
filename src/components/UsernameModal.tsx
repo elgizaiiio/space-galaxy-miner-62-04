@@ -19,12 +19,12 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
     e.preventDefault();
     
     if (!username.trim()) {
-      setError('يرجى إدخال اسم المستخدم');
+      setError('Please enter a username');
       return;
     }
     
     if (username.trim().length < 3) {
-      setError('اسم المستخدم يجب أن يكون 3 أحرف على الأقل');
+      setError('Username must be at least 3 characters');
       return;
     }
     
@@ -37,20 +37,20 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-md bg-slate-900/95 border border-blue-400/30 text-white" aria-describedby="username-description">
+      <DialogContent className="sm:max-w-sm bg-slate-900/95 border border-blue-400/30 text-white" aria-describedby="username-description">
         <DialogHeader>
-          <DialogTitle className="text-center text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            مرحباً بك في Space Coin
+          <DialogTitle className="text-center text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            Welcome to Space Coin
           </DialogTitle>
-          <DialogDescription id="username-description" className="text-center text-gray-300">
-            يرجى إدخال اسم المستخدم الخاص بك للمتابعة
+          <DialogDescription id="username-description" className="text-center text-gray-300 text-sm">
+            Please enter your username to continue
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-3 mt-3">
           <div className="space-y-2">
-            <Label htmlFor="username" className="text-gray-300">
-              اسم المستخدم
+            <Label htmlFor="username" className="text-gray-300 text-sm">
+              Username
             </Label>
             <Input
               id="username"
@@ -60,20 +60,20 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
                 setUsername(e.target.value);
                 setError('');
               }}
-              placeholder="أدخل اسم المستخدم"
-              className="bg-slate-800 border-slate-600 text-white placeholder-gray-400"
+              placeholder="Enter username"
+              className="bg-slate-800 border-slate-600 text-white placeholder-gray-400 h-9 text-sm"
               autoFocus
             />
             {error && (
-              <p className="text-red-400 text-sm">{error}</p>
+              <p className="text-red-400 text-xs">{error}</p>
             )}
           </div>
           
           <Button 
             type="submit" 
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 h-9 text-sm"
           >
-            بدء التعدين
+            Start Mining
           </Button>
         </form>
       </DialogContent>
