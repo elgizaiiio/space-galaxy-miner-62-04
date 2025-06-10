@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
+import SplashScreen from './components/SplashScreen';
 import MiningPage from './components/MiningPage';
 import TasksPage from './components/TasksPage';
 import WalletPage from './components/WalletPage';
@@ -19,6 +20,7 @@ const queryClient = new QueryClient();
 type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'store' | 'admin';
 
 const App = () => {
+  const [showSplash, setShowSplash] = useState(true);
   const [currentPage, setCurrentPage] = useState<Page>('mining');
   const [showAdminAccess, setShowAdminAccess] = useState(false);
   const [taskClickCount, setTaskClickCount] = useState(0);
@@ -26,14 +28,29 @@ const App = () => {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    // Check if username is already saved
-    const savedUsername = localStorage.getItem('username');
-    if (savedUsername) {
-      setUsername(savedUsername);
-    } else {
-      setShowUsernameModal(true);
+    // Check if splash has been shown before
+    const splashShown = localStorage.getItem('splashShown');
+    if (splashShown) {
+      setShowSplash(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (!showSplash) {
+      // Check if username is already saved
+      const savedUsername = localStorage.getItem('username');
+      if (savedUsername) {
+        setUsername(savedUsername);
+      } else {
+        setShowUsernameModal(true);
+      }
+    }
+  }, [showSplash]);
+
+  const handleSplashComplete = () => {
+    localStorage.setItem('splashShown', 'true');
+    setShowSplash(false);
+  };
 
   useEffect(() => {
     let clickCount = 0;
@@ -132,6 +149,11 @@ const App = () => {
         return <MiningPage />;
     }
   };
+
+  // Show splash screen first
+  if (showSplash) {
+    return <SplashScreen onComplete={handleSplashComplete} />;
+  }
 
   return (
     <TonConnectUIProvider manifestUrl={window.location.origin + '/tonconnect-manifest.json'}>
