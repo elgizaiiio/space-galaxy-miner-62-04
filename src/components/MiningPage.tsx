@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -8,8 +7,7 @@ import {
   Zap, 
   Clock, 
   TrendingUp, 
-  Play, 
-  Pause,
+  Play,
 } from 'lucide-react';
 
 interface MiningPageProps {
@@ -26,31 +24,38 @@ const StarField = () => {
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-            width: `${Math.random() * 6 + 3}px`,
-            height: `${Math.random() * 6 + 3}px`,
+            width: `${Math.random() * 4 + 2}px`,
+            height: `${Math.random() * 4 + 2}px`,
             background: `linear-gradient(45deg, #ffffff, #ec4899, #8b5cf6)`,
-            clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
-            animation: `twinkle-${i % 3} ${Math.random() * 3 + 2}s ease-in-out infinite`,
+            borderRadius: '50%',
+            animation: `sparkle-${i % 4} ${Math.random() * 4 + 3}s ease-in-out infinite`,
             filter: `hue-rotate(${Math.random() * 360}deg)`,
           }}
         />
       ))}
-      <style jsx>{`
-        @keyframes twinkle-0 {
-          0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
-          50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
-        }
-        @keyframes twinkle-1 {
-          0%, 100% { opacity: 0.5; transform: scale(1) rotate(0deg); }
-          33% { opacity: 0.8; transform: scale(1.3) rotate(120deg); }
-          66% { opacity: 0.2; transform: scale(0.7) rotate(240deg); }
-        }
-        @keyframes twinkle-2 {
-          0%, 100% { opacity: 0.4; transform: scale(0.9) rotate(0deg); }
-          25% { opacity: 1; transform: scale(1.1) rotate(90deg); }
-          75% { opacity: 0.6; transform: scale(1.4) rotate(270deg); }
-        }
-      `}</style>
+      <style>
+        {`
+          @keyframes sparkle-0 {
+            0%, 100% { opacity: 0.2; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.5); }
+          }
+          @keyframes sparkle-1 {
+            0%, 100% { opacity: 0.4; transform: scale(0.8); }
+            25% { opacity: 0.9; transform: scale(1.2); }
+            75% { opacity: 0.3; transform: scale(0.6); }
+          }
+          @keyframes sparkle-2 {
+            0%, 100% { opacity: 0.3; transform: scale(0.7); }
+            33% { opacity: 1; transform: scale(1.4); }
+            66% { opacity: 0.5; transform: scale(1); }
+          }
+          @keyframes sparkle-3 {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            40% { opacity: 0.8; transform: scale(1.3); }
+            80% { opacity: 0.2; transform: scale(0.4); }
+          }
+        `}
+      </style>
     </div>
   );
 };
@@ -168,12 +173,79 @@ const MiningPage = () => {
           </p>
         </div>
 
-        {/* Mining Circle - Clean Logo without borders */}
+        {/* Enhanced Compact Mining Status */}
+        {(miningActive || autoMiningActive) && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="relative mb-3"
+          >
+            <div className="bg-gradient-to-r from-green-500/20 via-emerald-500/20 to-green-600/20 backdrop-blur-xl border border-green-400/50 rounded-xl p-2 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="relative">
+                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/70"></div>
+                    <div className="absolute inset-0 w-3 h-3 bg-green-400 rounded-full animate-ping opacity-40"></div>
+                  </div>
+                  <span className="text-green-300 font-bold text-sm">
+                    {autoMiningActive ? 'Auto Mining' : 'Mining Active'}
+                  </span>
+                </div>
+                <div className="text-right">
+                  <div className="text-green-200 text-xs font-medium">
+                    {formatTime(autoMiningActive ? autoMiningRemainingTime : remainingTime)}
+                  </div>
+                  <div className="text-green-400 text-xs">
+                    +{coinsPerSecond.toFixed(1)}/sec
+                  </div>
+                </div>
+              </div>
+              
+              {/* Progress bar */}
+              <div className="mt-2">
+                <div className="w-full bg-green-900/30 rounded-full h-1.5">
+                  <motion.div 
+                    className="bg-gradient-to-r from-green-400 to-emerald-400 h-1.5 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ 
+                      width: `${((autoMiningActive ? (3600 - autoMiningRemainingTime) / 3600 : (300 - remainingTime) / 300) * 100)}%` 
+                    }}
+                    transition={{ duration: 0.5 }}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Floating particles effect */}
+            <div className="absolute inset-0 pointer-events-none">
+              {[...Array(3)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-1 h-1 bg-green-400 rounded-full"
+                  style={{
+                    left: `${20 + i * 30}%`,
+                    top: '50%',
+                  }}
+                  animate={{
+                    y: [-10, -30, -10],
+                    opacity: [0.8, 0.2, 0.8],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    delay: i * 0.7,
+                  }}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Mining Circle - Clean Logo */}
         <div className="relative flex justify-center items-center mb-4">
           <div className="relative w-32 h-32">
-            {/* Removed outer glow ring and borders */}
             <div className="relative w-full h-full overflow-hidden">
-              {/* SPACE AI Logo in center - clean without borders */}
               <div className="w-full h-full z-10 flex items-center justify-center">
                 <img 
                   src="/lovable-uploads/d391ae90-26f4-41e1-b5c8-5451cc3c1664.png" 
@@ -191,25 +263,6 @@ const MiningPage = () => {
           whileTap={{ scale: 0.99 }}
           className="bg-gradient-to-br from-slate-800/50 via-blue-900/40 to-purple-900/50 backdrop-blur-xl border border-blue-400/30 rounded-2xl p-3 shadow-xl"
         >
-          {/* Mining Status */}
-          <div className="text-center mb-3">
-            <div className="flex items-center justify-center gap-2 mb-1">
-              {miningActive || autoMiningActive ? (
-                <>
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-md shadow-green-400/50"></div>
-                  <span className="text-green-400 font-semibold text-sm">
-                    {autoMiningActive ? 'Auto Mining Active' : 'Mining Active'}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                  <span className="text-gray-300 font-semibold text-sm">Mining Stopped</span>
-                </>
-              )}
-            </div>
-          </div>
-
           {/* Enhanced Stats Grid */}
           <div className="grid grid-cols-2 gap-2 mb-3">
             {/* Balance */}
