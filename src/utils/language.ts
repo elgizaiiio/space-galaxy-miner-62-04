@@ -2,7 +2,7 @@
 import { Language } from './languages/types';
 import { SUPPORTED_LANGUAGES } from './languages/supportedLanguages';
 
-// Enhanced translations with missing keys
+// Enhanced translations - all in English
 const translations: Record<string, string> = {
   // Basic navigation
   'mining': 'Mining',
@@ -10,6 +10,7 @@ const translations: Record<string, string> = {
   'wallet': 'Wallet',
   'friends': 'Friends',
   'premium': 'Premium',
+  'store': 'Store',
   
   // Mining page
   'startMining': 'Start Mining',
@@ -124,6 +125,23 @@ const translations: Record<string, string> = {
   'subscribeNow': 'Subscribe Now',
   'currentPlan': 'Current Plan',
   'premiumBenefits': 'Premium Benefits',
+  
+  // Store
+  'premiumStore': 'Premium Store',
+  'premiumSubscriptions': 'Premium Subscriptions',
+  'miningUpgrades': 'Mining Upgrades',
+  'mostPopular': 'Most Popular',
+  'subscribeNow': 'Subscribe Now',
+  'buyNow': 'Buy Now',
+  'owned': 'Owned',
+  'active': 'Active',
+  'processing': 'Processing...',
+  'walletRequired': 'Wallet Required',
+  'connectWalletFirst': 'Please connect your TON wallet first',
+  'purchaseSuccessful': 'Purchase Successful!',
+  'activatedSuccessfully': 'activated successfully!',
+  'paymentFailed': 'Payment Failed',
+  'failedToProcessPayment': 'Failed to process payment',
   
   // Contests
   'contests': 'Contests',

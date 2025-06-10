@@ -20,7 +20,6 @@ import {
 import { formatTON } from '../utils/ton';
 
 const StorePage = () => {
-  const [tonBalance] = useState(5.25);
   const [tonConnectUI] = useTonConnectUI();
   const [purchasedItems, setPurchasedItems] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -30,46 +29,46 @@ const StorePage = () => {
     {
       id: 'basic',
       name: 'Basic Premium',
-      description: 'تعزيز التعدين الأساسي',
+      description: 'Essential mining boost',
       price: 2.5,
-      duration: 'شهر واحد',
+      duration: '1 month',
       icon: Crown,
       color: 'from-blue-500 to-cyan-600',
       features: [
-        'سرعة تعدين 2x',
-        'تعدين تلقائي 24 ساعة',
-        'خلفيات أساسية'
+        '2x mining speed',
+        '24h auto mining',
+        'Basic backgrounds'
       ]
     },
     {
       id: 'premium',
       name: 'Premium Pro',
-      description: 'قوة تعدين متقدمة',
+      description: 'Advanced mining power',
       price: 5.0,
-      duration: 'شهر واحد',
+      duration: '1 month',
       icon: Diamond,
       color: 'from-purple-500 to-pink-600',
       popular: true,
       features: [
-        'سرعة تعدين 5x',
-        'تعدين تلقائي غير محدود',
-        'جميع الخلفيات',
-        'شارة VIP'
+        '5x mining speed',
+        'Unlimited auto mining',
+        'All backgrounds',
+        'VIP badge'
       ]
     },
     {
       id: 'vip',
       name: 'VIP Elite',
-      description: 'تجربة التعدين النهائية',
+      description: 'Ultimate mining experience',
       price: 10.0,
-      duration: 'شهر واحد',
+      duration: '1 month',
       icon: Rocket,
       color: 'from-orange-500 to-red-600',
       features: [
-        'سرعة تعدين 10x',
-        'تعدين تلقائي غير محدود',
-        'خلفيات VIP حصرية',
-        'شارة النخبة'
+        '10x mining speed',
+        'Unlimited auto mining',
+        'Exclusive VIP backgrounds',
+        'Elite badge'
       ]
     }
   ];
@@ -77,28 +76,28 @@ const StorePage = () => {
   const upgrades = [
     {
       id: 'speed-2x',
-      name: 'تعزيز السرعة 2x',
-      description: 'تعزيز التعدين لمدة 24 ساعة',
+      name: '2x Speed Boost',
+      description: 'Mining boost for 24 hours',
       price: 0.5,
-      duration: '24 ساعة',
+      duration: '24 hours',
       icon: Zap,
       color: 'from-yellow-500 to-orange-600'
     },
     {
       id: 'speed-5x',
-      name: 'تعزيز السرعة 5x',
-      description: 'تعزيز فائق لمدة 48 ساعة',
+      name: '5x Speed Boost',
+      description: 'Super boost for 48 hours',
       price: 1.2,
-      duration: '48 ساعة',
+      duration: '48 hours',
       icon: Zap,
       color: 'from-green-500 to-emerald-600'
     },
     {
       id: 'auto-mining',
-      name: 'التعدين التلقائي',
-      description: 'تعدين تلقائي لمدة 7 أيام',
+      name: 'Auto Mining',
+      description: 'Automatic mining for 7 days',
       price: 2.0,
-      duration: '7 أيام',
+      duration: '7 days',
       icon: Shield,
       color: 'from-indigo-500 to-purple-600'
     }
@@ -107,17 +106,8 @@ const StorePage = () => {
   const handlePurchase = async (item: any, type: 'subscription' | 'upgrade') => {
     if (!tonConnectUI.wallet) {
       toast({
-        title: "المحفظة مطلوبة",
-        description: "يرجى ربط محفظة TON الخاصة بك أولاً",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (tonBalance < item.price) {
-      toast({
-        title: "TON غير كافي",
-        description: `تحتاج إلى ${formatTON(item.price)} ولكن لديك فقط ${formatTON(tonBalance)}`,
+        title: "Wallet Required",
+        description: "Please connect your TON wallet first",
         variant: "destructive"
       });
       return;
@@ -142,14 +132,14 @@ const StorePage = () => {
       }
 
       toast({
-        title: "الشراء تم بنجاح!",
-        description: `تم تفعيل ${item.name} بنجاح!`
+        title: "Purchase Successful!",
+        description: `${item.name} activated successfully!`
       });
     } catch (error) {
       console.error('Purchase failed:', error);
       toast({
-        title: "فشل الدفع",
-        description: "فشل في معالجة الدفعة",
+        title: "Payment Failed",
+        description: "Failed to process payment",
         variant: "destructive"
       });
     } finally {
@@ -159,7 +149,7 @@ const StorePage = () => {
 
   return (
     <div 
-      className="min-h-screen p-2 pb-20 relative"
+      className="min-h-screen p-4 pb-20 relative"
       style={{
         backgroundImage: `url(/lovable-uploads/0636abc4-6032-4f0c-872d-cfc4ff30f6f3.png)`,
         backgroundSize: 'cover',
@@ -169,16 +159,16 @@ const StorePage = () => {
     >
       <div className="absolute inset-0 bg-black/50"></div>
       
-      <div className="max-w-md mx-auto space-y-3 relative z-10">
-        <div className="text-center mb-3">
+      <div className="max-w-md mx-auto space-y-6 relative z-10">
+        <div className="text-center mb-8">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex items-center justify-center mb-2"
+            className="flex items-center justify-center mb-4"
           >
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-lg">
-              <Crown className="w-6 h-6 text-white" />
+            <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-lg">
+              <Crown className="w-8 h-8 text-white" />
             </div>
           </motion.div>
           
@@ -186,32 +176,30 @@ const StorePage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2"
+            className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-3"
           >
-            متجر TON
+            Premium Store
           </motion.h1>
           
-          <motion.div 
+          <motion.p 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex items-center justify-center gap-2 bg-gradient-to-br from-slate-800/60 to-blue-900/50 backdrop-blur-lg border border-blue-400/30 rounded-lg p-2 shadow-lg"
+            className="text-gray-300 text-base"
           >
-            <Coins className="w-4 h-4 text-blue-400" />
-            <span className="text-white font-bold text-sm">{formatTON(tonBalance)}</span>
-            <Sparkles className="w-3 h-3 text-yellow-400 animate-pulse" />
-          </motion.div>
+            Unlock premium features and boost your mining
+          </motion.p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-6">
           <motion.h2 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="text-lg font-bold text-white flex items-center gap-2"
+            className="text-xl font-bold text-white flex items-center gap-2"
           >
-            <Crown className="w-5 h-5 text-yellow-400" />
-            اشتراكات بريميوم
+            <Crown className="w-6 h-6 text-yellow-400" />
+            Premium Subscriptions
           </motion.h2>
           
           {subscriptions.map((sub, index) => {
@@ -229,38 +217,38 @@ const StorePage = () => {
                 className="relative"
               >
                 {sub.popular && (
-                  <Badge className="absolute -top-1 left-1/2 transform -translate-x-1/2 z-10 bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-bold text-xs">
-                    الأكثر شعبية
+                  <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10 bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-bold text-sm">
+                    Most Popular
                   </Badge>
                 )}
                 
-                <Card className={`bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-lg border ${sub.popular ? 'border-yellow-400/50' : 'border-blue-400/20'} rounded-xl shadow-lg ${sub.popular ? 'ring-1 ring-yellow-400/30' : ''}`}>
-                  <CardHeader className="text-center pb-2 pt-3">
-                    <div className="flex justify-center mb-2">
-                      <div className={`p-2 rounded-full bg-gradient-to-r ${sub.color} shadow-md`}>
-                        <Icon className="w-5 h-5 text-white" />
+                <Card className={`bg-gradient-to-br from-slate-800/60 via-blue-900/40 to-purple-900/50 backdrop-blur-lg border ${sub.popular ? 'border-yellow-400/50' : 'border-blue-400/30'} rounded-xl shadow-xl ${sub.popular ? 'ring-2 ring-yellow-400/30' : ''}`}>
+                  <CardHeader className="text-center pb-4 pt-6">
+                    <div className="flex justify-center mb-3">
+                      <div className={`p-3 rounded-full bg-gradient-to-r ${sub.color} shadow-lg`}>
+                        <Icon className="w-6 h-6 text-white" />
                       </div>
                     </div>
-                    <CardTitle className="text-white text-lg font-bold">
+                    <CardTitle className="text-white text-xl font-bold">
                       {sub.name}
                     </CardTitle>
-                    <p className="text-gray-300 text-xs">{sub.description}</p>
-                    <div className="text-center mt-2">
-                      <span className="text-xl font-bold text-white">
+                    <p className="text-gray-300 text-sm">{sub.description}</p>
+                    <div className="text-center mt-3">
+                      <span className="text-2xl font-bold text-white">
                         {formatTON(sub.price)}
                       </span>
-                      <span className="text-xs ml-1 text-gray-300 font-medium">
+                      <span className="text-sm ml-2 text-gray-300 font-medium">
                         / {sub.duration}
                       </span>
                     </div>
                   </CardHeader>
 
-                  <CardContent className="space-y-3 pt-0">
-                    <div className="space-y-2">
+                  <CardContent className="space-y-4 pt-0">
+                    <div className="space-y-3">
                       {sub.features.map((feature, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <CheckCircle className="w-3 h-3 text-green-400 flex-shrink-0" />
-                          <span className="text-xs text-gray-200 font-medium">{feature}</span>
+                        <div key={index} className="flex items-center gap-3">
+                          <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                          <span className="text-sm text-gray-200 font-medium">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -268,17 +256,17 @@ const StorePage = () => {
                     <Button 
                       onClick={() => handlePurchase(sub, 'subscription')} 
                       disabled={isPurchased || isProcessing} 
-                      className={`w-full mt-3 ${
+                      className={`w-full mt-4 ${
                         isPurchased 
                           ? 'bg-green-600 hover:bg-green-600 cursor-default' 
                           : `bg-gradient-to-r ${sub.color} hover:opacity-90`
-                      } rounded-lg font-bold py-2 text-xs shadow-md transition-all duration-300`}
+                      } rounded-lg font-bold py-3 text-sm shadow-lg transition-all duration-300`}
                     >
                       {isProcessing 
-                        ? 'جاري المعالجة...' 
+                        ? 'Processing...' 
                         : isPurchased 
-                          ? 'مفعل' 
-                          : 'اشترك الآن'
+                          ? 'Active' 
+                          : 'Subscribe Now'
                       }
                     </Button>
                   </CardContent>
@@ -288,15 +276,15 @@ const StorePage = () => {
           })}
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-6">
           <motion.h2 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.8 }}
-            className="text-lg font-bold text-white flex items-center gap-2"
+            className="text-xl font-bold text-white flex items-center gap-2"
           >
-            <Zap className="w-5 h-5 text-yellow-400" />
-            ترقيات التعدين
+            <Zap className="w-6 h-6 text-yellow-400" />
+            Mining Upgrades
           </motion.h2>
           
           {upgrades.map((upgrade, index) => {
@@ -311,33 +299,33 @@ const StorePage = () => {
                 transition={{ duration: 0.5, delay: 0.9 + index * 0.1 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-lg border border-blue-400/20 rounded-xl p-3 shadow-lg"
+                className="bg-gradient-to-br from-slate-800/60 via-blue-900/40 to-purple-900/50 backdrop-blur-lg border border-blue-400/30 rounded-xl p-4 shadow-xl"
               >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className={`p-2 rounded-full bg-gradient-to-r ${upgrade.color} shadow-md`}>
-                      <Icon className="w-4 h-4 text-white" />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-full bg-gradient-to-r ${upgrade.color} shadow-lg`}>
+                      <Icon className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-white font-bold text-sm">
+                      <h3 className="text-white font-bold text-base">
                         {upgrade.name}
                       </h3>
-                      <p className="text-gray-300 text-xs">
+                      <p className="text-gray-300 text-sm">
                         {upgrade.description}
                       </p>
                     </div>
                   </div>
                   {isPurchased && (
-                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    <CheckCircle className="w-5 h-5 text-green-400" />
                   )}
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-white font-bold text-sm">
+                  <div className="flex items-center gap-3">
+                    <span className="text-white font-bold text-base">
                       {formatTON(upgrade.price)}
                     </span>
-                    <Badge className="bg-blue-500/30 text-blue-300 text-xs font-medium">
+                    <Badge className="bg-blue-500/30 text-blue-300 text-sm font-medium">
                       {upgrade.duration}
                     </Badge>
                   </div>
@@ -345,13 +333,13 @@ const StorePage = () => {
                   <Button
                     onClick={() => handlePurchase(upgrade, 'upgrade')}
                     disabled={isPurchased || isProcessing}
-                    className={`text-xs py-1 px-4 rounded-lg font-bold shadow-md transition-all duration-300 ${
+                    className={`text-sm py-2 px-6 rounded-lg font-bold shadow-lg transition-all duration-300 ${
                       isPurchased 
                         ? 'bg-green-600 cursor-not-allowed' 
                         : `bg-gradient-to-r ${upgrade.color} hover:opacity-90 hover:scale-105`
                     }`}
                   >
-                    {isPurchased ? 'مملوك' : 'شراء'}
+                    {isPurchased ? 'Owned' : 'Buy Now'}
                   </Button>
                 </div>
               </motion.div>
@@ -363,14 +351,14 @@ const StorePage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.2 }}
-          className="p-4 bg-gradient-to-br from-yellow-900/40 to-orange-900/40 backdrop-blur-lg border border-yellow-400/30 rounded-xl text-center shadow-lg"
+          className="p-6 bg-gradient-to-br from-yellow-900/50 to-orange-900/50 backdrop-blur-lg border border-yellow-400/30 rounded-xl text-center shadow-xl"
         >
-          <Star className="w-6 h-6 text-yellow-400 mx-auto mb-2 animate-pulse" />
-          <h2 className="text-sm font-bold text-white mb-1">
-            مزايا البريميوم
+          <Star className="w-8 h-8 text-yellow-400 mx-auto mb-3 animate-pulse" />
+          <h2 className="text-lg font-bold text-white mb-2">
+            Premium Benefits
           </h2>
-          <p className="text-gray-300 text-xs">
-            افتح التعدين الأسرع والميزات الحصرية مع خطط الاشتراك
+          <p className="text-gray-300 text-sm">
+            Unlock faster mining and exclusive features with subscription plans
           </p>
         </motion.div>
       </div>
