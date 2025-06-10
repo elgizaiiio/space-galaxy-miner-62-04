@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -28,9 +29,9 @@ const App = () => {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    // Check if splash has been shown before
+    // Always show splash screen on first load, but check if it should be skipped
     const splashShown = localStorage.getItem('splashShown');
-    if (splashShown) {
+    if (splashShown === 'true') {
       setShowSplash(false);
     }
   }, []);
