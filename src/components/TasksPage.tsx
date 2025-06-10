@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,20 +31,20 @@ const TasksPage = () => {
     description: string;
     reward: number;
     icon: React.ComponentType<any>;
-    category: 'basic' | 'partner' | 'daily';
+    category: 'main' | 'partner' | 'daily';
     action?: () => void;
     url?: string;
   }
 
-  // Basic Tasks
-  const basicTasks: TaskWithImage[] = [
+  // Main Tasks
+  const mainTasks: TaskWithImage[] = [
     {
       id: 'connect-wallet',
       title: getTranslation('connectWallet'),
       description: getTranslation('connectWalletDesc'),
       reward: 500,
       icon: Wallet,
-      category: 'basic'
+      category: 'main'
     },
     {
       id: 'first-mine',
@@ -53,7 +52,7 @@ const TasksPage = () => {
       description: getTranslation('firstMineDesc'),
       reward: 250,
       icon: Pickaxe,
-      category: 'basic'
+      category: 'main'
     },
     {
       id: 'complete-profile',
@@ -61,7 +60,7 @@ const TasksPage = () => {
       description: getTranslation('completeProfileDesc'),
       reward: 300,
       icon: UserPlus,
-      category: 'basic'
+      category: 'main'
     }
   ];
 
@@ -147,7 +146,7 @@ const TasksPage = () => {
       setCompletedTasks(newCompleted);
       localStorage.setItem('completedTasks', JSON.stringify(newCompleted));
       
-      const allTasks = [...basicTasks, ...partnerTasks, ...dailyTasks];
+      const allTasks = [...mainTasks, ...partnerTasks, ...dailyTasks];
       const task = allTasks.find(t => t.id === taskId);
       
       toast({
@@ -161,7 +160,7 @@ const TasksPage = () => {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'basic': return 'from-green-500 to-emerald-600';
+      case 'main': return 'from-green-500 to-emerald-600';
       case 'partner': return 'from-purple-500 to-pink-600';
       case 'daily': return 'from-blue-500 to-cyan-600';
       default: return 'from-gray-500 to-slate-600';
@@ -255,14 +254,14 @@ const TasksPage = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="basic" className="w-full">
+        <Tabs defaultValue="main" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-blue-400/30 mb-4">
             <TabsTrigger 
-              value="basic" 
+              value="main" 
               className="text-xs data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400"
             >
               <UserPlus className="w-3 h-3 mr-1" />
-              {getTranslation('basicTasks')}
+              {getTranslation('mainTasks')}
             </TabsTrigger>
             <TabsTrigger 
               value="partner" 
@@ -280,8 +279,8 @@ const TasksPage = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="basic" className="space-y-3">
-            {basicTasks.map((task, index) => (
+          <TabsContent value="main" className="space-y-3">
+            {mainTasks.map((task, index) => (
               <motion.div
                 key={task.id}
                 initial={{ opacity: 0, y: 20 }}

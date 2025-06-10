@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -11,7 +10,6 @@ import WalletPage from './components/WalletPage';
 import ReferralPage from './components/ReferralPage';
 import StorePage from './components/StorePage';
 import TaskAdminPage from './components/TaskAdminPage';
-import SplashScreen from './components/SplashScreen';
 import UsernameModal from './components/UsernameModal';
 import { Button } from '@/components/ui/button';
 import { Home, CheckSquare, Wallet, Users, Settings, ShoppingBag } from 'lucide-react';
@@ -24,7 +22,6 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState<Page>('mining');
   const [showAdminAccess, setShowAdminAccess] = useState(false);
   const [taskClickCount, setTaskClickCount] = useState(0);
-  const [showSplash, setShowSplash] = useState(true);
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [username, setUsername] = useState('');
 
@@ -33,6 +30,8 @@ const App = () => {
     const savedUsername = localStorage.getItem('username');
     if (savedUsername) {
       setUsername(savedUsername);
+    } else {
+      setShowUsernameModal(true);
     }
   }, []);
 
@@ -68,14 +67,6 @@ const App = () => {
     }
   }, [taskClickCount]);
 
-  const handleSplashComplete = () => {
-    setShowSplash(false);
-    const savedUsername = localStorage.getItem('username');
-    if (!savedUsername) {
-      setShowUsernameModal(true);
-    }
-  };
-
   const handleUsernameComplete = (newUsername: string) => {
     setUsername(newUsername);
     setShowUsernameModal(false);
@@ -92,11 +83,6 @@ const App = () => {
       setCurrentPage('tasks');
     }
   };
-
-  // Show splash screen
-  if (showSplash) {
-    return <SplashScreen onComplete={handleSplashComplete} />;
-  }
 
   const navigationItems = [{
     id: 'mining',
