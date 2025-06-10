@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from "@/hooks/use-toast";
 import { 
-  Gift, 
   CheckCircle, 
   ExternalLink, 
   Calendar, 
@@ -16,9 +16,10 @@ import {
   Clock,
   Star,
   Users,
-  Wallet
+  Wallet,
+  Gift,
+  Handshake
 } from 'lucide-react';
-import { getTranslation } from '../utils/language';
 
 const TasksPage = () => {
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
@@ -31,18 +32,76 @@ const TasksPage = () => {
     description: string;
     reward: number;
     icon: React.ComponentType<any>;
-    category: 'daily' | 'social' | 'referral' | 'mining';
+    category: 'basic' | 'partner' | 'daily';
     action?: () => void;
     url?: string;
-    progress?: number;
-    maxProgress?: number;
   }
 
+  // Basic Tasks
+  const basicTasks: TaskWithImage[] = [
+    {
+      id: 'connect-wallet',
+      title: 'ربط المحفظة',
+      description: 'اربط محفظة TON الخاصة بك',
+      reward: 500,
+      icon: Wallet,
+      category: 'basic'
+    },
+    {
+      id: 'first-mine',
+      title: 'التعدين الأول',
+      description: 'ابدأ عملية التعدين لأول مرة',
+      reward: 250,
+      icon: Pickaxe,
+      category: 'basic'
+    },
+    {
+      id: 'complete-profile',
+      title: 'إكمال الملف الشخصي',
+      description: 'أكمل معلومات ملفك الشخصي',
+      reward: 300,
+      icon: UserPlus,
+      category: 'basic'
+    }
+  ];
+
+  // Partner Tasks
+  const partnerTasks: TaskWithImage[] = [
+    {
+      id: 'follow-telegram',
+      title: 'انضم للتليجرام',
+      description: 'انضم لقناة التليجرام الرسمية',
+      reward: 200,
+      icon: Share2,
+      category: 'partner',
+      url: 'https://t.me/spacecoin'
+    },
+    {
+      id: 'follow-twitter',
+      title: 'تابع تويتر',
+      description: 'تابع الحساب الرسمي على تويتر',
+      reward: 150,
+      icon: Share2,
+      category: 'partner',
+      url: 'https://twitter.com/spacecoin'
+    },
+    {
+      id: 'youtube-subscribe',
+      title: 'اشترك باليوتيوب',
+      description: 'اشترك في القناة الرسمية',
+      reward: 175,
+      icon: Share2,
+      category: 'partner',
+      url: 'https://youtube.com/spacecoin'
+    }
+  ];
+
+  // Daily Tasks
   const dailyTasks: TaskWithImage[] = [
     {
       id: 'daily-login',
-      title: 'تسجيل الدخول اليومي',
-      description: 'سجل دخولك يومياً واحصل على مكافآت',
+      title: 'تسجيل دخول يومي',
+      description: 'سجل دخولك يومياً',
       reward: 50,
       icon: Calendar,
       category: 'daily'
@@ -54,63 +113,14 @@ const TasksPage = () => {
       reward: 100,
       icon: Pickaxe,
       category: 'daily'
-    }
-  ];
-
-  const socialTasks: TaskWithImage[] = [
-    {
-      id: 'follow-telegram',
-      title: 'انضم إلى التليجرام',
-      description: 'انضم إلى قناة التليجرام الرسمية',
-      reward: 200,
-      icon: Share2,
-      category: 'social',
-      url: 'https://t.me/spacecoin'
     },
     {
-      id: 'follow-twitter',
-      title: 'تابعنا على تويتر',
-      description: 'تابع الحساب الرسمي على تويتر',
-      reward: 150,
-      icon: Share2,
-      category: 'social',
-      url: 'https://twitter.com/spacecoin'
-    },
-    {
-      id: 'share-app',
-      title: 'شارك التطبيق',
-      description: 'شارك التطبيق مع أصدقائك',
+      id: 'daily-share',
+      title: 'مشاركة يومية',
+      description: 'شارك التطبيق مع الأصدقاء',
       reward: 75,
       icon: Share2,
-      category: 'social',
-      url: 'https://t.me/share/url?url=https://example.com'
-    }
-  ];
-
-  const referralTasks: TaskWithImage[] = [
-    {
-      id: 'invite-1-friend',
-      title: 'ادع صديق واحد',
-      description: 'ادع صديقاً واحداً للانضمام',
-      reward: 500,
-      icon: UserPlus,
-      category: 'referral'
-    },
-    {
-      id: 'invite-5-friends',
-      title: 'ادع 5 أصدقاء',
-      description: 'ادع 5 أصدقاء للانضمام',
-      reward: 2500,
-      icon: Users,
-      category: 'referral'
-    },
-    {
-      id: 'invite-10-friends',
-      title: 'ادع 10 أصدقاء',
-      description: 'ادع 10 أصدقاء للانضمام',
-      reward: 10000,
-      icon: Users,
-      category: 'referral'
+      category: 'daily'
     }
   ];
 
@@ -137,7 +147,7 @@ const TasksPage = () => {
       setCompletedTasks(newCompleted);
       localStorage.setItem('completedTasks', JSON.stringify(newCompleted));
       
-      const allTasks = [...dailyTasks, ...socialTasks, ...referralTasks];
+      const allTasks = [...basicTasks, ...partnerTasks, ...dailyTasks];
       const task = allTasks.find(t => t.id === taskId);
       
       toast({
@@ -151,10 +161,9 @@ const TasksPage = () => {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
+      case 'basic': return 'from-green-500 to-emerald-600';
+      case 'partner': return 'from-purple-500 to-pink-600';
       case 'daily': return 'from-blue-500 to-cyan-600';
-      case 'social': return 'from-purple-500 to-pink-600';
-      case 'referral': return 'from-green-500 to-emerald-600';
-      case 'mining': return 'from-orange-500 to-red-600';
       default: return 'from-gray-500 to-slate-600';
     }
   };
@@ -163,98 +172,60 @@ const TasksPage = () => {
     return reward.toLocaleString();
   };
 
-  const renderTaskSection = (title: string, tasks: TaskWithImage[], icon: React.ComponentType<any>) => {
-    const Icon = icon;
+  const renderTaskCard = (task: TaskWithImage) => {
+    const TaskIcon = task.icon;
+    const isCompleted = completedTasks.includes(task.id);
+    const inProgress = isTaskInProgress[task.id];
     
     return (
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
-            <Icon className="w-6 h-6 text-white" />
-          </div>
-          <h2 className="text-xl font-bold text-white">{title}</h2>
-        </div>
-        
-        <div className="space-y-3">
-          {tasks.map((task, index) => {
-            const TaskIcon = task.icon;
-            const isCompleted = completedTasks.includes(task.id);
-            const inProgress = isTaskInProgress[task.id];
+      <Card key={task.id} className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border border-blue-400/20 rounded-xl">
+        <CardContent className="p-3">
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-full bg-gradient-to-r ${getCategoryColor(task.category)} flex-shrink-0`}>
+              <TaskIcon className="w-4 h-4 text-white" />
+            </div>
             
-            return (
-              <motion.div
-                key={task.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <Card className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border border-blue-400/20 rounded-2xl overflow-hidden">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-4">
-                      <div className={`p-3 rounded-full bg-gradient-to-r ${getCategoryColor(task.category)}`}>
-                        <TaskIcon className="w-6 h-6 text-white" />
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-white font-bold text-sm">
-                            {task.title}
-                          </h3>
-                          <Badge className={`text-xs px-2 py-0.5 bg-gradient-to-r ${getCategoryColor(task.category)}`}>
-                            {task.category}
-                          </Badge>
-                        </div>
-                        
-                        <p className="text-gray-300 text-xs mb-2 line-clamp-2">
-                          {task.description}
-                        </p>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-yellow-400" />
-                            <span className="text-yellow-400 font-bold text-sm">
-                              +{formatReward(task.reward)} $SPACE
-                            </span>
-                          </div>
-                          
-                          <Button
-                            onClick={() => handleTaskComplete(task.id, task.url)}
-                            disabled={isCompleted || inProgress}
-                            className={`text-xs py-1.5 px-3 rounded-lg ${
-                              isCompleted 
-                                ? 'bg-green-600 cursor-not-allowed' 
-                                : inProgress
-                                  ? 'bg-yellow-600 cursor-not-allowed'
-                                  : `bg-gradient-to-r ${getCategoryColor(task.category)} hover:opacity-90`
-                            }`}
-                          >
-                            {isCompleted ? (
-                              <>
-                                <CheckCircle className="w-3 h-3 mr-1" />
-                                مكتمل
-                              </>
-                            ) : inProgress ? (
-                              <>
-                                <Clock className="w-3 h-3 mr-1 animate-spin" />
-                                جاري...
-                              </>
-                            ) : (
-                              <>
-                                {task.url && <ExternalLink className="w-3 h-3 mr-1" />}
-                                ابدأ
-                              </>
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-white font-semibold text-sm truncate">
+                {task.title}
+              </h3>
+              <p className="text-gray-300 text-xs mb-2 line-clamp-1">
+                {task.description}
+              </p>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <Star className="w-3 h-3 text-yellow-400" />
+                  <span className="text-yellow-400 font-bold text-xs">
+                    +{formatReward(task.reward)}
+                  </span>
+                </div>
+                
+                <Button
+                  onClick={() => handleTaskComplete(task.id, task.url)}
+                  disabled={isCompleted || inProgress}
+                  size="sm"
+                  className={`text-xs py-1 px-2 h-7 ${
+                    isCompleted 
+                      ? 'bg-green-600 cursor-not-allowed' 
+                      : inProgress
+                        ? 'bg-yellow-600 cursor-not-allowed'
+                        : `bg-gradient-to-r ${getCategoryColor(task.category)} hover:opacity-90`
+                  }`}
+                >
+                  {isCompleted ? (
+                    <CheckCircle className="w-3 h-3" />
+                  ) : inProgress ? (
+                    <Clock className="w-3 h-3 animate-spin" />
+                  ) : (
+                    task.url ? <ExternalLink className="w-3 h-3" /> : <Gift className="w-3 h-3" />
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     );
   };
 
@@ -270,9 +241,9 @@ const TasksPage = () => {
     >
       <div className="absolute inset-0 bg-black/50"></div>
       
-      <div className="max-w-md mx-auto space-y-4 relative z-10">
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+      <div className="max-w-md mx-auto relative z-10">
+        <div className="text-center mb-4">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-1">
             المهام
           </h1>
           <p className="text-gray-300 text-sm">
@@ -280,9 +251,70 @@ const TasksPage = () => {
           </p>
         </div>
 
-        {renderTaskSection('المهام اليومية', dailyTasks, Calendar)}
-        {renderTaskSection('وسائل التواصل الاجتماعي', socialTasks, Share2)}
-        {renderTaskSection('دعوة الأصدقاء', referralTasks, UserPlus)}
+        <Tabs defaultValue="basic" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 bg-black/40 border border-blue-400/30 mb-4">
+            <TabsTrigger 
+              value="basic" 
+              className="text-xs data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400"
+            >
+              <UserPlus className="w-3 h-3 mr-1" />
+              أساسية
+            </TabsTrigger>
+            <TabsTrigger 
+              value="partner" 
+              className="text-xs data-[state=active]:bg-purple-500/20 data-[state=active]:text-purple-400"
+            >
+              <Handshake className="w-3 h-3 mr-1" />
+              شركاء
+            </TabsTrigger>
+            <TabsTrigger 
+              value="daily" 
+              className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400"
+            >
+              <Calendar className="w-3 h-3 mr-1" />
+              يومية
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="basic" className="space-y-3">
+            {basicTasks.map((task, index) => (
+              <motion.div
+                key={task.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                {renderTaskCard(task)}
+              </motion.div>
+            ))}
+          </TabsContent>
+
+          <TabsContent value="partner" className="space-y-3">
+            {partnerTasks.map((task, index) => (
+              <motion.div
+                key={task.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                {renderTaskCard(task)}
+              </motion.div>
+            ))}
+          </TabsContent>
+
+          <TabsContent value="daily" className="space-y-3">
+            {dailyTasks.map((task, index) => (
+              <motion.div
+                key={task.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                {renderTaskCard(task)}
+              </motion.div>
+            ))}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
