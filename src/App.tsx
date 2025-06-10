@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -10,15 +9,14 @@ import MiningPage from './components/MiningPage';
 import TasksPage from './components/TasksPage';
 import WalletPage from './components/WalletPage';
 import ReferralPage from './components/ReferralPage';
-import SubscriptionPage from './components/SubscriptionPage';
 import StorePage from './components/StorePage';
 import TaskAdminPage from './components/TaskAdminPage';
 import { Button } from '@/components/ui/button';
-import { Home, CheckSquare, Wallet, Users, Crown, Settings, ShoppingBag } from 'lucide-react';
+import { Home, CheckSquare, Wallet, Users, Settings, ShoppingBag } from 'lucide-react';
 import { getTranslation } from './utils/language';
 
 const queryClient = new QueryClient();
-type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'subscription' | 'store' | 'admin';
+type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'store' | 'admin';
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -49,7 +47,6 @@ const App = () => {
     };
   }, []);
 
-  // Reset task click count after 2 seconds
   useEffect(() => {
     if (taskClickCount > 0) {
       const timer = setTimeout(() => {
@@ -95,10 +92,6 @@ const App = () => {
     id: 'referral',
     label: getTranslation('friends'),
     icon: Users
-  }, {
-    id: 'subscription',
-    label: getTranslation('premium'),
-    icon: Crown
   }];
 
   if (showAdminAccess) {
@@ -121,8 +114,6 @@ const App = () => {
         return <WalletPage />;
       case 'referral':
         return <ReferralPage />;
-      case 'subscription':
-        return <SubscriptionPage />;
       case 'admin':
         return showAdminAccess ? <TaskAdminPage /> : <MiningPage />;
       default:
@@ -148,7 +139,7 @@ const App = () => {
 
             <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/20 p-2 z-50">
               <div className="max-w-md mx-auto">
-                <div className={`grid gap-1 ${showAdminAccess ? 'grid-cols-7' : 'grid-cols-6'}`}>
+                <div className={`grid gap-1 ${showAdminAccess ? 'grid-cols-6' : 'grid-cols-5'}`}>
                   {navigationItems.map(item => {
                     const Icon = item.icon;
                     return (
