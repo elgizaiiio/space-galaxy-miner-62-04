@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CheckCircle, Trophy, ExternalLink } from 'lucide-react';
 import { getTranslation } from '../utils/language';
 import { taskService } from '@/services/taskService';
@@ -71,6 +72,90 @@ const TasksPage = () => {
     }
   };
 
+  // Filter tasks by type
+  const mainTasks = tasks.filter(task => task.task_type === 'mining' || task.task_type === 'wallet');
+  const partnerTasks = tasks.filter(task => task.task_type === 'social');
+  const dailyTasks = tasks.filter(task => task.task_type === 'daily');
+
+  const renderTasks = (taskList: Task[]) => {
+    if (isLoading) {
+      return (
+        <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-xl">
+          <CardContent className="p-4 text-center">
+            <p className="text-gray-300 text-sm">Loading tasks...</p>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (taskList.length === 0) {
+      return (
+        <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-xl">
+          <CardContent className="p-4 text-center">
+            <div className="space-y-2">
+              <Trophy className="w-6 h-6 text-indigo-400 mx-auto" />
+              <h3 className="text-white text-base font-bold">{t('noTasksAvailable')}</h3>
+              <p className="text-gray-300 text-xs">{t('noTasksDesc')}</p>
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return (
+      <div className="space-y-2">
+        {taskList.map(task => {
+          const isCompleted = completedTasks.includes(task.id);
+          return (
+            <Card key={task.id} className={`bg-gradient-to-br backdrop-blur-xl border rounded-xl ${
+              isCompleted 
+                ? 'from-green-500/10 to-emerald-500/10 border-green-500/30' 
+                : 'from-indigo-500/10 to-purple-500/10 border-indigo-500/30'
+            }`}>
+              <CardHeader className="pb-1">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-2">
+                    {isCompleted ? 
+                      <CheckCircle className="w-4 h-4 text-green-400" /> : 
+                      <Trophy className="w-4 h-4 text-indigo-400" />
+                    }
+                    <div>
+                      <CardTitle className="text-white text-sm">
+                        {t(task.title_key) || task.title_key}
+                      </CardTitle>
+                      <Badge className={`${getTypeColor(task.task_type)} text-xs px-1.5 py-0.5`}>
+                        {task.task_type}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0 pb-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-zinc-50 text-xs">+{task.reward_amount} $SPACE</span>
+                  {!isCompleted ? (
+                    <Button 
+                      onClick={() => handleTaskComplete(task.id, task.action_url || undefined)} 
+                      size="sm"
+                      className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-xs rounded-full px-3 py-1.5 h-auto"
+                    >
+                      {task.action_url && <ExternalLink className="w-3 h-3 mr-1" />}
+                      Complete
+                    </Button>
+                  ) : (
+                    <Badge className="bg-green-500/20 text-green-300 text-xs px-2 py-0.5">
+                      Completed
+                    </Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-2 pb-20">
       <div className="max-w-md mx-auto space-y-3">
@@ -102,75 +187,41 @@ const TasksPage = () => {
           </CardContent>
         </Card>
 
-        {/* Tasks List */}
-        {isLoading ? (
-          <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-xl">
-            <CardContent className="p-4 text-center">
-              <p className="text-gray-300 text-sm">Loading tasks...</p>
-            </CardContent>
-          </Card>
-        ) : tasks.length === 0 ? (
-          <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border border-indigo-500/30 rounded-xl">
-            <CardContent className="p-4 text-center">
-              <div className="space-y-2">
-                <Trophy className="w-6 h-6 text-indigo-400 mx-auto" />
-                <h3 className="text-white text-base font-bold">{t('noTasksAvailable')}</h3>
-                <p className="text-gray-300 text-xs">{t('noTasksDesc')}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-2">
-            {tasks.map(task => {
-              const isCompleted = completedTasks.includes(task.id);
-              return (
-                <Card key={task.id} className={`bg-gradient-to-br backdrop-blur-xl border rounded-xl ${
-                  isCompleted 
-                    ? 'from-green-500/10 to-emerald-500/10 border-green-500/30' 
-                    : 'from-indigo-500/10 to-purple-500/10 border-indigo-500/30'
-                }`}>
-                  <CardHeader className="pb-1">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-2">
-                        {isCompleted ? 
-                          <CheckCircle className="w-4 h-4 text-green-400" /> : 
-                          <Trophy className="w-4 h-4 text-indigo-400" />
-                        }
-                        <div>
-                          <CardTitle className="text-white text-sm">
-                            {t(task.title_key) || task.title_key}
-                          </CardTitle>
-                          <Badge className={`${getTypeColor(task.task_type)} text-xs px-1.5 py-0.5`}>
-                            {task.task_type}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-0 pb-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-zinc-50 text-xs">+{task.reward_amount} $SPACE</span>
-                      {!isCompleted ? (
-                        <Button 
-                          onClick={() => handleTaskComplete(task.id, task.action_url || undefined)} 
-                          size="sm"
-                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-xs rounded-full px-3 py-1.5 h-auto"
-                        >
-                          {task.action_url && <ExternalLink className="w-3 h-3 mr-1" />}
-                          Complete
-                        </Button>
-                      ) : (
-                        <Badge className="bg-green-500/20 text-green-300 text-xs px-2 py-0.5">
-                          Completed
-                        </Badge>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
+        {/* Tasks Tabs */}
+        <Tabs defaultValue="main" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-xl border border-indigo-500/30 rounded-xl">
+            <TabsTrigger 
+              value="main" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-gray-300 text-xs"
+            >
+              المهام الرئيسية
+            </TabsTrigger>
+            <TabsTrigger 
+              value="partners" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-gray-300 text-xs"
+            >
+              مهام الشركاء
+            </TabsTrigger>
+            <TabsTrigger 
+              value="daily" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-gray-300 text-xs"
+            >
+              مهام يومية
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="main" className="mt-4">
+            {renderTasks(mainTasks)}
+          </TabsContent>
+          
+          <TabsContent value="partners" className="mt-4">
+            {renderTasks(partnerTasks)}
+          </TabsContent>
+          
+          <TabsContent value="daily" className="mt-4">
+            {renderTasks(dailyTasks)}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
