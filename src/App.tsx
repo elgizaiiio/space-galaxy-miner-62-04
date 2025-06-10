@@ -25,15 +25,13 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState<Page>('mining');
   const [showAdminAccess, setShowAdminAccess] = useState(false);
   const [taskClickCount, setTaskClickCount] = useState(0);
+  const [lastClickTime, setLastClickTime] = useState(0);
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    // Always show splash screen on first load, but check if it should be skipped
-    const splashShown = localStorage.getItem('splashShown');
-    if (splashShown === 'true') {
-      setShowSplash(false);
-    }
+    // Always show splash screen on app load
+    setShowSplash(true);
   }, []);
 
   useEffect(() => {
@@ -49,7 +47,6 @@ const App = () => {
   }, [showSplash]);
 
   const handleSplashComplete = () => {
-    localStorage.setItem('splashShown', 'true');
     setShowSplash(false);
   };
 
@@ -80,7 +77,8 @@ const App = () => {
     if (taskClickCount > 0) {
       const timer = setTimeout(() => {
         setTaskClickCount(0);
-      }, 2000);
+        setLastClickTime(0);
+      }, 2000); // Reset after 2 seconds of no clicks
       return () => clearTimeout(timer);
     }
   }, [taskClickCount]);
@@ -91,13 +89,28 @@ const App = () => {
   };
 
   const handleTaskButtonClick = () => {
-    const newCount = taskClickCount + 1;
-    setTaskClickCount(newCount);
-    if (newCount === 3) {
-      setCurrentPage('admin');
-      setShowAdminAccess(true);
-      setTaskClickCount(0);
+    const currentTime = Date.now();
+    
+    // If more than 500ms passed since last click, reset counter
+    if (currentTime - lastClickTime > 500) {
+      setTaskClickCount(1);
     } else {
+      const newCount = taskClickCount + 1;
+      setTaskClickCount(newCount);
+      
+      if (newCount >= 5) {
+        setCurrentPage('admin');
+        setShowAdminAccess(true);
+        setTaskClickCount(0);
+        setLastClickTime(0);
+        return;
+      }
+    }
+    
+    setLastClickTime(currentTime);
+    
+    // If less than 5 clicks, go to tasks page
+    if (taskClickCount < 5) {
       setCurrentPage('tasks');
     }
   };

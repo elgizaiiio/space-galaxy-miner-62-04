@@ -37,16 +37,16 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
         
         <div className="space-y-3">
           <p className="text-xs text-gray-300 text-center">
-            اكتب اسمك لبدء التعدين
+            Enter your name to start mining
           </p>
           
           <div>
             <Label htmlFor="username" className="text-white mb-1 block text-xs font-medium">
-              الاسم
+              Name
             </Label>
             <Input
               id="username"
-              placeholder="اكتب اسمك"
+              placeholder="Enter your name"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-400 h-8 text-sm rounded-lg"
@@ -59,7 +59,7 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
             disabled={!username.trim()}
             className="w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 hover:from-blue-600 hover:via-indigo-600 hover:to-purple-700 h-8 text-sm font-semibold rounded-lg shadow-lg disabled:opacity-50"
           >
-            ابدأ التعدين
+            Start Mining
           </Button>
         </div>
       </DialogContent>
