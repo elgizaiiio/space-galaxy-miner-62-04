@@ -124,20 +124,21 @@ const MiningPage = () => {
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('/lovable-uploads/2b36822a-b34f-47fb-801f-68aa9cd42e9e.png')`
+          backgroundImage: `url('/lovable-uploads/d391ae90-26f4-41e1-b5c8-5451cc3c1664.png')`
         }}
       />
       
-      <div className="flex-1 flex flex-col items-center justify-center relative z-10 p-4">
+      {/* Content positioned at bottom */}
+      <div className="flex-1 flex flex-col justify-end relative z-10 p-6 pb-20">
         {/* Username */}
         {username && (
-          <div className="text-center mb-8">
+          <div className="text-center mb-4">
             <p className="text-white text-2xl font-bold">{username}</p>
           </div>
         )}
 
         {/* Balance */}
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center justify-center gap-3 mb-4">
           <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
             <Coins className="w-6 h-6 text-white" />
           </div>
@@ -148,7 +149,7 @@ const MiningPage = () => {
 
         {/* Mining Time Display - Only show when mining is active */}
         {miningActive && (
-          <div className="text-center mb-8">
+          <div className="text-center mb-4">
             <p className="text-gray-300 text-lg">Mining Time Left:</p>
             <p className="text-white text-xl font-bold">{formatTime(remainingTime)}</p>
           </div>
@@ -156,15 +157,17 @@ const MiningPage = () => {
 
         {/* Start Mining Button - Only show when not mining */}
         {!miningActive && (
-          <Button
-            onClick={handleStartMining}
-            className="py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-          >
-            <div className="flex items-center justify-center gap-2">
-              <Play className="w-5 h-5" />
-              <span>Start Mining</span>
-            </div>
-          </Button>
+          <div className="flex justify-center">
+            <Button
+              onClick={handleStartMining}
+              className="py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Play className="w-5 h-5" />
+                <span>Start Mining</span>
+              </div>
+            </Button>
+          </div>
         )}
       </div>
     </div>
