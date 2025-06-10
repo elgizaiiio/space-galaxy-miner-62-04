@@ -21,17 +21,30 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   
   const getTransactionIcon = (tx: TONTransaction) => {
     if (tx.type === 'in') {
-      return <ArrowDownLeft className="w-5 h-5 text-green-400" />;
+      return <ArrowDownLeft className="w-4 h-4 text-green-400" />;
     }
-    return <ArrowUpRight className="w-5 h-5 text-red-400" />;
+    return <ArrowUpRight className="w-4 h-4 text-red-400" />;
   };
   
   const getTransactionDescription = (tx: TONTransaction) => {
-    if (tx.comment) {
+    // Handle the case where comment might be encoded or corrupted
+    if (tx.comment && typeof tx.comment === 'string') {
+      // Check if comment contains the weird encoded string and replace it
+      if (tx.comment.includes('c2lnbn') || tx.comment.includes('xFoR271') || tx.comment.length > 50) {
+        // Return a generic description based on transaction type
+        if (tx.type === 'in') return 'استلام TON';
+        return 'إرسال TON';
+      }
+      
+      // Handle normal comments
       if (tx.comment.includes('upgrade') || tx.comment.includes('ترقية')) return 'ترقية سرعة التعدين';
       if (tx.comment.includes('referral') || tx.comment.includes('إحالة')) return 'مكافأة الإحالة';
-      return tx.comment;
+      
+      // Return the comment if it's normal and short
+      return tx.comment.length > 30 ? (tx.type === 'in' ? 'استلام TON' : 'إرسال TON') : tx.comment;
     }
+    
+    // Default descriptions
     if (tx.type === 'in') return 'استلام TON';
     return 'إرسال TON';
   };
@@ -56,19 +69,19 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
 
   return (
     <div 
-      className="group flex items-center justify-between p-4 bg-gradient-to-r from-white/5 to-white/10 rounded-2xl border border-white/10 hover:from-white/10 hover:to-white/15 transition-all duration-300 cursor-pointer" 
+      className="group flex items-center justify-between p-3 bg-gradient-to-r from-white/5 to-white/10 rounded-xl border border-white/10 hover:from-white/10 hover:to-white/15 transition-all duration-300 cursor-pointer" 
       onClick={() => onViewExplorer(transaction.hash)}
     >
-      <div className="flex items-center gap-4 flex-1">
+      <div className="flex items-center gap-3 flex-1">
         {/* Transaction Icon */}
-        <div className={`p-3 rounded-xl ${transaction.type === 'in' ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
+        <div className={`p-2 rounded-lg ${transaction.type === 'in' ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
           {getTransactionIcon(transaction)}
         </div>
         
         {/* Transaction Details */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-white text-sm font-semibold">
+            <h3 className="text-white text-xs font-semibold">
               {getTransactionDescription(transaction)}
             </h3>
             <div className="flex items-center gap-1 text-xs text-gray-400">
@@ -84,9 +97,9 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
       </div>
       
       {/* Amount and Actions */}
-      <div className="text-right ml-3 flex items-center gap-3">
+      <div className="text-right ml-2 flex items-center gap-2">
         <div>
-          <p className={`font-bold text-base ${getTransactionColor(transaction.type)}`}>
+          <p className={`font-bold text-sm ${getTransactionColor(transaction.type)}`}>
             {transaction.type === 'in' ? '+' : '-'}{transaction.value} TON
           </p>
           <p className="text-gray-400 text-xs">رسوم: {transaction.fee} TON</p>
@@ -103,9 +116,9 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               e.stopPropagation();
               onViewExplorer(transaction.hash);
             }} 
-            className="text-gray-400 hover:text-white hover:bg-white/10 h-8 w-8 p-0 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200"
+            className="text-gray-400 hover:text-white hover:bg-white/10 h-6 w-6 p-0 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200"
           >
-            <ExternalLink className="w-4 h-4" />
+            <ExternalLink className="w-3 h-3" />
           </Button>
         )}
       </div>

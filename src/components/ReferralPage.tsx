@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Users, MessageSquare, ArrowRight } from 'lucide-react';
@@ -7,6 +7,14 @@ import { getTranslation } from '../utils/language';
 
 const ReferralPage = () => {
   const t = (key: string) => getTranslation(key);
+  
+  // Disable scrolling when component mounts
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
   
   const openTelegramBot = () => {
     window.open('https://t.me/Spacelbot', '_blank');

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Send, History, LogIn, LogOut } from 'lucide-react';
@@ -173,86 +174,86 @@ const WalletPage = () => {
           <img 
             src="/lovable-uploads/60d2a535-0c51-4428-b219-eca7f18bb598.png" 
             alt="TON" 
-            className="w-5 h-5 rounded-full"
+            className="w-4 h-4 rounded-full"
           />
           <span className="text-xs text-gray-300">
-            {connectedAddress ? `${connectedAddress.slice(0, 6)}...${connectedAddress.slice(-3)}` : 'UQA...xxf'}
+            {connectedAddress ? `${connectedAddress.slice(0, 4)}...${connectedAddress.slice(-3)}` : 'UQA...xxf'}
           </span>
         </div>
         <Button 
           onClick={disconnectWallet} 
           variant="ghost" 
           size="sm" 
-          className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-7 w-7 p-0"
+          className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-6 w-6 p-0"
         >
-          <LogOut className="w-3.5 h-3.5" />
+          <LogOut className="w-3 h-3" />
         </Button>
       </div>
 
       {/* Main content */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6">
         {/* Balance display */}
-        <div className="text-center mb-8">
-          <div className="text-4xl font-light mb-1 text-gray-200">
+        <div className="text-center mb-6">
+          <div className="text-3xl font-light mb-1 text-gray-200">
             ${totalBalanceUSD.toFixed(2)}
           </div>
         </div>
 
-        {/* Action buttons - redesigned */}
-        <div className="flex gap-8 mb-10">
+        {/* Action buttons - smaller size */}
+        <div className="flex gap-6 mb-8">
           <button 
             onClick={() => setShowSendModal(true)}
-            className="flex flex-col items-center gap-3 group"
+            className="flex flex-col items-center gap-2 group"
           >
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-600/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-blue-500/30 group-hover:from-blue-500/30 group-hover:to-purple-600/30 transition-all duration-300">
-              <Send className="w-6 h-6 text-blue-400 group-hover:text-blue-300" />
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-purple-600/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-blue-500/30 group-hover:from-blue-500/30 group-hover:to-purple-600/30 transition-all duration-300">
+              <Send className="w-5 h-5 text-blue-400 group-hover:text-blue-300" />
             </div>
-            <span className="text-gray-300 text-sm font-medium">Send</span>
+            <span className="text-gray-300 text-xs font-medium">Send</span>
           </button>
 
           <button 
             onClick={() => setShowHistoryModal(true)}
-            className="flex flex-col items-center gap-3 group"
+            className="flex flex-col items-center gap-2 group"
           >
-            <div className="w-16 h-16 bg-gradient-to-br from-green-500/20 to-teal-600/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-green-500/30 group-hover:from-green-500/30 group-hover:to-teal-600/30 transition-all duration-300">
-              <History className="w-6 h-6 text-green-400 group-hover:text-green-300" />
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500/20 to-teal-600/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-green-500/30 group-hover:from-green-500/30 group-hover:to-teal-600/30 transition-all duration-300">
+              <History className="w-5 h-5 text-green-400 group-hover:text-green-300" />
             </div>
-            <span className="text-gray-300 text-sm font-medium">History</span>
+            <span className="text-gray-300 text-xs font-medium">History</span>
           </button>
         </div>
 
-        {/* Currency list */}
-        <div className="w-full max-w-xs space-y-3">
+        {/* Currency list - smaller content */}
+        <div className="w-full max-w-xs space-y-2">
           {/* Toncoin */}
-          <div className="flex items-center justify-between py-3 px-4 bg-gradient-to-r from-gray-800/40 to-gray-700/40 rounded-2xl backdrop-blur-sm border border-gray-600/30">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between py-2 px-3 bg-gradient-to-r from-gray-800/40 to-gray-700/40 rounded-xl backdrop-blur-sm border border-gray-600/30">
+            <div className="flex items-center gap-2">
               <img 
                 src="/lovable-uploads/60d2a535-0c51-4428-b219-eca7f18bb598.png" 
                 alt="TON" 
-                className="w-8 h-8 rounded-full"
+                className="w-6 h-6 rounded-full"
               />
               <div>
-                <div className="text-white font-medium text-sm">Toncoin</div>
+                <div className="text-white font-medium text-xs">Toncoin</div>
                 <div className="text-gray-400 text-xs">{tonBalance.toFixed(1)} TON</div>
               </div>
             </div>
-            <div className="text-white font-medium text-sm">${(tonBalance * 5.2).toFixed(2)}</div>
+            <div className="text-white font-medium text-xs">${(tonBalance * 5.2).toFixed(2)}</div>
           </div>
 
           {/* SPACE */}
-          <div className="flex items-center justify-between py-3 px-4 bg-gradient-to-r from-gray-800/40 to-gray-700/40 rounded-2xl backdrop-blur-sm border border-gray-600/30">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between py-2 px-3 bg-gradient-to-r from-gray-800/40 to-gray-700/40 rounded-xl backdrop-blur-sm border border-gray-600/30">
+            <div className="flex items-center gap-2">
               <img 
                 src="/lovable-uploads/859d4b2d-567d-4e4f-ba7c-d739fa472910.png" 
                 alt="SPACE" 
-                className="w-8 h-8 rounded-full"
+                className="w-6 h-6 rounded-full"
               />
               <div>
-                <div className="text-white font-medium text-sm">SPACE</div>
+                <div className="text-white font-medium text-xs">SPACE</div>
                 <div className="text-gray-400 text-xs">{spaceBalance.toLocaleString()} $SPACE</div>
               </div>
             </div>
-            <div className="text-white font-medium text-sm">$0</div>
+            <div className="text-white font-medium text-xs">$0</div>
           </div>
         </div>
       </div>
@@ -269,7 +270,7 @@ const WalletPage = () => {
         isOpen={showHistoryModal} 
         onClose={() => setShowHistoryModal(false)} 
         transactions={transactions}
-        address={connectedAddress!}
+        address={connectedAddress}
       />
     </div>
   );
