@@ -122,7 +122,6 @@ const translations: Record<string, string> = {
   'unlockPremiumFeatures': 'Unlock premium features and boost your mining',
   'popular': 'Popular',
   'current': 'Current',
-  'subscribeNow': 'Subscribe Now',
   'currentPlan': 'Current Plan',
   'premiumBenefits': 'Premium Benefits',
   
