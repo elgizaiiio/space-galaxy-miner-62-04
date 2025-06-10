@@ -23,6 +23,14 @@ const WalletPage = () => {
   // Get translation function
   const t = (key: string) => getTranslation(key);
 
+  // Disable scrolling when component mounts
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
   useEffect(() => {
     checkWalletConnection();
     const unsubscribe = tonConnectUI.onStatusChange(wallet => {
@@ -117,7 +125,7 @@ const WalletPage = () => {
   if (!isWalletConnected) {
     return (
       <div 
-        className="min-h-screen text-white flex flex-col relative"
+        className="min-h-screen text-white flex flex-col relative overflow-hidden"
         style={{
           backgroundImage: `url('/lovable-uploads/d1b0fb13-b222-4fb2-a0d7-ca5cc2ed9d2d.png')`,
           backgroundSize: 'cover',
@@ -149,7 +157,7 @@ const WalletPage = () => {
 
   return (
     <div 
-      className="min-h-screen text-white flex flex-col relative"
+      className="min-h-screen text-white flex flex-col relative overflow-hidden"
       style={{
         backgroundImage: `url('/lovable-uploads/d1b0fb13-b222-4fb2-a0d7-ca5cc2ed9d2d.png')`,
         backgroundSize: 'cover',
@@ -190,33 +198,33 @@ const WalletPage = () => {
           </div>
         </div>
 
-        {/* Action buttons */}
-        <div className="flex gap-12 mb-10">
+        {/* Action buttons - redesigned */}
+        <div className="flex gap-8 mb-10">
           <button 
             onClick={() => setShowSendModal(true)}
-            className="flex flex-col items-center gap-2"
+            className="flex flex-col items-center gap-3 group"
           >
-            <div className="w-12 h-12 bg-gray-800/70 rounded-full flex items-center justify-center">
-              <Send className="w-5 h-5 text-white" />
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-purple-600/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-blue-500/30 group-hover:from-blue-500/30 group-hover:to-purple-600/30 transition-all duration-300">
+              <Send className="w-6 h-6 text-blue-400 group-hover:text-blue-300" />
             </div>
-            <span className="text-gray-300 text-sm">Send</span>
+            <span className="text-gray-300 text-sm font-medium">Send</span>
           </button>
 
           <button 
             onClick={() => setShowHistoryModal(true)}
-            className="flex flex-col items-center gap-2"
+            className="flex flex-col items-center gap-3 group"
           >
-            <div className="w-12 h-12 bg-gray-800/70 rounded-full flex items-center justify-center">
-              <History className="w-5 h-5 text-white" />
+            <div className="w-16 h-16 bg-gradient-to-br from-green-500/20 to-teal-600/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-green-500/30 group-hover:from-green-500/30 group-hover:to-teal-600/30 transition-all duration-300">
+              <History className="w-6 h-6 text-green-400 group-hover:text-green-300" />
             </div>
-            <span className="text-gray-300 text-sm">History</span>
+            <span className="text-gray-300 text-sm font-medium">History</span>
           </button>
         </div>
 
         {/* Currency list */}
         <div className="w-full max-w-xs space-y-3">
           {/* Toncoin */}
-          <div className="flex items-center justify-between py-3 px-4 bg-gray-800/30 rounded-lg backdrop-blur-sm">
+          <div className="flex items-center justify-between py-3 px-4 bg-gradient-to-r from-gray-800/40 to-gray-700/40 rounded-2xl backdrop-blur-sm border border-gray-600/30">
             <div className="flex items-center gap-3">
               <img 
                 src="/lovable-uploads/60d2a535-0c51-4428-b219-eca7f18bb598.png" 
@@ -232,7 +240,7 @@ const WalletPage = () => {
           </div>
 
           {/* SPACE */}
-          <div className="flex items-center justify-between py-3 px-4 bg-gray-800/30 rounded-lg backdrop-blur-sm">
+          <div className="flex items-center justify-between py-3 px-4 bg-gradient-to-r from-gray-800/40 to-gray-700/40 rounded-2xl backdrop-blur-sm border border-gray-600/30">
             <div className="flex items-center gap-3">
               <img 
                 src="/lovable-uploads/859d4b2d-567d-4e4f-ba7c-d739fa472910.png" 
