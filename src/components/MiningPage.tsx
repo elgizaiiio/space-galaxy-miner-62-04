@@ -1,8 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { useToast } from "@/hooks/use-toast";
 import { 
   Coins, 
   Play,
@@ -16,7 +14,6 @@ const MiningPage = () => {
   const [remainingTime, setRemainingTime] = useState(28800); // 8 hours
   const [username, setUsername] = useState('');
   const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
-  const { toast } = useToast();
 
   useEffect(() => {
     // Check if username exists in localStorage
@@ -92,7 +89,7 @@ const MiningPage = () => {
   };
 
   return (
-    <div className="min-h-screen relative p-4 pb-20 overflow-hidden">
+    <div className="min-h-screen flex flex-col overflow-hidden">
       {/* Username Prompt Modal */}
       {showUsernamePrompt && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -127,67 +124,33 @@ const MiningPage = () => {
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('/lovable-uploads/e80a217f-cec9-4e53-bb98-cb1000455827.png')`
+          backgroundImage: `url('/lovable-uploads/2b36822a-b34f-47fb-801f-68aa9cd42e9e.png')`
         }}
       />
       
-      {/* Dark overlay for better readability */}
-      <div className="fixed inset-0 bg-black/30" />
-      
-      <div className="max-w-xs mx-auto space-y-6 relative z-10 flex flex-col items-center justify-center min-h-screen">
-        {/* Logo without glow */}
-        <div className="relative flex justify-center items-center mb-4">
-          <div className="w-48 h-48 rounded-full border-4 border-blue-500/50 flex items-center justify-center">
-            <img 
-              src="/lovable-uploads/d391ae90-26f4-41e1-b5c8-5451cc3c1664.png" 
-              alt="SPACE AI Logo"
-              className="w-32 h-32 object-cover rounded-full"
-            />
-            {/* Mining wave effect inside circle when active */}
-            {miningActive && (
-              <div className="absolute inset-0 rounded-full border-4 border-transparent">
-                <div className="w-full h-full relative overflow-hidden rounded-full">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500/30 to-transparent animate-pulse"></div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
+      <div className="flex-1 flex flex-col items-center justify-center relative z-10 p-4">
         {/* Username */}
         {username && (
-          <div className="text-center mb-6">
-            <p className="text-white text-lg font-medium">{username}</p>
+          <div className="text-center mb-8">
+            <p className="text-white text-2xl font-bold">{username}</p>
           </div>
         )}
 
         {/* Balance */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
-            <Coins className="w-5 h-5 text-white" />
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
+            <Coins className="w-6 h-6 text-white" />
           </div>
-          <span className="text-white text-2xl font-bold">
+          <span className="text-white text-3xl font-bold">
             {Math.floor(spaceCoins).toLocaleString()}
           </span>
         </div>
 
-        {/* Mining Status - Only show when mining is active */}
+        {/* Mining Time Display - Only show when mining is active */}
         {miningActive && (
-          <div className="bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 w-full border border-gray-600">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-300 text-sm">Farming</span>
-                <div className="w-4 h-4 bg-red-600 rounded-full flex items-center justify-center">
-                  <Coins className="w-2 h-2 text-white" />
-                </div>
-                <span className="text-white text-sm font-medium">
-                  {(coinsPerSecond * 3600).toFixed(1)}
-                </span>
-              </div>
-              <span className="text-gray-400 text-sm">
-                {formatTime(remainingTime)}
-              </span>
-            </div>
+          <div className="text-center mb-8">
+            <p className="text-gray-300 text-lg">Mining Time Left:</p>
+            <p className="text-white text-xl font-bold">{formatTime(remainingTime)}</p>
           </div>
         )}
 
@@ -195,7 +158,7 @@ const MiningPage = () => {
         {!miningActive && (
           <Button
             onClick={handleStartMining}
-            className="w-full py-4 text-lg font-bold rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            className="py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
           >
             <div className="flex items-center justify-center gap-2">
               <Play className="w-5 h-5" />
