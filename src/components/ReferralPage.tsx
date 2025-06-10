@@ -41,10 +41,10 @@ const ReferralPage = () => {
             </div>
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-3">
-            {t('friends')}
+            Friends
           </h1>
           <p className="text-gray-300 text-base leading-relaxed">
-            {t('inviteFriendsEarn')}
+            Invite friends and earn $SPACE coins together
           </p>
         </div>
 
@@ -53,28 +53,28 @@ const ReferralPage = () => {
           <CardHeader className="pb-3">
             <CardTitle className="text-white text-xl text-center flex items-center justify-center gap-3">
               <MessageSquare className="w-6 h-6" />
-              {t('getReferralLink')}
+              Get Your Referral Link
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 pt-0">
             <div className="space-y-4">
               <div className="flex items-center gap-3 text-base">
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">1</div>
-                <p className="text-gray-200">{t('goToBot')} @Spacelbot</p>
+                <p className="text-gray-200">Go to @Spacelbot on Telegram</p>
               </div>
               <div className="flex items-center gap-3 text-base">
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">2</div>
-                <p className="text-gray-200">{t('sendCommand')}: <code className="bg-white/20 px-2 py-1 rounded text-white text-sm">/space</code></p>
+                <p className="text-gray-200">Send the command: <code className="bg-white/20 px-2 py-1 rounded text-white text-sm">/space</code></p>
               </div>
               <div className="flex items-center gap-3 text-base">
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">3</div>
-                <p className="text-gray-200">{t('receiveLink')}</p>
+                <p className="text-gray-200">You will receive your personal referral link</p>
               </div>
             </div>
             
             <Button onClick={openTelegramBot} className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-xl flex items-center justify-center gap-3 py-3 text-base font-semibold">
               <MessageSquare className="w-5 h-5" />
-              {t('openBot')}
+              Open @Spacelbot
               <ArrowRight className="w-5 h-5" />
             </Button>
           </CardContent>

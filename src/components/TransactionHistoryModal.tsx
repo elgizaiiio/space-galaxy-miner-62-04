@@ -30,44 +30,44 @@ const TransactionHistoryModal: React.FC<TransactionHistoryModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gradient-to-br from-slate-900/98 via-gray-900/95 to-black/98 backdrop-blur-xl border-2 border-gray-700/50 text-white max-w-sm max-h-[75vh] overflow-hidden rounded-2xl">
+      <DialogContent className="bg-gradient-to-br from-slate-900/98 via-gray-900/95 to-black/98 backdrop-blur-xl border-2 border-gray-700/50 text-white max-w-xs max-h-[60vh] overflow-hidden rounded-2xl">
         <DialogHeader>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-r from-green-500/20 to-teal-600/20 rounded-xl">
-                <History className="w-4 h-4 text-green-400" />
+              <div className="p-1.5 bg-gradient-to-r from-green-500/20 to-teal-600/20 rounded-lg">
+                <History className="w-3 h-3 text-green-400" />
               </div>
-              <DialogTitle className="text-lg font-bold bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
-                سجل المعاملات
+              <DialogTitle className="text-sm font-bold bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
+                Transaction History
               </DialogTitle>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="text-gray-400 hover:text-white hover:bg-white/10 h-6 w-6 p-0 rounded-full"
+              className="text-gray-400 hover:text-white hover:bg-white/10 h-5 w-5 p-0 rounded-full"
             >
-              <X className="w-3 h-3" />
+              <X className="w-2.5 h-2.5" />
             </Button>
           </div>
           
           {/* Wallet Address Display */}
           {address && (
-            <div className="bg-white/5 rounded-xl p-2 border border-white/10">
+            <div className="bg-white/5 rounded-lg p-1.5 border border-white/10">
               <div className="flex items-center gap-2 text-xs text-gray-300">
-                <span>العنوان:</span>
+                <span>Address:</span>
                 <span className="font-mono text-blue-400">{address.slice(0, 6)}...{address.slice(-4)}</span>
               </div>
             </div>
           )}
         </DialogHeader>
         
-        <div className="space-y-2 pt-1 overflow-y-auto max-h-80 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+        <div className="space-y-1.5 pt-1 overflow-y-auto max-h-64 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
           {transactions.length > 0 ? (
             <>
-              <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
-                <Clock className="w-3 h-3" />
-                <span>آخر {transactions.length} معاملات</span>
+              <div className="flex items-center gap-2 text-xs text-gray-400 mb-1">
+                <Clock className="w-2.5 h-2.5" />
+                <span>Last {transactions.length} transactions</span>
               </div>
               {transactions.map((transaction) => (
                 <TransactionItem
@@ -78,12 +78,12 @@ const TransactionHistoryModal: React.FC<TransactionHistoryModalProps> = ({
               ))}
             </>
           ) : (
-            <div className="text-center py-8">
-              <div className="w-12 h-12 bg-gray-800/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                <History className="w-6 h-6 text-gray-500" />
+            <div className="text-center py-6">
+              <div className="w-8 h-8 bg-gray-800/50 rounded-full flex items-center justify-center mx-auto mb-2">
+                <History className="w-4 h-4 text-gray-500" />
               </div>
-              <p className="text-gray-400 text-base mb-2">لا توجد معاملات</p>
-              <p className="text-gray-500 text-xs">ستظهر معاملاتك هنا عند إجرائها</p>
+              <p className="text-gray-400 text-sm mb-1">No Transactions</p>
+              <p className="text-gray-500 text-xs">Your transactions will appear here</p>
             </div>
           )}
         </div>
