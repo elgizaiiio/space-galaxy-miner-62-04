@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -243,7 +244,7 @@ const TasksPage = () => {
     <div 
       className="min-h-screen p-4 pb-20 relative"
       style={{
-        backgroundImage: `url(/lovable-uploads/4ffd5e26-18ef-4590-9c0e-47f3db73709e.png)`,
+        backgroundImage: `url(/lovable-uploads/1b18cac4-761a-4a7d-9b9e-cdd86d973e07.png)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
