@@ -154,7 +154,7 @@ const MiningPage = () => {
         {/* Username with Matrix-style font */}
         {username && (
           <div className="text-center mb-4">
-            <p className="text-white text-2xl font-bold font-mono" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <p className="text-black text-2xl font-bold font-mono" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {username}
             </p>
           </div>
@@ -169,7 +169,7 @@ const MiningPage = () => {
               className="w-full h-full object-cover"
             />
           </div>
-          <span className="text-white text-3xl font-bold">
+          <span className="text-black text-3xl font-bold">
             {Math.floor(spaceCoins).toLocaleString()}
           </span>
         </div>
@@ -177,8 +177,8 @@ const MiningPage = () => {
         {/* Mining Time Display - Only show when mining is active */}
         {miningActive && (
           <div className="text-center mb-4">
-            <p className="text-gray-300 text-lg">Mining Time Left:</p>
-            <p className="text-white text-xl font-bold">{formatTime(remainingTime)}</p>
+            <p className="text-gray-700 text-lg">Mining Time Left:</p>
+            <p className="text-black text-xl font-bold">{formatTime(remainingTime)}</p>
           </div>
         )}
 
