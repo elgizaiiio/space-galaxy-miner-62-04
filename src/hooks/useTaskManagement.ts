@@ -15,7 +15,16 @@ export const useTaskManagement = () => {
 
   useEffect(() => {
     loadTasks();
+    initializeDailyCheckIn();
   }, []);
+
+  const initializeDailyCheckIn = async () => {
+    try {
+      await taskService.createDailyCheckInTask();
+    } catch (error) {
+      console.error('Error initializing daily check-in task:', error);
+    }
+  };
 
   const loadTasks = async () => {
     setIsLoading(true);

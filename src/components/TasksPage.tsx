@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from "@/hooks/use-toast";
 import { useTaskManagement } from '@/hooks/useTaskManagement';
 import { useUserData } from '@/hooks/useUserData';
+import { tonService } from '@/services/tonService';
 import { getTranslation } from '../utils/language';
 import { 
   CheckCircle, 
@@ -79,9 +81,51 @@ const TasksPage = () => {
     setIsTaskInProgress(prev => ({ ...prev, [task.id]: true }));
 
     try {
-      // Open URL if exists
-      if (task.action_url) {
-        window.open(task.action_url, '_blank');
+      // Handle daily check-in task (requires TON payment)
+      if (task.title_key === 'daily check-in' && task.task_type === 'daily') {
+        try {
+          // Check wallet connection
+          if (!tonService.isWalletConnected()) {
+            const walletAddress = await tonService.connectWallet();
+            if (!walletAddress) {
+              toast({
+                title: 'خطأ',
+                description: 'يجب ربط المحفظة أولاً لإتمام هذه المهمة',
+                variant: 'destructive'
+              });
+              return;
+            }
+          }
+
+          // Show payment confirmation
+          const confirmed = window.confirm('هذه المهمة تتطلب دفع 0.1 تون. هل تريد المتابعة؟');
+          if (!confirmed) {
+            return;
+          }
+
+          // Here you would integrate with TON payment
+          // For now, we'll simulate the payment
+          toast({
+            title: 'جاري المعالجة',
+            description: 'جاري معالجة الدفع...',
+          });
+
+          // Simulate payment processing
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          
+        } catch (error) {
+          toast({
+            title: 'خطأ في الدفع',
+            description: 'فشل في معالجة الدفع',
+            variant: 'destructive'
+          });
+          return;
+        }
+      } else {
+        // Open URL if exists for other tasks
+        if (task.action_url) {
+          window.open(task.action_url, '_blank');
+        }
       }
 
       // Simulate task completion delay
@@ -134,8 +178,17 @@ const TasksPage = () => {
       <Card key={task.id} className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border border-blue-400/20 rounded-xl">
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-full bg-gradient-to-r ${getCategoryColor(category)} flex-shrink-0`}>
-              <TaskIcon className="w-4 h-4 text-white" />
+            {/* Task Image or Icon */}
+            <div className={`flex-shrink-0 ${task.image_url ? 'w-12 h-12 rounded-full overflow-hidden' : `p-2 rounded-full bg-gradient-to-r ${getCategoryColor(category)}`}`}>
+              {task.image_url ? (
+                <img 
+                  src={task.image_url} 
+                  alt={task.title_key}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <TaskIcon className="w-4 h-4 text-white" />
+              )}
             </div>
             
             <div className="flex-1 min-w-0">
@@ -153,6 +206,9 @@ const TasksPage = () => {
                   <span className="text-yellow-400 font-bold text-xs">
                     +{formatReward(task.reward_amount)}
                   </span>
+                  {task.title_key === 'daily check-in' && (
+                    <span className="text-orange-400 text-xs ml-1">(0.1 TON)</span>
+                  )}
                 </div>
                 
                 <Button

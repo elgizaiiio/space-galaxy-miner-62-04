@@ -62,6 +62,7 @@ const TaskAdminTable: React.FC<TaskAdminTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow className="border-indigo-500/30">
+            <TableHead className="text-white">الصورة</TableHead>
             <TableHead className="text-white">العنوان</TableHead>
             <TableHead className="text-white">النوع</TableHead>
             <TableHead className="text-white">المكافأة</TableHead>
@@ -73,12 +74,20 @@ const TaskAdminTable: React.FC<TaskAdminTableProps> = ({
           {tasks.map((task) => (
             <TableRow key={task.id} className="border-indigo-500/20 hover:bg-indigo-500/10">
               <TableCell>
-                <div>
-                  <div className="text-white font-medium">{task.title_key}</div>
-                  <div className="text-gray-400 text-sm truncate max-w-xs">
-                    {task.description_key}
+                {task.image_url ? (
+                  <img 
+                    src={task.image_url} 
+                    alt={task.title_key}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center">
+                    <Image className="w-5 h-5 text-gray-400" />
                   </div>
-                </div>
+                )}
+              </TableCell>
+              <TableCell>
+                <div className="text-white font-medium">{task.title_key}</div>
               </TableCell>
               <TableCell>
                 <Badge className={getTypeColor(task.task_type)}>
@@ -89,6 +98,9 @@ const TaskAdminTable: React.FC<TaskAdminTableProps> = ({
                 <span className="text-pink-400 font-bold">
                   {task.reward_amount} $SPACE
                 </span>
+                {task.title_key === 'daily check-in' && (
+                  <div className="text-orange-400 text-xs">(0.1 TON required)</div>
+                )}
               </TableCell>
               <TableCell>
                 <Switch

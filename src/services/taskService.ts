@@ -29,10 +29,10 @@ export const taskService = {
       .from('tasks')
       .insert({
         title_key: task.title_key,
-        description_key: task.description_key,
         task_type: task.task_type,
         reward_amount: task.reward_amount,
         action_url: task.action_url || null,
+        image_url: task.image_url || null,
         is_active: task.is_active ?? true
       })
       .select()
@@ -58,10 +58,10 @@ export const taskService = {
           .from('tasks')
           .insert({
             title_key: task.title_key,
-            description_key: task.description_key,
             task_type: task.task_type,
             reward_amount: task.reward_amount,
             action_url: task.action_url || null,
+            image_url: task.image_url || null,
             is_active: task.is_active ?? true
           })
           .select()
@@ -129,5 +129,47 @@ export const taskService = {
     }
     
     return data;
+  },
+
+  async createDailyCheckInTask(): Promise<Task | null> {
+    try {
+      // Check if daily check-in task already exists
+      const { data: existingTask } = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('title_key', 'daily check-in')
+        .eq('task_type', 'daily')
+        .single();
+
+      if (existingTask) {
+        console.log('Daily check-in task already exists');
+        return existingTask;
+      }
+
+      // Create daily check-in task
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert({
+          title_key: 'daily check-in',
+          task_type: 'daily',
+          reward_amount: 50,
+          action_url: null,
+          image_url: null,
+          is_active: true
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating daily check-in task:', error);
+        return null;
+      }
+
+      console.log('Daily check-in task created successfully');
+      return data;
+    } catch (error) {
+      console.error('Error in createDailyCheckInTask:', error);
+      return null;
+    }
   }
 };

@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Save, X, Upload, Image, Trash2 } from 'lucide-react';
+import { imageUploadService } from '@/services/imageUploadService';
+import { useToast } from "@/hooks/use-toast";
 import type { Database } from '@/integrations/supabase/types';
 
 type Task = Database['public']['Tables']['tasks']['Row'];
@@ -29,19 +31,43 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
     task_type: task?.task_type || 'daily',
     reward_amount: task?.reward_amount || 100,
     action_url: task?.action_url || '',
+    image_url: task?.image_url || '',
     is_active: task?.is_active ?? true
   });
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
+  const [imagePreview, setImagePreview] = useState<string>(task?.image_url || '');
+  const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Form submitted with data:', formData);
     
     try {
-      await onSubmit(formData);
+      let finalFormData = { ...formData };
+
+      // Upload image if selected
+      if (selectedImage) {
+        setUploadingImage(true);
+        try {
+          const tempTaskId = task?.id || `temp-${Date.now()}`;
+          const imageUrl = await imageUploadService.uploadTaskImage(selectedImage, tempTaskId);
+          finalFormData.image_url = imageUrl;
+        } catch (error) {
+          toast({
+            title: 'خطأ',
+            description: 'فشل في رفع الصورة',
+            variant: 'destructive'
+          });
+          return;
+        } finally {
+          setUploadingImage(false);
+        }
+      }
+
+      await onSubmit(finalFormData);
     } catch (error) {
       console.error('Form submission error:', error);
     }
@@ -58,6 +84,16 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: 'خطأ',
+          description: 'حجم الصورة يجب أن يكون أقل من 5MB',
+          variant: 'destructive'
+        });
+        return;
+      }
+
       setSelectedImage(file);
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -71,6 +107,7 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
   const handleRemoveImage = () => {
     setSelectedImage(null);
     setImagePreview('');
+    setFormData(prev => ({ ...prev, image_url: '' }));
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -162,7 +199,7 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
                     type="button"
                     onClick={handleRemoveImage}
                     className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full"
-                    disabled={isLoading}
+                    disabled={isLoading || uploadingImage}
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -187,7 +224,7 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
               accept="image/*"
               onChange={handleImageSelect}
               className="hidden"
-              disabled={isLoading}
+              disabled={isLoading || uploadingImage}
             />
 
             {!imagePreview && (
@@ -195,7 +232,7 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
                 type="button"
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={isLoading}
+                disabled={isLoading || uploadingImage}
                 className="mt-3 text-white border-white/20 hover:bg-white/10"
               >
                 <Upload className="w-4 h-4 mr-2" />
@@ -209,7 +246,7 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
               type="button" 
               variant="outline" 
               onClick={onCancel}
-              disabled={isLoading}
+              disabled={isLoading || uploadingImage}
               className="text-white border-white/20 hover:bg-white/10"
             >
               <X className="w-4 h-4 mr-2" />
@@ -217,11 +254,11 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
             </Button>
             <Button 
               type="submit" 
-              disabled={isLoading}
+              disabled={isLoading || uploadingImage}
               className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
             >
               <Save className="w-4 h-4 mr-2" />
-              {isLoading ? 'جاري الحفظ...' : (task ? 'تحديث المهمة' : 'إضافة المهمة')}
+              {uploadingImage ? 'جاري رفع الصورة...' : (isLoading ? 'جاري الحفظ...' : (task ? 'تحديث المهمة' : 'إضافة المهمة'))}
             </Button>
           </div>
         </form>
