@@ -41,8 +41,8 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
         }}
       />
 
-      {/* Loading indicator and welcome text */}
-      <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+      {/* Centered loading indicator and welcome text */}
+      <div className="flex flex-col items-center justify-center">
         {/* Loading spinner */}
         <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mb-4"></div>
         

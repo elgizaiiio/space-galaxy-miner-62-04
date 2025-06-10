@@ -1,5 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
+"use client";
+
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { 
   Play,
@@ -149,10 +151,12 @@ const MiningPage = () => {
       
       {/* Content positioned at bottom */}
       <div className="fixed bottom-0 left-0 right-0 z-10 p-6 pb-20 flex flex-col items-center">
-        {/* Username */}
+        {/* Username with Matrix-style font */}
         {username && (
           <div className="text-center mb-4">
-            <p className="text-white text-2xl font-bold">{username}</p>
+            <p className="text-white text-2xl font-bold font-mono" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {username}
+            </p>
           </div>
         )}
 
