@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -223,11 +224,13 @@ const StorePage = () => {
         {/* SPACE Coins */}
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-3">
-            <img 
-              src="/lovable-uploads/487ce26d-d030-4f5b-a0eb-2be721555e67.png" 
-              alt="SPACE Coin" 
-              className="w-4 h-4 rounded-full"
-            />
+            <div className="w-5 h-5 rounded-full overflow-hidden bg-gradient-to-r from-yellow-400 to-orange-500 p-0.5">
+              <img 
+                src="/lovable-uploads/487ce26d-d030-4f5b-a0eb-2be721555e67.png" 
+                alt="SPACE Coin" 
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
             <h2 className="text-lg font-bold text-white">SPACE Coins</h2>
           </div>
           
@@ -253,11 +256,13 @@ const StorePage = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <div className={`p-1.5 rounded-lg bg-gradient-to-r ${pack.color}`}>
-                          <img 
-                            src="/lovable-uploads/487ce26d-d030-4f5b-a0eb-2be721555e67.png" 
-                            alt="SPACE Coin" 
-                            className="w-4 h-4 rounded-full"
-                          />
+                          <div className="w-4 h-4 rounded-full overflow-hidden">
+                            <img 
+                              src="/lovable-uploads/487ce26d-d030-4f5b-a0eb-2be721555e67.png" 
+                              alt="SPACE Coin" 
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
                         </div>
                         <div>
                           <CardTitle className="text-white text-base font-bold">
