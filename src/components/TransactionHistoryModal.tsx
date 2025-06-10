@@ -52,12 +52,14 @@ const TransactionHistoryModal: React.FC<TransactionHistoryModalProps> = ({
           </div>
           
           {/* Wallet Address Display */}
-          <div className="bg-white/5 rounded-xl p-3 border border-white/10">
-            <div className="flex items-center gap-2 text-sm text-gray-300">
-              <span>العنوان:</span>
-              <span className="font-mono text-blue-400">{address.slice(0, 8)}...{address.slice(-6)}</span>
+          {address && (
+            <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+              <div className="flex items-center gap-2 text-sm text-gray-300">
+                <span>العنوان:</span>
+                <span className="font-mono text-blue-400">{address.slice(0, 8)}...{address.slice(-6)}</span>
+              </div>
             </div>
-          </div>
+          )}
         </DialogHeader>
         
         <div className="space-y-3 pt-2 overflow-y-auto max-h-96 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
