@@ -1,176 +1,318 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from "@/hooks/use-toast";
+import { useTonConnectUI } from '@tonconnect/ui-react';
 import { 
-  ShoppingCart, 
+  Crown, 
   Zap, 
-  Palette, 
-  Crown,
   Star,
-  Coins,
-  Lock,
-  Check
+  Rocket,
+  CheckCircle,
+  Diamond,
+  Shield,
+  Coins
 } from 'lucide-react';
+import { formatTON } from '../utils/ton';
 
 const StorePage = () => {
-  const [spaceCoins, setSpaceCoins] = useState(1000); // Example balance
+  const [tonBalance] = useState(5.25); // Example TON balance
+  const [tonConnectUI] = useTonConnectUI();
   const [purchasedItems, setPurchasedItems] = useState<string[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
+  // Premium subscriptions data
+  const subscriptions = [
+    {
+      id: 'basic',
+      name: 'Basic Premium',
+      description: 'Essential mining boost',
+      price: 2.5,
+      duration: '1 Month',
+      icon: Crown,
+      color: 'from-blue-500 to-cyan-600',
+      features: [
+        '2x Mining Speed',
+        '24h Auto Mining',
+        'Basic Backgrounds',
+        'Priority Support'
+      ]
+    },
+    {
+      id: 'premium',
+      name: 'Premium Pro',
+      description: 'Advanced mining power',
+      price: 5.0,
+      duration: '1 Month',
+      icon: Diamond,
+      color: 'from-purple-500 to-pink-600',
+      popular: true,
+      features: [
+        '5x Mining Speed',
+        'Unlimited Auto Mining',
+        'All Backgrounds',
+        'VIP Badge',
+        'Exclusive Tasks',
+        '24/7 Support'
+      ]
+    },
+    {
+      id: 'vip',
+      name: 'VIP Elite',
+      description: 'Ultimate mining experience',
+      price: 10.0,
+      duration: '1 Month',
+      icon: Rocket,
+      color: 'from-orange-500 to-red-600',
+      features: [
+        '10x Mining Speed',
+        'Unlimited Auto Mining',
+        'Exclusive VIP Backgrounds',
+        'Elite Badge',
+        'VIP-Only Tasks',
+        'Personal Manager',
+        'Early Access Features'
+      ]
+    }
+  ];
+
+  // Mining upgrades
   const upgrades = [
     {
       id: 'speed-2x',
       name: 'Speed Boost 2x',
-      description: 'Double your mining speed',
-      price: 500,
+      description: '24 hours mining boost',
+      price: 0.5,
+      duration: '24h',
       icon: Zap,
-      type: 'upgrade'
+      color: 'from-yellow-500 to-orange-600'
     },
     {
       id: 'speed-5x',
       name: 'Speed Boost 5x',
-      description: 'Multiply mining speed by 5',
-      price: 2000,
+      description: '48 hours super boost',
+      price: 1.2,
+      duration: '48h',
       icon: Zap,
-      type: 'upgrade'
+      color: 'from-green-500 to-emerald-600'
     },
     {
       id: 'auto-mining',
       name: 'Auto Mining',
-      description: '24h automatic mining',
-      price: 1500,
-      icon: Crown,
-      type: 'upgrade'
+      description: '7 days automatic mining',
+      price: 2.0,
+      duration: '7 days',
+      icon: Shield,
+      color: 'from-indigo-500 to-purple-600'
     }
   ];
 
-  const backgrounds = [
-    {
-      id: 'nebula',
-      name: 'Cosmic Nebula',
-      description: 'Beautiful nebula background',
-      price: 300,
-      icon: Star,
-      type: 'background',
-      preview: 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)'
-    },
-    {
-      id: 'galaxy',
-      name: 'Galaxy Theme',
-      description: 'Spiral galaxy background',
-      price: 500,
-      icon: Star,
-      type: 'background',
-      preview: 'linear-gradient(45deg, #2196F3 0%, #9C27B0 100%)'
-    },
-    {
-      id: 'solar',
-      name: 'Solar System',
-      description: 'Planets and stars theme',
-      price: 800,
-      icon: Star,
-      type: 'background',
-      preview: 'linear-gradient(45deg, #FF9800 0%, #FF5722 100%)'
+  const handlePurchase = async (item: any, type: 'subscription' | 'upgrade') => {
+    if (!tonConnectUI.wallet) {
+      toast({
+        title: "Wallet Required",
+        description: "Please connect your TON wallet first",
+        variant: "destructive"
+      });
+      return;
     }
-  ];
 
-  const handlePurchase = (item: any) => {
-    if (spaceCoins >= item.price && !purchasedItems.includes(item.id)) {
-      setSpaceCoins(prev => prev - item.price);
+    if (tonBalance < item.price) {
+      toast({
+        title: "Insufficient TON",
+        description: `You need ${formatTON(item.price)} but only have ${formatTON(tonBalance)}`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 300,
+        messages: [{
+          address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
+          amount: (item.price * 1e9).toString()
+        }]
+      };
+
+      await tonConnectUI.sendTransaction(transaction);
       setPurchasedItems(prev => [...prev, item.id]);
+      
+      if (type === 'subscription') {
+        localStorage.setItem('activeSubscription', item.id);
+        localStorage.setItem('subscriptionExpiry', (Date.now() + 30 * 24 * 60 * 60 * 1000).toString());
+      }
+
       toast({
         title: "Purchase Successful!",
-        description: `You bought ${item.name}`,
+        description: `${item.name} activated successfully!`
       });
-    } else if (purchasedItems.includes(item.id)) {
+    } catch (error) {
+      console.error('Purchase failed:', error);
       toast({
-        title: "Already Purchased",
-        description: "You already own this item",
+        title: "Payment Failed",
+        description: "Failed to process payment",
         variant: "destructive"
       });
-    } else {
-      toast({
-        title: "Insufficient Funds",
-        description: "You don't have enough $SPACE coins",
-        variant: "destructive"
-      });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-2 pb-20">
-      <div className="max-w-sm mx-auto space-y-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-3 pb-24">
+      <div className="max-w-md mx-auto space-y-4">
         {/* Header */}
         <div className="text-center mb-4">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-            $SPACE Store
+            TON Store
           </h1>
-          <div className="flex items-center justify-center gap-2 bg-gradient-to-br from-slate-800/40 to-blue-900/30 backdrop-blur-xl border border-blue-400/20 rounded-xl p-2">
-            <Coins className="w-4 h-4 text-yellow-400" />
-            <span className="text-white font-bold">{spaceCoins.toLocaleString()}</span>
-            <span className="text-blue-300 text-sm">$SPACE</span>
+          <div className="flex items-center justify-center gap-2 bg-gradient-to-br from-slate-800/40 to-blue-900/30 backdrop-blur-xl border border-blue-400/20 rounded-xl p-3">
+            <Coins className="w-5 h-5 text-blue-400" />
+            <span className="text-white font-bold text-lg">{formatTON(tonBalance)}</span>
           </div>
         </div>
 
-        {/* Mining Upgrades Section */}
+        {/* Premium Subscriptions */}
         <div className="space-y-3">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Zap className="w-5 h-5 text-yellow-400" />
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Crown className="w-6 h-6 text-yellow-400" />
+            Premium Subscriptions
+          </h2>
+          
+          {subscriptions.map((sub) => {
+            const Icon = sub.icon;
+            const isPurchased = purchasedItems.includes(sub.id);
+            
+            return (
+              <motion.div
+                key={sub.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="relative"
+              >
+                {sub.popular && (
+                  <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10 bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-bold">
+                    Most Popular
+                  </Badge>
+                )}
+                
+                <Card className={`bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border ${sub.popular ? 'border-yellow-400/40' : 'border-blue-400/20'} rounded-2xl ${sub.popular ? 'ring-2 ring-yellow-400/30' : ''}`}>
+                  <CardHeader className="text-center pb-3">
+                    <div className="flex justify-center mb-2">
+                      <div className={`p-3 rounded-full bg-gradient-to-r ${sub.color}`}>
+                        <Icon className="w-6 h-6 text-white" />
+                      </div>
+                    </div>
+                    <CardTitle className="text-white text-xl font-bold">
+                      {sub.name}
+                    </CardTitle>
+                    <p className="text-gray-300 text-sm">{sub.description}</p>
+                    <div className="text-center mt-2">
+                      <span className="text-3xl font-bold text-white">
+                        {formatTON(sub.price)}
+                      </span>
+                      <span className="text-sm ml-2 text-gray-300 font-bold">
+                        / {sub.duration}
+                      </span>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      {sub.features.map((feature, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                          <span className="text-sm text-gray-200">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <Button 
+                      onClick={() => handlePurchase(sub, 'subscription')} 
+                      disabled={isPurchased || isProcessing} 
+                      className={`w-full mt-4 ${
+                        isPurchased 
+                          ? 'bg-green-600 hover:bg-green-600 cursor-default' 
+                          : `bg-gradient-to-r ${sub.color} hover:opacity-90`
+                      } rounded-xl font-bold py-3 text-sm`}
+                    >
+                      {isProcessing 
+                        ? 'Processing...' 
+                        : isPurchased 
+                          ? 'Active' 
+                          : 'Subscribe Now'
+                      }
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Mining Upgrades */}
+        <div className="space-y-3">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Zap className="w-6 h-6 text-yellow-400" />
             Mining Upgrades
           </h2>
           
           {upgrades.map((upgrade) => {
             const Icon = upgrade.icon;
             const isPurchased = purchasedItems.includes(upgrade.id);
-            const canAfford = spaceCoins >= upgrade.price;
             
             return (
               <motion.div
                 key={upgrade.id}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border border-blue-400/20 rounded-2xl p-3 shadow-xl"
+                className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border border-blue-400/20 rounded-2xl p-4"
               >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <Icon className="w-5 h-5 text-yellow-400" />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-full bg-gradient-to-r ${upgrade.color}`}>
+                      <Icon className="w-5 h-5 text-white" />
+                    </div>
                     <div>
-                      <h3 className="text-sm font-semibold text-white">
+                      <h3 className="text-white font-bold">
                         {upgrade.name}
                       </h3>
-                      <p className="text-xs text-gray-300">
+                      <p className="text-gray-300 text-sm">
                         {upgrade.description}
                       </p>
                     </div>
                   </div>
                   {isPurchased && (
-                    <Check className="w-5 h-5 text-green-400" />
+                    <CheckCircle className="w-5 h-5 text-green-400" />
                   )}
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    <Coins className="w-3 h-3 text-yellow-400" />
-                    <span className="text-white font-bold text-sm">
-                      {upgrade.price.toLocaleString()}
+                  <div className="flex items-center gap-2">
+                    <span className="text-white font-bold">
+                      {formatTON(upgrade.price)}
                     </span>
+                    <Badge className="bg-blue-500/20 text-blue-300 text-xs">
+                      {upgrade.duration}
+                    </Badge>
                   </div>
                   
                   <Button
-                    onClick={() => handlePurchase(upgrade)}
-                    disabled={isPurchased || !canAfford}
-                    className={`text-xs py-1 px-3 rounded-lg ${
+                    onClick={() => handlePurchase(upgrade, 'upgrade')}
+                    disabled={isPurchased || isProcessing}
+                    className={`text-sm py-2 px-4 rounded-lg ${
                       isPurchased 
                         ? 'bg-green-600 cursor-not-allowed' 
-                        : canAfford
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
-                        : 'bg-gray-600 cursor-not-allowed'
+                        : `bg-gradient-to-r ${upgrade.color} hover:opacity-90`
                     }`}
                   >
-                    {isPurchased ? 'Owned' : canAfford ? 'Buy' : 'Locked'}
-                    {!canAfford && !isPurchased && <Lock className="w-3 h-3 ml-1" />}
+                    {isPurchased ? 'Owned' : 'Buy'}
                   </Button>
                 </div>
               </motion.div>
@@ -178,89 +320,20 @@ const StorePage = () => {
           })}
         </div>
 
-        {/* Backgrounds Section */}
-        <div className="space-y-3">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Palette className="w-5 h-5 text-purple-400" />
-            Backgrounds
-          </h2>
-          
-          {backgrounds.map((background) => {
-            const Icon = background.icon;
-            const isPurchased = purchasedItems.includes(background.id);
-            const canAfford = spaceCoins >= background.price;
-            
-            return (
-              <motion.div
-                key={background.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border border-blue-400/20 rounded-2xl p-3 shadow-xl"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <div 
-                    className="w-10 h-10 rounded-lg border-2 border-white/20"
-                    style={{ background: background.preview }}
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold text-white">
-                        {background.name}
-                      </h3>
-                      {isPurchased && (
-                        <Check className="w-4 h-4 text-green-400" />
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-300">
-                      {background.description}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    <Coins className="w-3 h-3 text-yellow-400" />
-                    <span className="text-white font-bold text-sm">
-                      {background.price.toLocaleString()}
-                    </span>
-                  </div>
-                  
-                  <Button
-                    onClick={() => handlePurchase(background)}
-                    disabled={isPurchased || !canAfford}
-                    className={`text-xs py-1 px-3 rounded-lg ${
-                      isPurchased 
-                        ? 'bg-green-600 cursor-not-allowed' 
-                        : canAfford
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700'
-                        : 'bg-gray-600 cursor-not-allowed'
-                    }`}
-                  >
-                    {isPurchased ? 'Owned' : canAfford ? 'Buy' : 'Locked'}
-                    {!canAfford && !isPurchased && <Lock className="w-3 h-3 ml-1" />}
-                  </Button>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Coming Soon Section */}
+        {/* Premium Benefits */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="p-3 bg-gradient-to-br from-orange-900/30 to-red-900/30 backdrop-blur-xl border border-orange-400/20 rounded-2xl shadow-xl text-center"
+          className="p-4 bg-gradient-to-br from-yellow-900/30 to-orange-900/30 backdrop-blur-xl border border-yellow-400/20 rounded-2xl text-center"
         >
-          <h2 className="text-sm font-bold text-white mb-1">
-            Coming Soon
+          <Star className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
+          <h2 className="text-lg font-bold text-white mb-2">
+            Premium Benefits
           </h2>
-          <p className="text-gray-300 text-xs mb-2">
-            More upgrades and themes will be available soon!
+          <p className="text-gray-300 text-sm">
+            Unlock faster mining, exclusive features, and premium support with our subscription plans
           </p>
-          <div className="flex justify-center">
-            <ShoppingCart className="w-5 h-5 text-orange-400" />
-          </div>
         </motion.div>
       </div>
     </div>
