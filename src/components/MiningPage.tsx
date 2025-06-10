@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -14,6 +13,17 @@ const MiningPage = () => {
   const [remainingTime, setRemainingTime] = useState(28800); // 8 hours
   const [username, setUsername] = useState('');
   const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
+
+  // منع التمرير عند تحميل الصفحة
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    };
+  }, []);
 
   useEffect(() => {
     // Check if username exists in localStorage
@@ -89,7 +99,7 @@ const MiningPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col overflow-hidden">
+    <div className="fixed inset-0 overflow-hidden">
       {/* Username Prompt Modal */}
       {showUsernamePrompt && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -124,12 +134,12 @@ const MiningPage = () => {
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('/lovable-uploads/d391ae90-26f4-41e1-b5c8-5451cc3c1664.png')`
+          backgroundImage: `url('/lovable-uploads/e81290d1-496b-463f-8504-08f1bd2ce75c.png')`
         }}
       />
       
       {/* Content positioned at bottom */}
-      <div className="flex-1 flex flex-col justify-end relative z-10 p-6 pb-20">
+      <div className="fixed bottom-0 left-0 right-0 z-10 p-6 pb-20 flex flex-col items-center">
         {/* Username */}
         {username && (
           <div className="text-center mb-4">
