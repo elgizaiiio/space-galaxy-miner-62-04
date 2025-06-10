@@ -5,7 +5,6 @@ import { Send, History, LogIn, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { tonService, type TONTransaction } from '../services/tonService';
-import { getTranslation } from '../utils/language';
 import SendModal from './SendModal';
 import TransactionHistoryModal from './TransactionHistoryModal';
 
@@ -20,9 +19,6 @@ const WalletPage = () => {
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
   const [showSendModal, setShowSendModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
-
-  // Get translation function
-  const t = (key: string) => getTranslation(key);
 
   // Disable scrolling when component mounts
   useEffect(() => {
@@ -66,14 +62,14 @@ const WalletPage = () => {
       console.log('Attempting to connect TON wallet via UI...');
       await tonConnectUI.openModal();
       toast({
-        title: t('openConnectionWindow'),
-        description: t('pleaseSelectWallet')
+        title: 'Opening Connection Window',
+        description: 'Please select your wallet'
       });
     } catch (error) {
       console.error('Error opening TON Connect modal:', error);
       toast({
-        title: t('connectionError'),
-        description: t('failedToOpenWallet'),
+        title: 'Connection Error',
+        description: 'Failed to open wallet connection',
         variant: "destructive"
       });
     } finally {
@@ -88,8 +84,8 @@ const WalletPage = () => {
       setTonBalance(0);
       setTransactions([]);
       toast({
-        title: t('disconnected'),
-        description: t('tonWalletDisconnected')
+        title: 'Disconnected',
+        description: 'TON wallet disconnected'
       });
     } catch (error) {
       console.error('Error disconnecting wallet:', error);
@@ -108,8 +104,8 @@ const WalletPage = () => {
     } catch (error) {
       console.error('Error loading wallet data:', error);
       toast({
-        title: t('loadingDataError'),
-        description: t('failedToLoadWallet'),
+        title: 'Loading Data Error',
+        description: 'Failed to load wallet data',
         variant: "destructive"
       });
     } finally {
@@ -138,9 +134,9 @@ const WalletPage = () => {
         <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6">
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-center mb-2">
-              {t('smartWallet')}
+              Smart Wallet
             </h1>
-            <p className="text-gray-300 text-center text-sm">{t('connectWalletToAccess')}</p>
+            <p className="text-gray-300 text-center text-sm">Connect your wallet to access features</p>
           </div>
           
           <Button 
@@ -149,7 +145,7 @@ const WalletPage = () => {
             className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-full text-sm font-semibold"
           >
             <LogIn className="w-4 h-4 mr-2" />
-            {isConnecting ? t('connecting') : t('connectWallet')}
+            {isConnecting ? 'Connecting...' : 'Connect Wallet'}
           </Button>
         </div>
       </div>
