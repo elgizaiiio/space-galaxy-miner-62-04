@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,6 +9,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useTaskManagement } from '@/hooks/useTaskManagement';
 import { useUserData } from '@/hooks/useUserData';
 import { tonService } from '@/services/tonService';
+import { useTonConnectUI } from '@tonconnect/ui-react';
+import { TON_PAYMENT_ADDRESS, sendTONPayment, createTonConnector } from '@/utils/ton';
 import { getTranslation } from '../utils/language';
 import { 
   CheckCircle, 
@@ -28,6 +31,7 @@ type Task = Database['public']['Tables']['tasks']['Row'];
 
 const TasksPage = () => {
   const [isTaskInProgress, setIsTaskInProgress] = useState<{ [key: string]: boolean }>({});
+  const [tonConnectUI] = useTonConnectUI();
   const { toast } = useToast();
   
   // Get real tasks from database
@@ -74,6 +78,65 @@ const TasksPage = () => {
     }
   };
 
+  const handleDailyCheckInPayment = async () => {
+    try {
+      // Check if wallet is connected
+      if (!tonConnectUI.wallet) {
+        toast({
+          title: 'خطأ',
+          description: 'يجب ربط المحفظة أولاً لإتمام هذه المهمة',
+          variant: 'destructive'
+        });
+        // Open wallet connection modal
+        await tonConnectUI.openModal();
+        return false;
+      }
+
+      // Show payment confirmation
+      const confirmed = window.confirm('هذه المهمة تتطلب دفع 0.1 تون. هل تريد المتابعة؟');
+      if (!confirmed) {
+        return false;
+      }
+
+      toast({
+        title: 'جاري المعالجة',
+        description: 'جاري معالجة الدفع...',
+      });
+
+      // Create payment transaction
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
+        messages: [
+          {
+            address: TON_PAYMENT_ADDRESS,
+            amount: (0.1 * 1e9).toString(), // Convert 0.1 TON to nanoTON
+            payload: btoa('daily check-in payment'), // Base64 encoded comment
+          },
+        ],
+      };
+
+      // Send transaction using TON Connect UI
+      const result = await tonConnectUI.sendTransaction(transaction);
+      
+      console.log('Payment transaction result:', result);
+      
+      toast({
+        title: 'تم الدفع بنجاح',
+        description: 'تم إرسال 0.1 تون بنجاح',
+      });
+
+      return true;
+    } catch (error) {
+      console.error('Payment failed:', error);
+      toast({
+        title: 'خطأ في الدفع',
+        description: 'فشل في معالجة الدفع. حاول مرة أخرى.',
+        variant: 'destructive'
+      });
+      return false;
+    }
+  };
+
   const handleTaskComplete = async (task: Task) => {
     if (!userProfile || isTaskInProgress[task.id]) {
       return;
@@ -95,42 +158,9 @@ const TasksPage = () => {
     try {
       // Handle daily check-in task (requires TON payment)
       if (task.title === 'daily check-in' && task.status === 'pending') {
-        try {
-          // Check wallet connection
-          if (!tonService.isWalletConnected()) {
-            const walletAddress = await tonService.connectWallet();
-            if (!walletAddress) {
-              toast({
-                title: 'خطأ',
-                description: 'يجب ربط المحفظة أولاً لإتمام هذه المهمة',
-                variant: 'destructive'
-              });
-              return;
-            }
-          }
-
-          // Show payment confirmation
-          const confirmed = window.confirm('هذه المهمة تتطلب دفع 0.1 تون. هل تريد المتابعة؟');
-          if (!confirmed) {
-            return;
-          }
-
-          // Here you would integrate with TON payment
-          // For now, we'll simulate the payment
-          toast({
-            title: 'جاري المعالجة',
-            description: 'جاري معالجة الدفع...',
-          });
-
-          // Simulate payment processing
-          await new Promise(resolve => setTimeout(resolve, 3000));
-          
-        } catch (error) {
-          toast({
-            title: 'خطأ في الدفع',
-            description: 'فشل في معالجة الدفع',
-            variant: 'destructive'
-          });
+        const paymentSuccess = await handleDailyCheckInPayment();
+        if (!paymentSuccess) {
+          setIsTaskInProgress(prev => ({ ...prev, [task.id]: false }));
           return;
         }
       } else {
