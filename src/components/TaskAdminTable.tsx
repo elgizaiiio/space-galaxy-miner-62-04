@@ -41,6 +41,16 @@ const TaskAdminTable: React.FC<TaskAdminTableProps> = ({
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'pending': return 'مهمة يومية';
+      case 'in_progress': return 'مهمة أساسية';
+      case 'completed': return 'مهمة شراكة';
+      case 'failed': return 'فاشلة';
+      default: return status;
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center p-8">
@@ -64,7 +74,7 @@ const TaskAdminTable: React.FC<TaskAdminTableProps> = ({
           <TableRow className="border-indigo-500/30">
             <TableHead className="text-white">الصورة</TableHead>
             <TableHead className="text-white">العنوان</TableHead>
-            <TableHead className="text-white">الحالة</TableHead>
+            <TableHead className="text-white">النوع</TableHead>
             <TableHead className="text-white">المكافأة</TableHead>
             <TableHead className="text-white">نشط</TableHead>
             <TableHead className="text-white">الإجراءات</TableHead>
@@ -88,10 +98,15 @@ const TaskAdminTable: React.FC<TaskAdminTableProps> = ({
               </TableCell>
               <TableCell>
                 <div className="text-white font-medium">{task.title}</div>
+                {task.description && (
+                  <div className="text-gray-400 text-sm truncate max-w-xs">
+                    {task.description}
+                  </div>
+                )}
               </TableCell>
               <TableCell>
                 <Badge className={getStatusColor(task.status || 'pending')}>
-                  {task.status}
+                  {getStatusLabel(task.status || 'pending')}
                 </Badge>
               </TableCell>
               <TableCell>

@@ -1,277 +1,249 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Save, X, Upload, Image, Trash2 } from 'lucide-react';
-import { imageUploadService } from '@/services/imageUploadService';
-import { useToast } from "@/hooks/use-toast";
+import { Save, X, Upload, ExternalLink } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
 
 type Task = Database['public']['Tables']['tasks']['Row'];
 type NewTask = Database['public']['Tables']['tasks']['Insert'];
 
-interface TaskFormProps {
+interface TaskFormSimpleProps {
   task?: Task | null;
-  onSubmit: (data: NewTask) => Promise<void>;
+  onSubmit: (taskData: NewTask) => void;
   onCancel: () => void;
   isLoading?: boolean;
 }
 
-const TaskFormSimple: React.FC<TaskFormProps> = ({
+const TaskFormSimple: React.FC<TaskFormSimpleProps> = ({
   task,
   onSubmit,
   onCancel,
   isLoading = false
 }) => {
   const [formData, setFormData] = useState({
-    title: task?.title || '',
-    status: task?.status || 'pending',
-    reward_amount: task?.reward_amount || 100,
-    external_link: task?.external_link || '',
-    image_url: task?.image_url || '',
-    description: task?.description || '',
-    is_active: task?.is_active ?? true
+    title: '',
+    description: '',
+    reward_amount: 0,
+    external_link: '',
+    image_url: '',
+    is_active: true,
+    status: 'pending' as 'pending' | 'in_progress' | 'completed' | 'failed',
+    max_completions: null as number | null
   });
 
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(task?.image_url || '');
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
+  useEffect(() => {
+    if (task) {
+      setFormData({
+        title: task.title || '',
+        description: task.description || '',
+        reward_amount: task.reward_amount || 0,
+        external_link: task.external_link || '',
+        image_url: task.image_url || '',
+        is_active: task.is_active ?? true,
+        status: task.status || 'pending',
+        max_completions: task.max_completions || null
+      });
+    }
+  }, [task]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted with data:', formData);
     
-    try {
-      let finalFormData = { ...formData };
+    const taskData: NewTask = {
+      title: formData.title,
+      description: formData.description,
+      reward_amount: formData.reward_amount,
+      external_link: formData.external_link || null,
+      image_url: formData.image_url || null,
+      is_active: formData.is_active,
+      status: formData.status,
+      max_completions: formData.max_completions
+    };
 
-      // Upload image if selected
-      if (selectedImage) {
-        setUploadingImage(true);
-        try {
-          const tempTaskId = task?.id || `temp-${Date.now()}`;
-          const imageUrl = await imageUploadService.uploadTaskImage(selectedImage, tempTaskId);
-          finalFormData.image_url = imageUrl;
-        } catch (error) {
-          toast({
-            title: 'خطأ',
-            description: 'فشل في رفع الصورة',
-            variant: 'destructive'
-          });
-          return;
-        } finally {
-          setUploadingImage(false);
-        }
-      }
-
-      await onSubmit(finalFormData);
-    } catch (error) {
-      console.error('Form submission error:', error);
-    }
+    onSubmit(taskData);
   };
 
-  const handleInputChange = (field: string, value: any) => {
-    console.log(`Updating ${field} to:`, value);
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: 'خطأ',
-          description: 'حجم الصورة يجب أن يكون أقل من 5MB',
-          variant: 'destructive'
-        });
-        return;
-      }
-
-      setSelectedImage(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setImagePreview(result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleRemoveImage = () => {
-    setSelectedImage(null);
-    setImagePreview('');
-    setFormData(prev => ({ ...prev, image_url: '' }));
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'pending': return 'مهمة يومية';
+      case 'in_progress': return 'مهمة أساسية';
+      case 'completed': return 'مهمة شراكة';
+      case 'failed': return 'فاشلة';
+      default: return status;
     }
   };
 
   return (
     <Card className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-xl border-2 border-indigo-500/30 rounded-3xl">
       <CardHeader>
-        <CardTitle className="text-white">
-          {task ? 'تعديل المهمة' : 'إضافة مهمة جديدة'}
+        <CardTitle className="text-white text-center">
+          {task ? 'تحديث المهمة' : 'إنشاء مهمة جديدة'}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="title" className="text-white">عنوان المهمة</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => handleInputChange('title', e.target.value)}
-                placeholder="مثال: انضم إلى التليجرام"
-                className="bg-white/10 border-white/20 text-white placeholder-gray-400"
-                required
-                disabled={isLoading}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="status" className="text-white">حالة المهمة</Label>
-              <Select 
-                value={formData.status} 
-                onValueChange={(value) => handleInputChange('status', value)}
-                disabled={isLoading}
-              >
-                <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">في الانتظار</SelectItem>
-                  <SelectItem value="in_progress">قيد التنفيذ</SelectItem>
-                  <SelectItem value="completed">مكتملة</SelectItem>
-                  <SelectItem value="failed">فشلت</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="reward_amount" className="text-white">مكافأة المهمة</Label>
-              <Input
-                id="reward_amount"
-                type="number"
-                min="1"
-                value={formData.reward_amount}
-                onChange={(e) => handleInputChange('reward_amount', parseInt(e.target.value) || 0)}
-                className="bg-white/10 border-white/20 text-white"
-                required
-                disabled={isLoading}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="external_link" className="text-white">رابط المهمة (اختياري)</Label>
-              <Input
-                id="external_link"
-                type="url"
-                value={formData.external_link}
-                onChange={(e) => handleInputChange('external_link', e.target.value)}
-                placeholder="https://..."
-                className="bg-white/10 border-white/20 text-white placeholder-gray-400"
-                disabled={isLoading}
-              />
-            </div>
+          {/* Title */}
+          <div>
+            <Label htmlFor="title" className="text-white mb-2 block">
+              عنوان المهمة *
+            </Label>
+            <Input
+              id="title"
+              type="text"
+              value={formData.title}
+              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+              placeholder="أدخل عنوان المهمة"
+              required
+            />
           </div>
 
+          {/* Description */}
           <div>
-            <Label htmlFor="description" className="text-white">وصف المهمة (اختياري)</Label>
-            <Input
+            <Label htmlFor="description" className="text-white mb-2 block">
+              وصف المهمة
+            </Label>
+            <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              placeholder="وصف تفصيلي للمهمة"
-              className="bg-white/10 border-white/20 text-white placeholder-gray-400"
-              disabled={isLoading}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 min-h-[100px]"
+              placeholder="أدخل وصف المهمة"
             />
           </div>
 
-          {/* Image Upload Section */}
+          {/* Task Category (Status) */}
           <div>
-            <Label className="text-white mb-3 block">صورة المهمة (اختياري)</Label>
-            
-            {imagePreview ? (
-              <div className="space-y-3">
-                <div className="relative w-full h-40 bg-gray-800 rounded-lg overflow-hidden">
-                  <img 
-                    src={imagePreview} 
-                    alt="معاينة صورة المهمة" 
-                    className="w-full h-full object-cover"
-                  />
-                  <Button
-                    type="button"
-                    onClick={handleRemoveImage}
-                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full"
-                    disabled={isLoading || uploadingImage}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div 
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full h-40 border-2 border-dashed border-white/30 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-white/50 transition-colors bg-white/5"
-              >
-                <Image className="w-12 h-12 text-gray-400 mb-2" />
-                <p className="text-gray-400 text-sm text-center">
-                  اضغط لاختيار صورة<br />
-                  <span className="text-xs">PNG, JPG, GIF (حد أقصى 5MB)</span>
-                </p>
-              </div>
-            )}
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleImageSelect}
-              className="hidden"
-              disabled={isLoading || uploadingImage}
-            />
-
-            {!imagePreview && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isLoading || uploadingImage}
-                className="mt-3 text-white border-white/20 hover:bg-white/10"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                اختيار صورة
-              </Button>
-            )}
+            <Label htmlFor="status" className="text-white mb-2 block">
+              نوع المهمة *
+            </Label>
+            <Select 
+              value={formData.status} 
+              onValueChange={(value: 'pending' | 'in_progress' | 'completed' | 'failed') => 
+                setFormData(prev => ({ ...prev, status: value }))
+              }
+            >
+              <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                <SelectValue placeholder="اختر نوع المهمة" />
+              </SelectTrigger>
+              <SelectContent className="bg-gray-800 border-gray-600">
+                <SelectItem value="pending" className="text-white hover:bg-gray-700">
+                  مهمة يومية
+                </SelectItem>
+                <SelectItem value="in_progress" className="text-white hover:bg-gray-700">
+                  مهمة أساسية
+                </SelectItem>
+                <SelectItem value="completed" className="text-white hover:bg-gray-700">
+                  مهمة شراكة
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <Button 
-              type="button" 
-              variant="outline" 
+          {/* Reward Amount */}
+          <div>
+            <Label htmlFor="reward_amount" className="text-white mb-2 block">
+              مبلغ المكافأة ($SPACE) *
+            </Label>
+            <Input
+              id="reward_amount"
+              type="number"
+              min="0"
+              value={formData.reward_amount}
+              onChange={(e) => setFormData(prev => ({ ...prev, reward_amount: parseInt(e.target.value) || 0 }))}
+              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+              placeholder="0"
+              required
+            />
+          </div>
+
+          {/* External Link */}
+          <div>
+            <Label htmlFor="external_link" className="text-white mb-2 block flex items-center gap-2">
+              <ExternalLink className="w-4 h-4" />
+              رابط المهمة
+            </Label>
+            <Input
+              id="external_link"
+              type="url"
+              value={formData.external_link}
+              onChange={(e) => setFormData(prev => ({ ...prev, external_link: e.target.value }))}
+              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+              placeholder="https://example.com"
+            />
+          </div>
+
+          {/* Image URL */}
+          <div>
+            <Label htmlFor="image_url" className="text-white mb-2 block flex items-center gap-2">
+              <Upload className="w-4 h-4" />
+              رابط الصورة
+            </Label>
+            <Input
+              id="image_url"
+              type="url"
+              value={formData.image_url}
+              onChange={(e) => setFormData(prev => ({ ...prev, image_url: e.target.value }))}
+              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+              placeholder="https://example.com/image.jpg"
+            />
+          </div>
+
+          {/* Max Completions */}
+          <div>
+            <Label htmlFor="max_completions" className="text-white mb-2 block">
+              الحد الأقصى للإنجاز (اختياري)
+            </Label>
+            <Input
+              id="max_completions"
+              type="number"
+              min="1"
+              value={formData.max_completions || ''}
+              onChange={(e) => setFormData(prev => ({ 
+                ...prev, 
+                max_completions: e.target.value ? parseInt(e.target.value) : null 
+              }))}
+              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+              placeholder="غير محدود"
+            />
+          </div>
+
+          {/* Active Status */}
+          <div className="flex items-center justify-between">
+            <Label htmlFor="is_active" className="text-white">
+              المهمة نشطة
+            </Label>
+            <Switch
+              id="is_active"
+              checked={formData.is_active}
+              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4 pt-4">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {task ? 'تحديث المهمة' : 'إنشاء المهمة'}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
               onClick={onCancel}
-              disabled={isLoading || uploadingImage}
-              className="text-white border-white/20 hover:bg-white/10"
+              className="flex-1 border-red-500/50 text-red-400 hover:bg-red-500/10"
             >
               <X className="w-4 h-4 mr-2" />
               إلغاء
-            </Button>
-            <Button 
-              type="submit" 
-              disabled={isLoading || uploadingImage}
-              className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
-            >
-              <Save className="w-4 h-4 mr-2" />
-              {uploadingImage ? 'جاري رفع الصورة...' : (isLoading ? 'جاري الحفظ...' : (task ? 'تحديث المهمة' : 'إضافة المهمة'))}
             </Button>
           </div>
         </form>

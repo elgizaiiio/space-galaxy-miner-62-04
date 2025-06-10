@@ -62,6 +62,13 @@ const TasksPage = () => {
     return reward.toLocaleString();
   };
 
+  const handleTaskClick = (task: Task) => {
+    // If task has external link, open it in new tab
+    if (task.external_link) {
+      window.open(task.external_link, '_blank');
+    }
+  };
+
   const handleTaskComplete = async (task: Task) => {
     if (!userProfile || isTaskInProgress[task.id]) {
       return;
@@ -175,7 +182,11 @@ const TasksPage = () => {
                     task.status === 'pending' ? 'daily' : 'main';
     
     return (
-      <Card key={task.id} className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border border-blue-400/20 rounded-xl">
+      <Card 
+        key={task.id} 
+        className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border border-blue-400/20 rounded-xl cursor-pointer hover:border-blue-300/40 transition-all duration-200"
+        onClick={() => handleTaskClick(task)}
+      >
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
             {/* Task Image or Icon */}
@@ -212,7 +223,10 @@ const TasksPage = () => {
                 </div>
                 
                 <Button
-                  onClick={() => handleTaskComplete(task)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTaskComplete(task);
+                  }}
                   disabled={isCompleted || inProgress}
                   size="sm"
                   className={`text-xs py-1 px-2 h-7 ${
