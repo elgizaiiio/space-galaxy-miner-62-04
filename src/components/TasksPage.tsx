@@ -252,19 +252,25 @@ const TasksPage = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 pb-20 bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div 
+      className="min-h-screen p-4 pb-20 relative overflow-hidden"
+      style={{
+        backgroundImage: `url('/lovable-uploads/a886f619-aae7-4a46-b7ec-1dfcb2019fb0.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/40 z-0"></div>
+      
       <div className="max-w-md mx-auto space-y-4 relative z-10">
-        {/* Header */}
+        {/* Header - Removed logo and simplified */}
         <div className="text-center mb-4">
-          <div className="flex items-center justify-center mb-2">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
-              <Trophy className="w-6 h-6 text-white" />
-            </div>
-          </div>
           <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-1">
             Tasks
           </h1>
-          <p className="text-gray-300 text-sm">
+          <p className="text-gray-200 text-sm">
             Complete tasks to earn rewards
           </p>
         </div>
