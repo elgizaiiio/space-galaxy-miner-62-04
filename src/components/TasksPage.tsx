@@ -77,8 +77,8 @@ const TasksPage = () => {
       // Check if wallet is connected
       if (!tonConnectUI.wallet) {
         toast({
-          title: 'خطأ',
-          description: 'يجب ربط المحفظة أولاً لإتمام هذه المهمة',
+          title: 'Error',
+          description: 'Please connect your wallet first to complete this task',
           variant: 'destructive'
         });
         // Open wallet connection modal
@@ -86,16 +86,9 @@ const TasksPage = () => {
         return false;
       }
 
-      // Show payment confirmation
-      const confirmed = window.confirm('هذه المهمة تتطلب دفع 0.1 تون. هل تريد المتابعة؟');
-      if (!confirmed) {
-        console.log('Payment cancelled by user');
-        return false;
-      }
-
       toast({
-        title: 'جاري المعالجة',
-        description: 'جاري معالجة الدفع...',
+        title: 'Processing',
+        description: 'Processing payment...',
       });
 
       // Create payment transaction
@@ -116,16 +109,16 @@ const TasksPage = () => {
       console.log('Payment transaction result:', result);
       
       toast({
-        title: 'تم الدفع بنجاح',
-        description: 'تم إرسال 0.1 تون بنجاح',
+        title: 'Payment Successful',
+        description: '0.1 TON sent successfully',
       });
 
       return true;
     } catch (error) {
       console.error('Payment failed:', error);
       toast({
-        title: 'خطأ في الدفع',
-        description: 'فشل في معالجة الدفع. حاول مرة أخرى.',
+        title: 'Payment Error',
+        description: 'Failed to process payment. Please try again.',
         variant: 'destructive'
       });
       return false;
@@ -146,7 +139,7 @@ const TasksPage = () => {
       console.log('Task already completed');
       toast({
         title: getTranslation('taskCompleted'),
-        description: 'هذه المهمة مكتملة بالفعل',
+        description: 'This task is already completed',
         variant: 'destructive'
       });
       return;
@@ -186,8 +179,8 @@ const TasksPage = () => {
         } catch (error) {
           console.error('Error completing task:', error);
           toast({
-            title: 'خطأ',
-            description: 'فشل في إتمام المهمة',
+            title: 'Error',
+            description: 'Failed to complete task',
             variant: 'destructive'
           });
         } finally {
@@ -302,7 +295,7 @@ const TasksPage = () => {
   if (tasksLoading || userLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white">جاري التحميل...</div>
+        <div className="text-white">Loading...</div>
       </div>
     );
   }
