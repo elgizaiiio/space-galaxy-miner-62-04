@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -176,7 +175,7 @@ const App = () => {
           <Toaster />
           <Sonner 
             position="top-center"
-            duration={2000}
+            duration={1000}
             toastOptions={{
               style: {
                 background: 'rgba(15, 23, 42, 0.95)',
