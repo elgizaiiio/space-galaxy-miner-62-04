@@ -196,9 +196,9 @@ const TasksPage = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1">
                   <img 
-                    src="/lovable-uploads/a61fe220-a4a1-4863-bf49-f46aaea61a74.png" 
+                    src="/lovable-uploads/be8f1a36-1907-4464-9c19-754c1d78354a.png" 
                     alt="Space Coin"
-                    className="w-3 h-3"
+                    className="w-3 h-3 rounded-full"
                   />
                   <span className="text-yellow-400 font-bold text-xs">
                     +{formatReward(task.reward)}

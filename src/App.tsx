@@ -123,6 +123,7 @@ const App = () => {
           <Toaster />
           <Sonner 
             position="top-center"
+            duration={2000}
             toastOptions={{
               style: {
                 background: 'rgba(15, 23, 42, 0.95)',
