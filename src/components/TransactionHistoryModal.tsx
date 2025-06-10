@@ -2,7 +2,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { X, History, Clock } from 'lucide-react';
 import { TONTransaction } from '../services/tonService';
 import TransactionItem from './TransactionItem';
 import { getTranslation } from '@/utils/language';
@@ -30,35 +30,58 @@ const TransactionHistoryModal: React.FC<TransactionHistoryModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-black border border-gray-800 text-white max-w-sm max-h-[80vh] overflow-hidden">
+      <DialogContent className="bg-gradient-to-br from-slate-900/98 via-gray-900/95 to-black/98 backdrop-blur-xl border-2 border-gray-700/50 text-white max-w-sm max-h-[85vh] overflow-hidden rounded-3xl">
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-lg font-bold text-white">
-              {t('transactionHistory')}
-            </DialogTitle>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-r from-green-500/20 to-teal-600/20 rounded-xl">
+                <History className="w-5 h-5 text-green-400" />
+              </div>
+              <DialogTitle className="text-xl font-bold bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
+                سجل المعاملات
+              </DialogTitle>
+            </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="text-white hover:bg-gray-800 h-7 w-7 p-0 rounded-full"
+              className="text-gray-400 hover:text-white hover:bg-white/10 h-8 w-8 p-0 rounded-full"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" />
             </Button>
+          </div>
+          
+          {/* Wallet Address Display */}
+          <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+            <div className="flex items-center gap-2 text-sm text-gray-300">
+              <span>العنوان:</span>
+              <span className="font-mono text-blue-400">{address.slice(0, 8)}...{address.slice(-6)}</span>
+            </div>
           </div>
         </DialogHeader>
         
-        <div className="space-y-3 pt-2 overflow-y-auto max-h-96">
+        <div className="space-y-3 pt-2 overflow-y-auto max-h-96 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
           {transactions.length > 0 ? (
-            transactions.map((transaction) => (
-              <TransactionItem
-                key={transaction.hash}
-                transaction={transaction}
-                onViewExplorer={handleViewExplorer}
-              />
-            ))
+            <>
+              <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
+                <Clock className="w-4 h-4" />
+                <span>آخر {transactions.length} معاملات</span>
+              </div>
+              {transactions.map((transaction) => (
+                <TransactionItem
+                  key={transaction.hash}
+                  transaction={transaction}
+                  onViewExplorer={handleViewExplorer}
+                />
+              ))}
+            </>
           ) : (
-            <div className="text-center py-8">
-              <p className="text-gray-400">{t('noTransactionsFound')}</p>
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <History className="w-8 h-8 text-gray-500" />
+              </div>
+              <p className="text-gray-400 text-lg mb-2">لا توجد معاملات</p>
+              <p className="text-gray-500 text-sm">ستظهر معاملاتك هنا عند إجرائها</p>
             </div>
           )}
         </div>
