@@ -114,21 +114,30 @@ const WalletPage = () => {
   // If no wallet connected, show connection screen
   if (!isWalletConnected) {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col">
-        <div className="flex-1 flex flex-col items-center justify-center px-6">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-center mb-2">
+      <div 
+        className="min-h-screen text-white flex flex-col relative"
+        style={{
+          backgroundImage: `url('/lovable-uploads/d1b0fb13-b222-4fb2-a0d7-ca5cc2ed9d2d.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6">
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-center mb-2">
               {t('smartWallet')}
             </h1>
-            <p className="text-gray-400 text-center">{t('connectWalletToAccess')}</p>
+            <p className="text-gray-300 text-center text-sm">{t('connectWalletToAccess')}</p>
           </div>
           
           <Button 
             onClick={connectWallet} 
             disabled={isConnecting} 
-            className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-full text-lg font-semibold"
+            className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-full text-sm font-semibold"
           >
-            <LogIn className="w-5 h-5 mr-2" />
+            <LogIn className="w-4 h-4 mr-2" />
             {isConnecting ? t('connecting') : t('connectWallet')}
           </Button>
         </div>
@@ -137,14 +146,24 @@ const WalletPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div 
+      className="min-h-screen text-white flex flex-col relative"
+      style={{
+        backgroundImage: `url('/lovable-uploads/d1b0fb13-b222-4fb2-a0d7-ca5cc2ed9d2d.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      <div className="absolute inset-0 bg-black/60"></div>
+      
       {/* Header with address and disconnect */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-800">
-        <div className="flex items-center gap-2 bg-gray-800 rounded-full px-3 py-1">
-          <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+      <div className="relative z-10 flex items-center justify-between p-3 border-b border-gray-800/50">
+        <div className="flex items-center gap-2 bg-gray-800/70 rounded-full px-3 py-1">
+          <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
             <span className="text-xs font-bold">T</span>
           </div>
-          <span className="text-sm text-gray-300">
+          <span className="text-xs text-gray-300">
             {connectedAddress ? `${connectedAddress.slice(0, 6)}...${connectedAddress.slice(-3)}` : 'UQA...xxf'}
           </span>
         </div>
@@ -152,72 +171,76 @@ const WalletPage = () => {
           onClick={disconnectWallet} 
           variant="ghost" 
           size="sm" 
-          className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+          className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-7 w-7 p-0"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="w-3.5 h-3.5" />
         </Button>
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6">
         {/* Balance display */}
-        <div className="text-center mb-12">
-          <div className="text-6xl font-light mb-2 text-gray-300">
+        <div className="text-center mb-8">
+          <div className="text-4xl font-light mb-1 text-gray-200">
             $&lt;0.01
           </div>
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-16 mb-16">
+        <div className="flex gap-12 mb-10">
           <button 
             onClick={() => setShowSendModal(true)}
-            className="flex flex-col items-center gap-3"
+            className="flex flex-col items-center gap-2"
           >
-            <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center">
-              <Send className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-gray-800/70 rounded-full flex items-center justify-center">
+              <Send className="w-5 h-5 text-white" />
             </div>
-            <span className="text-gray-400 text-lg">Send</span>
+            <span className="text-gray-300 text-sm">Send</span>
           </button>
 
           <button 
             onClick={() => setShowHistoryModal(true)}
-            className="flex flex-col items-center gap-3"
+            className="flex flex-col items-center gap-2"
           >
-            <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center">
-              <History className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-gray-800/70 rounded-full flex items-center justify-center">
+              <History className="w-5 h-5 text-white" />
             </div>
-            <span className="text-gray-400 text-lg">History</span>
+            <span className="text-gray-300 text-sm">History</span>
           </button>
         </div>
 
         {/* Currency list */}
-        <div className="w-full max-w-sm space-y-4">
+        <div className="w-full max-w-xs space-y-3">
           {/* Toncoin */}
-          <div className="flex items-center justify-between py-4">
+          <div className="flex items-center justify-between py-3 px-4 bg-gray-800/30 rounded-lg backdrop-blur-sm">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">T</span>
-              </div>
+              <img 
+                src="/lovable-uploads/60d2a535-0c51-4428-b219-eca7f18bb598.png" 
+                alt="TON" 
+                className="w-8 h-8 rounded-full"
+              />
               <div>
-                <div className="text-white font-semibold">Toncoin</div>
-                <div className="text-gray-400 text-sm">{tonBalance.toFixed(1)} TON</div>
+                <div className="text-white font-medium text-sm">Toncoin</div>
+                <div className="text-gray-400 text-xs">{tonBalance.toFixed(1)} TON</div>
               </div>
             </div>
-            <div className="text-white font-semibold">$0</div>
+            <div className="text-white font-medium text-sm">$0</div>
           </div>
 
           {/* SPACE */}
-          <div className="flex items-center justify-between py-4">
+          <div className="flex items-center justify-between py-3 px-4 bg-gray-800/30 rounded-lg backdrop-blur-sm">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                <div className="w-6 h-6 bg-gray-800 rounded-full"></div>
-              </div>
+              <img 
+                src="/lovable-uploads/859d4b2d-567d-4e4f-ba7c-d739fa472910.png" 
+                alt="SPACE" 
+                className="w-8 h-8 rounded-full"
+              />
               <div>
-                <div className="text-white font-semibold">SPACE</div>
-                <div className="text-gray-400 text-sm">{spaceBalance.toLocaleString()} $SPACE</div>
+                <div className="text-white font-medium text-sm">SPACE</div>
+                <div className="text-gray-400 text-xs">{spaceBalance.toLocaleString()} $SPACE</div>
               </div>
             </div>
-            <div className="text-white font-semibold">$0</div>
+            <div className="text-white font-medium text-sm">$0</div>
           </div>
         </div>
       </div>
