@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -63,8 +62,14 @@ const TasksPage = () => {
   };
 
   const handleTaskClick = (task: Task) => {
+    // Special handling for daily check-in task
+    if (task.title === 'daily check-in') {
+      handleTaskComplete(task);
+      return;
+    }
+    
     // If task has external link, open it in new tab
-    if (task.external_link) {
+    if (task.external_link && task.external_link !== '#') {
       window.open(task.external_link, '_blank');
     }
   };
@@ -130,7 +135,7 @@ const TasksPage = () => {
         }
       } else {
         // Open URL if exists for other tasks
-        if (task.external_link) {
+        if (task.external_link && task.external_link !== '#') {
           window.open(task.external_link, '_blank');
         }
       }
@@ -169,7 +174,7 @@ const TasksPage = () => {
     return tasks.filter(task => {
       if (category === 'main') return task.status === 'pending' || task.status === 'in_progress';
       if (category === 'partner') return task.status === 'completed';
-      if (category === 'daily') return task.status === 'pending';
+      if (category === 'daily') return task.status === 'pending' && task.title === 'daily check-in';
       return false;
     }).filter(task => task.is_active);
   };
@@ -242,7 +247,7 @@ const TasksPage = () => {
                   ) : inProgress ? (
                     <Clock className="w-3 h-3 animate-spin" />
                   ) : (
-                    task.external_link ? <ExternalLink className="w-3 h-3" /> : <Gift className="w-3 h-3" />
+                    task.external_link && task.external_link !== '#' ? <ExternalLink className="w-3 h-3" /> : <Gift className="w-3 h-3" />
                   )}
                 </Button>
               </div>

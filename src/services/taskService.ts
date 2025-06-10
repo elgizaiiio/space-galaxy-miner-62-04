@@ -168,16 +168,16 @@ export const taskService = {
 
   async createDailyCheckInTask(): Promise<Task | null> {
     try {
-      // Check if daily check-in task already exists
+      // Check if daily check-in task already exists (active task only)
       const { data: existingTask, error: checkError } = await supabase
         .from('tasks')
         .select('*')
         .eq('title', 'daily check-in')
         .eq('status', 'pending')
-        .single();
+        .eq('is_active', true)
+        .maybeSingle();
 
-      if (checkError && checkError.code !== 'PGRST116') {
-        // PGRST116 means no rows found, which is expected
+      if (checkError) {
         console.error('Error checking for existing daily task:', checkError);
         return null;
       }
@@ -187,14 +187,14 @@ export const taskService = {
         return existingTask;
       }
 
-      // Create daily check-in task
+      // Create daily check-in task with external link
       const { data, error } = await supabase
         .from('tasks')
         .insert({
           title: 'daily check-in',
           status: 'pending',
           reward_amount: 50,
-          external_link: null,
+          external_link: '#', // Add a placeholder link so it can be clicked
           description: 'Complete daily check-in to earn rewards',
           is_active: true
         })

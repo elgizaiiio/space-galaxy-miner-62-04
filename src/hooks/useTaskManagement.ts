@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { taskService } from '@/services/taskService';
 import { taskUserService } from '@/services/taskUserService';
@@ -11,12 +10,20 @@ type NewTask = Database['public']['Tables']['tasks']['Insert'];
 export const useTaskManagement = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [dailyTaskInitialized, setDailyTaskInitialized] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     loadTasks();
-    initializeDailyCheckIn();
   }, []);
+
+  useEffect(() => {
+    // Only initialize daily check-in once per session
+    if (!dailyTaskInitialized) {
+      initializeDailyCheckIn();
+      setDailyTaskInitialized(true);
+    }
+  }, [dailyTaskInitialized]);
 
   const initializeDailyCheckIn = async () => {
     try {
