@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Send, History, LogIn, LogOut } from 'lucide-react';
@@ -111,6 +110,9 @@ const WalletPage = () => {
 
   const isWalletConnected = !!tonConnectUI.wallet;
 
+  // Calculate total balance in USD (using TON balance for now)
+  const totalBalanceUSD = tonBalance * 5.2; // Assuming 1 TON = $5.2 (you can update this with real-time price)
+
   // If no wallet connected, show connection screen
   if (!isWalletConnected) {
     return (
@@ -160,9 +162,11 @@ const WalletPage = () => {
       {/* Header with address and disconnect */}
       <div className="relative z-10 flex items-center justify-between p-3 border-b border-gray-800/50">
         <div className="flex items-center gap-2 bg-gray-800/70 rounded-full px-3 py-1">
-          <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-            <span className="text-xs font-bold">T</span>
-          </div>
+          <img 
+            src="/lovable-uploads/60d2a535-0c51-4428-b219-eca7f18bb598.png" 
+            alt="TON" 
+            className="w-5 h-5 rounded-full"
+          />
           <span className="text-xs text-gray-300">
             {connectedAddress ? `${connectedAddress.slice(0, 6)}...${connectedAddress.slice(-3)}` : 'UQA...xxf'}
           </span>
@@ -182,7 +186,7 @@ const WalletPage = () => {
         {/* Balance display */}
         <div className="text-center mb-8">
           <div className="text-4xl font-light mb-1 text-gray-200">
-            $&lt;0.01
+            ${totalBalanceUSD.toFixed(2)}
           </div>
         </div>
 
@@ -224,7 +228,7 @@ const WalletPage = () => {
                 <div className="text-gray-400 text-xs">{tonBalance.toFixed(1)} TON</div>
               </div>
             </div>
-            <div className="text-white font-medium text-sm">$0</div>
+            <div className="text-white font-medium text-sm">${(tonBalance * 5.2).toFixed(2)}</div>
           </div>
 
           {/* SPACE */}
