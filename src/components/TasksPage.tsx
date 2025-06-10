@@ -35,7 +35,7 @@ const TasksPage = () => {
   const { tasks, isLoading: tasksLoading, checkTaskCompletion } = useTaskManagement();
   
   // Mock user data - in real app this would come from authentication
-  const mockTelegramUserId = 123456789;
+  const mockTelegramUserId = "123456789"; // Convert to string
   const { userProfile, completedTasks, completeTask, isLoading: userLoading } = useUserData(mockTelegramUserId);
 
   const getTaskIcon = (status: string) => {
