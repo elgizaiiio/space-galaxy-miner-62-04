@@ -62,7 +62,6 @@ const TaskAdminTable: React.FC<TaskAdminTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow className="border-indigo-500/30">
-            <TableHead className="text-white">صورة</TableHead>
             <TableHead className="text-white">العنوان</TableHead>
             <TableHead className="text-white">النوع</TableHead>
             <TableHead className="text-white">المكافأة</TableHead>
@@ -73,19 +72,6 @@ const TaskAdminTable: React.FC<TaskAdminTableProps> = ({
         <TableBody>
           {tasks.map((task) => (
             <TableRow key={task.id} className="border-indigo-500/20 hover:bg-indigo-500/10">
-              <TableCell>
-                <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-700 flex items-center justify-center">
-                  {task.image_url ? (
-                    <img 
-                      src={task.image_url} 
-                      alt={task.title_key}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Image className="w-6 h-6 text-gray-400" />
-                  )}
-                </div>
-              </TableCell>
               <TableCell>
                 <div>
                   <div className="text-white font-medium">{task.title_key}</div>

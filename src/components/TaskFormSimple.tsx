@@ -31,12 +31,11 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
     task_type: task?.task_type || 'daily',
     reward_amount: task?.reward_amount || 100,
     action_url: task?.action_url || '',
-    is_active: task?.is_active ?? true,
-    image_url: task?.image_url || ''
+    is_active: task?.is_active ?? true
   });
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(task?.image_url || '');
+  const [imagePreview, setImagePreview] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,14 +43,7 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
     console.log('Form submitted with data:', formData);
     
     try {
-      // If there's a selected image, we would normally upload it first
-      // For now, we'll just use the preview URL
-      const finalData = {
-        ...formData,
-        image_url: imagePreview || formData.image_url
-      };
-      
-      await onSubmit(finalData);
+      await onSubmit(formData);
     } catch (error) {
       console.error('Form submission error:', error);
     }
@@ -73,7 +65,6 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
       reader.onload = (e) => {
         const result = e.target?.result as string;
         setImagePreview(result);
-        handleInputChange('image_url', result);
       };
       reader.readAsDataURL(file);
     }
@@ -82,7 +73,6 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
   const handleRemoveImage = () => {
     setSelectedImage(null);
     setImagePreview('');
-    handleInputChange('image_url', '');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }

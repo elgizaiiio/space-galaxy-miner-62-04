@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +14,9 @@ import {
   UserPlus,
   Pickaxe,
   Clock,
-  Star
+  Star,
+  Users,
+  Wallet
 } from 'lucide-react';
 import { getTranslation } from '../utils/language';
 
@@ -33,44 +36,81 @@ const TasksPage = () => {
     url?: string;
     progress?: number;
     maxProgress?: number;
-    image?: string;
   }
 
-  const tasks: TaskWithImage[] = [
+  const dailyTasks: TaskWithImage[] = [
     {
       id: 'daily-login',
-      title: getTranslation('dailyLogin'),
-      description: getTranslation('dailyLoginDesc'),
+      title: 'تسجيل الدخول اليومي',
+      description: 'سجل دخولك يومياً واحصل على مكافآت',
       reward: 50,
       icon: Calendar,
       category: 'daily'
     },
     {
-      id: 'invite-friend',
-      title: getTranslation('inviteFriend'),
-      description: getTranslation('inviteFriendDesc'),
+      id: 'daily-mine',
+      title: 'تعدين يومي',
+      description: 'قم بالتعدين لمدة 30 دقيقة',
       reward: 100,
+      icon: Pickaxe,
+      category: 'daily'
+    }
+  ];
+
+  const socialTasks: TaskWithImage[] = [
+    {
+      id: 'follow-telegram',
+      title: 'انضم إلى التليجرام',
+      description: 'انضم إلى قناة التليجرام الرسمية',
+      reward: 200,
+      icon: Share2,
+      category: 'social',
+      url: 'https://t.me/spacecoin'
+    },
+    {
+      id: 'follow-twitter',
+      title: 'تابعنا على تويتر',
+      description: 'تابع الحساب الرسمي على تويتر',
+      reward: 150,
+      icon: Share2,
+      category: 'social',
+      url: 'https://twitter.com/spacecoin'
+    },
+    {
+      id: 'share-app',
+      title: 'شارك التطبيق',
+      description: 'شارك التطبيق مع أصدقائك',
+      reward: 75,
+      icon: Share2,
+      category: 'social',
+      url: 'https://t.me/share/url?url=https://example.com'
+    }
+  ];
+
+  const referralTasks: TaskWithImage[] = [
+    {
+      id: 'invite-1-friend',
+      title: 'ادع صديق واحد',
+      description: 'ادع صديقاً واحداً للانضمام',
+      reward: 500,
       icon: UserPlus,
       category: 'referral'
     },
     {
-      id: 'share-app',
-      title: getTranslation('shareApp'),
-      description: getTranslation('shareAppDesc'),
-      reward: 25,
-      icon: Share2,
-      category: 'social',
-      url: 'https://t.me/share/url?url=https://example.com'
+      id: 'invite-5-friends',
+      title: 'ادع 5 أصدقاء',
+      description: 'ادع 5 أصدقاء للانضمام',
+      reward: 2500,
+      icon: Users,
+      category: 'referral'
     },
     {
-      id: 'mine-tokens',
-      title: getTranslation('mineTokens'),
-      description: getTranslation('mineTokensDesc'),
-      reward: 75,
-      icon: Pickaxe,
-      category: 'mining',
-      progress: 150,
-      maxProgress: 500
+      id: 'invite-10-friends',
+      title: 'ادع 10 أصدقاء',
+      description: 'ادع 10 أصدقاء للانضمام',
+      reward: 10000,
+      icon: Users,
+      category: 'referral'
     }
   ];
 
@@ -97,25 +137,16 @@ const TasksPage = () => {
       setCompletedTasks(newCompleted);
       localStorage.setItem('completedTasks', JSON.stringify(newCompleted));
       
-      const task = tasks.find(t => t.id === taskId);
+      const allTasks = [...dailyTasks, ...socialTasks, ...referralTasks];
+      const task = allTasks.find(t => t.id === taskId);
       
       toast({
-        title: getTranslation('taskCompleted'),
-        description: `${getTranslation('earned')} ${task?.reward} $SPACE!`
+        title: 'تم إكمال المهمة!',
+        description: `لقد حصلت على ${task?.reward} $SPACE!`
       });
 
       setIsTaskInProgress(prev => ({ ...prev, [taskId]: false }));
     }, 2000);
-  };
-
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'daily': return Calendar;
-      case 'social': return Share2;
-      case 'referral': return UserPlus;
-      case 'mining': return Pickaxe;
-      default: return Gift;
-    }
   };
 
   const getCategoryColor = (category: string) => {
@@ -132,31 +163,21 @@ const TasksPage = () => {
     return reward.toLocaleString();
   };
 
-  return (
-    <div 
-      className="min-h-screen p-3 pb-24 relative"
-      style={{
-        backgroundImage: `url(/lovable-uploads/a886f619-aae7-4a46-b7ec-1dfcb2019fb0.png)`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
-      <div className="absolute inset-0 bg-black/50"></div>
-      
-      <div className="max-w-md mx-auto space-y-4 relative z-10">
-        <div className="text-center mb-4">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-            {getTranslation('tasks')}
-          </h1>
-          <p className="text-gray-300 text-sm">
-            {getTranslation('completeTasksEarn')}
-          </p>
+  const renderTaskSection = (title: string, tasks: TaskWithImage[], icon: React.ComponentType<any>) => {
+    const Icon = icon;
+    
+    return (
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
+            <Icon className="w-6 h-6 text-white" />
+          </div>
+          <h2 className="text-xl font-bold text-white">{title}</h2>
         </div>
-
+        
         <div className="space-y-3">
           {tasks.map((task, index) => {
-            const Icon = task.icon;
+            const TaskIcon = task.icon;
             const isCompleted = completedTasks.includes(task.id);
             const inProgress = isTaskInProgress[task.id];
             
@@ -171,7 +192,7 @@ const TasksPage = () => {
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
                       <div className={`p-3 rounded-full bg-gradient-to-r ${getCategoryColor(task.category)}`}>
-                        <Icon className="w-6 h-6 text-white" />
+                        <TaskIcon className="w-6 h-6 text-white" />
                       </div>
                       
                       <div className="flex-1 min-w-0">
@@ -187,21 +208,6 @@ const TasksPage = () => {
                         <p className="text-gray-300 text-xs mb-2 line-clamp-2">
                           {task.description}
                         </p>
-                        
-                        {task.progress !== undefined && task.maxProgress && (
-                          <div className="mb-2">
-                            <div className="flex justify-between text-xs text-gray-400 mb-1">
-                              <span>{getTranslation('progress')}</span>
-                              <span>{task.progress}/{task.maxProgress}</span>
-                            </div>
-                            <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-300"
-                                style={{ width: `${(task.progress / task.maxProgress) * 100}%` }}
-                              />
-                            </div>
-                          </div>
-                        )}
                         
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1">
@@ -225,17 +231,17 @@ const TasksPage = () => {
                             {isCompleted ? (
                               <>
                                 <CheckCircle className="w-3 h-3 mr-1" />
-                                {getTranslation('completed')}
+                                مكتمل
                               </>
                             ) : inProgress ? (
                               <>
                                 <Clock className="w-3 h-3 mr-1 animate-spin" />
-                                {getTranslation('inProgress')}
+                                جاري...
                               </>
                             ) : (
                               <>
                                 {task.url && <ExternalLink className="w-3 h-3 mr-1" />}
-                                {getTranslation('start')}
+                                ابدأ
                               </>
                             )}
                           </Button>
@@ -248,6 +254,35 @@ const TasksPage = () => {
             );
           })}
         </div>
+      </div>
+    );
+  };
+
+  return (
+    <div 
+      className="min-h-screen p-3 pb-24 relative"
+      style={{
+        backgroundImage: `url(/lovable-uploads/a886f619-aae7-4a46-b7ec-1dfcb2019fb0.png)`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      <div className="max-w-md mx-auto space-y-4 relative z-10">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+            المهام
+          </h1>
+          <p className="text-gray-300 text-sm">
+            أكمل المهام واحصل على $SPACE
+          </p>
+        </div>
+
+        {renderTaskSection('المهام اليومية', dailyTasks, Calendar)}
+        {renderTaskSection('وسائل التواصل الاجتماعي', socialTasks, Share2)}
+        {renderTaskSection('دعوة الأصدقاء', referralTasks, UserPlus)}
       </div>
     </div>
   );
