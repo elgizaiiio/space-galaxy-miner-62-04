@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { getTranslation } from '../utils/language';
 
 interface UsernameModalProps {
   isOpen: boolean;

@@ -16,7 +16,8 @@ import {
   Diamond,
   Shield,
   Sparkles,
-  Clock
+  Clock,
+  Coins
 } from 'lucide-react';
 import { formatTON } from '../utils/ton';
 
@@ -25,6 +26,46 @@ const StorePage = () => {
   const [purchasedItems, setPurchasedItems] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
+
+  const coinPacks = [
+    {
+      id: 'space-50k',
+      name: '50,000 SPACE',
+      description: 'Instant coin pack',
+      price: 1.0,
+      coins: 50000,
+      icon: Coins,
+      color: 'from-yellow-500 to-orange-500'
+    },
+    {
+      id: 'space-100k',
+      name: '100,000 SPACE',
+      description: 'Double coin pack',
+      price: 2.0,
+      coins: 100000,
+      icon: Coins,
+      color: 'from-green-500 to-emerald-500'
+    },
+    {
+      id: 'space-250k',
+      name: '250,000 SPACE',
+      description: 'Mega coin pack',
+      price: 5.0,
+      coins: 250000,
+      icon: Coins,
+      color: 'from-purple-500 to-pink-500',
+      popular: true
+    },
+    {
+      id: 'space-500k',
+      name: '500,000 SPACE',
+      description: 'Ultra coin pack',
+      price: 10.0,
+      coins: 500000,
+      icon: Coins,
+      color: 'from-blue-500 to-cyan-500'
+    }
+  ];
 
   const subscriptions = [
     {
@@ -106,7 +147,7 @@ const StorePage = () => {
     }
   ];
 
-  const handlePurchase = async (item: any, type: 'subscription' | 'upgrade') => {
+  const handlePurchase = async (item: any, type: 'subscription' | 'upgrade' | 'coins') => {
     if (!tonConnectUI.wallet) {
       toast({
         title: "Wallet Required",
@@ -132,11 +173,16 @@ const StorePage = () => {
       if (type === 'subscription') {
         localStorage.setItem('activeSubscription', item.id);
         localStorage.setItem('subscriptionExpiry', (Date.now() + 30 * 24 * 60 * 60 * 1000).toString());
+      } else if (type === 'coins') {
+        // Add coins to user's balance
+        const currentCoins = parseFloat(localStorage.getItem('spaceCoins') || '0');
+        const newBalance = currentCoins + item.coins;
+        localStorage.setItem('spaceCoins', newBalance.toString());
       }
 
       toast({
         title: "Success!",
-        description: `${item.name} activated`
+        description: type === 'coins' ? `${item.coins.toLocaleString()} SPACE coins added to your balance` : `${item.name} activated`
       });
     } catch (error) {
       console.error('Purchase failed:', error);
@@ -175,6 +221,68 @@ const StorePage = () => {
           </p>
         </motion.div>
 
+        {/* SPACE Coins */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-3">
+            <Coins className="w-4 h-4 text-yellow-400" />
+            <h2 className="text-lg font-bold text-white">SPACE Coins</h2>
+          </div>
+          
+          {coinPacks.map((pack, index) => {
+            const Icon = pack.icon;
+            const isPurchased = purchasedItems.includes(pack.id);
+            
+            return (
+              <motion.div
+                key={pack.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="relative"
+              >
+                {pack.popular && (
+                  <Badge className="absolute -top-1 left-3 z-10 bg-yellow-500 text-black text-xs px-2 py-0">
+                    Popular
+                  </Badge>
+                )}
+                
+                <Card className={`bg-slate-800/50 backdrop-blur border ${pack.popular ? 'border-yellow-400/50' : 'border-slate-600/50'} ${pack.popular ? 'ring-1 ring-yellow-400/30' : ''}`}>
+                  <CardHeader className="pb-2 pt-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`p-1.5 rounded-lg bg-gradient-to-r ${pack.color}`}>
+                          <Icon className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-white text-base font-bold">
+                            {pack.name}
+                          </CardTitle>
+                          <p className="text-gray-400 text-xs">{pack.description}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-white">
+                          {formatTON(pack.price)}
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="pt-0 pb-3">
+                    <Button 
+                      onClick={() => handlePurchase(pack, 'coins')} 
+                      disabled={isProcessing} 
+                      className={`w-full h-8 text-xs font-bold bg-gradient-to-r ${pack.color} hover:opacity-90`}
+                    >
+                      {isProcessing ? 'Processing...' : 'Buy Now'}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+
         {/* Subscriptions */}
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-3">
@@ -191,7 +299,7 @@ const StorePage = () => {
                 key={sub.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
                 className="relative"
               >
                 {sub.popular && (
@@ -274,7 +382,7 @@ const StorePage = () => {
                 key={upgrade.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+                transition={{ duration: 0.5, delay: 0.7 + index * 0.1 }}
                 className="bg-slate-800/50 backdrop-blur border border-slate-600/50 rounded-lg p-3"
               >
                 <div className="flex items-center justify-between">
@@ -323,7 +431,7 @@ const StorePage = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
+          transition={{ duration: 0.6, delay: 1.0 }}
           className="p-4 bg-gradient-to-r from-yellow-900/30 to-orange-900/30 backdrop-blur border border-yellow-400/30 rounded-lg text-center"
         >
           <Sparkles className="w-5 h-5 text-yellow-400 mx-auto mb-2" />
