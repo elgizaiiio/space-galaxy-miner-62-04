@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -66,20 +65,31 @@ const TasksPage = () => {
   };
 
   const handleTaskClick = (task: Task) => {
-    // Special handling for daily check-in task
+    console.log('Task clicked:', task.title, task);
+    
+    // Always handle task completion for daily check-in
     if (task.title === 'daily check-in') {
+      console.log('Daily check-in clicked - calling handleTaskComplete');
       handleTaskComplete(task);
       return;
     }
     
-    // If task has external link, open it in new tab
+    // For other tasks, open external link if exists
     if (task.external_link && task.external_link !== '#') {
+      console.log('Opening external link:', task.external_link);
       window.open(task.external_link, '_blank');
+      // Also trigger task completion flow
+      handleTaskComplete(task);
+    } else {
+      console.log('No external link, calling handleTaskComplete directly');
+      handleTaskComplete(task);
     }
   };
 
   const handleDailyCheckInPayment = async () => {
     try {
+      console.log('Starting daily check-in payment process');
+      
       // Check if wallet is connected
       if (!tonConnectUI.wallet) {
         toast({
@@ -95,6 +105,7 @@ const TasksPage = () => {
       // Show payment confirmation
       const confirmed = window.confirm('هذه المهمة تتطلب دفع 0.1 تون. هل تريد المتابعة؟');
       if (!confirmed) {
+        console.log('Payment cancelled by user');
         return false;
       }
 
@@ -138,13 +149,17 @@ const TasksPage = () => {
   };
 
   const handleTaskComplete = async (task: Task) => {
+    console.log('handleTaskComplete called for task:', task.title, task.id);
+    
     if (!userProfile || isTaskInProgress[task.id]) {
+      console.log('Cannot complete task - userProfile:', userProfile, 'inProgress:', isTaskInProgress[task.id]);
       return;
     }
 
     // Check if task is already completed
     const isCompleted = completedTasks.some(ct => ct.task_id === task.id);
     if (isCompleted) {
+      console.log('Task already completed');
       toast({
         title: getTranslation('taskCompleted'),
         description: 'هذه المهمة مكتملة بالفعل',
@@ -153,32 +168,37 @@ const TasksPage = () => {
       return;
     }
 
+    console.log('Setting task in progress:', task.id);
     setIsTaskInProgress(prev => ({ ...prev, [task.id]: true }));
 
     try {
       // Handle daily check-in task (requires TON payment)
       if (task.title === 'daily check-in' && task.status === 'pending') {
+        console.log('Processing daily check-in payment');
         const paymentSuccess = await handleDailyCheckInPayment();
         if (!paymentSuccess) {
+          console.log('Payment failed, resetting task progress');
           setIsTaskInProgress(prev => ({ ...prev, [task.id]: false }));
           return;
         }
+        console.log('Payment successful, proceeding with task completion');
       } else {
-        // Open URL if exists for other tasks
-        if (task.external_link && task.external_link !== '#') {
-          window.open(task.external_link, '_blank');
-        }
+        console.log('Regular task - no payment required');
+        // Open URL if exists for other tasks (this is already handled in handleTaskClick)
       }
 
       // Simulate task completion delay
+      console.log('Starting task completion delay');
       setTimeout(async () => {
         try {
+          console.log('Completing task in database');
           await completeTask(task.id);
           
           toast({
             title: getTranslation('taskCompleted'),
             description: `${getTranslation('earnedReward')} ${task.reward_amount} $SPACE!`,
           });
+          console.log('Task completed successfully');
         } catch (error) {
           console.error('Error completing task:', error);
           toast({
@@ -187,6 +207,7 @@ const TasksPage = () => {
             variant: 'destructive'
           });
         } finally {
+          console.log('Resetting task progress');
           setIsTaskInProgress(prev => ({ ...prev, [task.id]: false }));
         }
       }, 2000);
@@ -216,11 +237,16 @@ const TasksPage = () => {
     const category = task.status === 'completed' ? 'partner' : 
                     task.status === 'pending' ? 'daily' : 'main';
     
+    console.log('Rendering task card:', task.title, 'isCompleted:', isCompleted, 'inProgress:', inProgress);
+    
     return (
       <Card 
         key={task.id} 
         className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border border-blue-400/20 rounded-xl cursor-pointer hover:border-blue-300/40 transition-all duration-200"
-        onClick={() => handleTaskClick(task)}
+        onClick={() => {
+          console.log('Card clicked for task:', task.title);
+          handleTaskClick(task);
+        }}
       >
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
@@ -260,6 +286,7 @@ const TasksPage = () => {
                 <Button
                   onClick={(e) => {
                     e.stopPropagation();
+                    console.log('Button clicked for task:', task.title);
                     handleTaskComplete(task);
                   }}
                   disabled={isCompleted || inProgress}
