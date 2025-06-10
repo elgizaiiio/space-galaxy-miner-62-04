@@ -9,635 +9,642 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      cards: {
+      comments: {
         Row: {
+          author_id: string
+          content: string
           created_at: string | null
-          currency: string | null
-          description: string | null
-          hourly_yield: number | null
           id: string
-          name: string
-          price: number | null
-          rarity: string | null
+          likes_count: number | null
+          post_id: string
           updated_at: string | null
         }
         Insert: {
+          author_id: string
+          content: string
           created_at?: string | null
-          currency?: string | null
-          description?: string | null
-          hourly_yield?: number | null
           id?: string
-          name: string
-          price?: number | null
-          rarity?: string | null
+          likes_count?: number | null
+          post_id: string
           updated_at?: string | null
         }
         Update: {
+          author_id?: string
+          content?: string
           created_at?: string | null
-          currency?: string | null
-          description?: string | null
-          hourly_yield?: number | null
           id?: string
-          name?: string
-          price?: number | null
-          rarity?: string | null
+          likes_count?: number | null
+          post_id?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-      daily_event_participants: {
+      conversations: {
         Row: {
-          event_id: string
+          created_at: string | null
           id: string
-          participated_at: string | null
+          last_message_at: string | null
+          participant1_id: string
+          participant2_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          participant1_id: string
+          participant2_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          participant1_id?: string
+          participant2_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_participant1_id_fkey"
+            columns: ["participant1_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_participant2_id_fkey"
+            columns: ["participant2_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      follows: {
+        Row: {
+          created_at: string | null
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follows_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "follows_following_id_fkey"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_id: string
           user_id: string
         }
         Insert: {
-          event_id: string
+          created_at?: string | null
           id?: string
-          participated_at?: string | null
+          post_id: string
           user_id: string
         }
         Update: {
-          event_id?: string
+          created_at?: string | null
           id?: string
-          participated_at?: string | null
+          post_id?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "daily_event_participants_event_id_fkey"
-            columns: ["event_id"]
+            foreignKeyName: "likes_post_id_fkey"
+            columns: ["post_id"]
             isOneToOne: false
-            referencedRelation: "daily_events"
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "daily_event_participants_user_id_fkey"
+            foreignKeyName: "likes_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_profiles"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      daily_events: {
+      messages: {
         Row: {
+          content: string
+          conversation_id: string
           created_at: string | null
-          event_date: string
           id: string
-          min_invites_required: number | null
-          prize_gift_id: string | null
-          status: string | null
-          total_participants: number | null
-          winner_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          event_date?: string
-          id?: string
-          min_invites_required?: number | null
-          prize_gift_id?: string | null
-          status?: string | null
-          total_participants?: number | null
-          winner_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          event_date?: string
-          id?: string
-          min_invites_required?: number | null
-          prize_gift_id?: string | null
-          status?: string | null
-          total_participants?: number | null
-          winner_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "daily_events_prize_gift_id_fkey"
-            columns: ["prize_gift_id"]
-            isOneToOne: false
-            referencedRelation: "gift_items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "daily_events_winner_id_fkey"
-            columns: ["winner_id"]
-            isOneToOne: false
-            referencedRelation: "user_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gift_items: {
-        Row: {
-          created_at: string | null
-          emoji: string
-          id: string
-          is_available: boolean | null
-          name: string
-          rarity: string | null
-          star_price: number
-          telegram_gift_id: string | null
-          ton_price: number | null
-        }
-        Insert: {
-          created_at?: string | null
-          emoji: string
-          id?: string
-          is_available?: boolean | null
-          name: string
-          rarity?: string | null
-          star_price: number
-          telegram_gift_id?: string | null
-          ton_price?: number | null
-        }
-        Update: {
-          created_at?: string | null
-          emoji?: string
-          id?: string
-          is_available?: boolean | null
-          name?: string
-          rarity?: string | null
-          star_price?: number
-          telegram_gift_id?: string | null
-          ton_price?: number | null
-        }
-        Relationships: []
-      }
-      gift_transactions: {
-        Row: {
-          amount: number | null
-          created_at: string | null
-          gift_id: string
-          id: string
-          message: string | null
-          receiver_id: string | null
+          is_read: boolean | null
           sender_id: string
-          status: string | null
-          telegram_payment_id: string | null
-          ton_amount: number | null
-          transaction_type: string
         }
         Insert: {
-          amount?: number | null
+          content: string
+          conversation_id: string
           created_at?: string | null
-          gift_id: string
           id?: string
-          message?: string | null
-          receiver_id?: string | null
+          is_read?: boolean | null
           sender_id: string
-          status?: string | null
-          telegram_payment_id?: string | null
-          ton_amount?: number | null
-          transaction_type: string
         }
         Update: {
-          amount?: number | null
+          content?: string
+          conversation_id?: string
           created_at?: string | null
-          gift_id?: string
           id?: string
-          message?: string | null
-          receiver_id?: string | null
+          is_read?: boolean | null
           sender_id?: string
-          status?: string | null
-          telegram_payment_id?: string | null
-          ton_amount?: number | null
-          transaction_type?: string
         }
         Relationships: [
           {
-            foreignKeyName: "gift_transactions_gift_id_fkey"
-            columns: ["gift_id"]
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
             isOneToOne: false
-            referencedRelation: "gift_items"
+            referencedRelation: "conversations"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "gift_transactions_receiver_id_fkey"
-            columns: ["receiver_id"]
-            isOneToOne: false
-            referencedRelation: "user_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gift_transactions_sender_id_fkey"
+            foreignKeyName: "messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
-            referencedRelation: "user_profiles"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      profile_gifts: {
+      notifications: {
         Row: {
           created_at: string | null
-          display_order: number | null
-          gift_id: string
           id: string
-          is_displayed: boolean | null
-          transaction_id: string
+          is_read: boolean | null
+          message: string
+          related_post_id: string | null
+          related_user_id: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
           user_id: string
         }
         Insert: {
           created_at?: string | null
-          display_order?: number | null
-          gift_id: string
           id?: string
-          is_displayed?: boolean | null
-          transaction_id: string
+          is_read?: boolean | null
+          message: string
+          related_post_id?: string | null
+          related_user_id?: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
           user_id: string
         }
         Update: {
           created_at?: string | null
-          display_order?: number | null
-          gift_id?: string
           id?: string
-          is_displayed?: boolean | null
-          transaction_id?: string
+          is_read?: boolean | null
+          message?: string
+          related_post_id?: string | null
+          related_user_id?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "profile_gifts_gift_id_fkey"
-            columns: ["gift_id"]
+            foreignKeyName: "notifications_related_post_id_fkey"
+            columns: ["related_post_id"]
             isOneToOne: false
-            referencedRelation: "gift_items"
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "profile_gifts_transaction_id_fkey"
-            columns: ["transaction_id"]
+            foreignKeyName: "notifications_related_user_id_fkey"
+            columns: ["related_user_id"]
             isOneToOne: false
-            referencedRelation: "gift_transactions"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "profile_gifts_user_id_fkey"
+            foreignKeyName: "notifications_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_profiles"
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          author_id: string
+          comments_count: number | null
+          content: string | null
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_premium: boolean | null
+          likes_count: number | null
+          post_type: Database["public"]["Enums"]["post_type"] | null
+          shares_count: number | null
+          title: string | null
+          updated_at: string | null
+          video_url: string | null
+        }
+        Insert: {
+          author_id: string
+          comments_count?: number | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_premium?: boolean | null
+          likes_count?: number | null
+          post_type?: Database["public"]["Enums"]["post_type"] | null
+          shares_count?: number | null
+          title?: string | null
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          author_id?: string
+          comments_count?: number | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_premium?: boolean | null
+          likes_count?: number | null
+          post_type?: Database["public"]["Enums"]["post_type"] | null
+          shares_count?: number | null
+          title?: string | null
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          display_name: string | null
+          earnings: number | null
+          followers_count: number | null
+          following_count: number | null
+          id: string
+          is_verified: boolean | null
+          subscribers_count: number | null
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          earnings?: number | null
+          followers_count?: number | null
+          following_count?: number | null
+          id: string
+          is_verified?: boolean | null
+          subscribers_count?: number | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          earnings?: number | null
+          followers_count?: number | null
+          following_count?: number | null
+          id?: string
+          is_verified?: boolean | null
+          subscribers_count?: number | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          reason: string
+          reported_post_id: string | null
+          reported_user_id: string | null
+          reporter_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          reason: string
+          reported_post_id?: string | null
+          reported_user_id?: string | null
+          reporter_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          reason?: string
+          reported_post_id?: string | null
+          reported_user_id?: string | null
+          reporter_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_reported_post_id_fkey"
+            columns: ["reported_post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reported_user_id_fkey"
+            columns: ["reported_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_posts: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_posts_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stories: {
+        Row: {
+          author_id: string
+          content: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          image_url: string | null
+          video_url: string | null
+          views_count: number | null
+        }
+        Insert: {
+          author_id: string
+          content?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          image_url?: string | null
+          video_url?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          author_id?: string
+          content?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          image_url?: string | null
+          video_url?: string | null
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stories_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      story_views: {
+        Row: {
+          id: string
+          story_id: string
+          viewed_at: string | null
+          viewer_id: string
+        }
+        Insert: {
+          id?: string
+          story_id: string
+          viewed_at?: string | null
+          viewer_id: string
+        }
+        Update: {
+          id?: string
+          story_id?: string
+          viewed_at?: string | null
+          viewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_views_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "story_views_viewer_id_fkey"
+            columns: ["viewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
       tasks: {
         Row: {
-          action_url: string | null
-          category: string | null
-          completed: boolean | null
           created_at: string | null
+          current_completions: number | null
           description: string | null
-          description_key: string | null
+          external_link: string | null
           id: string
+          image_url: string | null
           is_active: boolean | null
-          link: string | null
-          reward: string | null
-          reward_amount: number | null
-          task_type: string | null
-          title: string | null
-          title_key: string | null
+          max_completions: number | null
+          reward_amount: number
+          status: Database["public"]["Enums"]["task_status"] | null
+          title: string
           updated_at: string | null
         }
         Insert: {
-          action_url?: string | null
-          category?: string | null
-          completed?: boolean | null
           created_at?: string | null
+          current_completions?: number | null
           description?: string | null
-          description_key?: string | null
+          external_link?: string | null
           id?: string
+          image_url?: string | null
           is_active?: boolean | null
-          link?: string | null
-          reward?: string | null
-          reward_amount?: number | null
-          task_type?: string | null
-          title?: string | null
-          title_key?: string | null
+          max_completions?: number | null
+          reward_amount?: number
+          status?: Database["public"]["Enums"]["task_status"] | null
+          title: string
           updated_at?: string | null
         }
         Update: {
-          action_url?: string | null
-          category?: string | null
-          completed?: boolean | null
           created_at?: string | null
+          current_completions?: number | null
           description?: string | null
-          description_key?: string | null
+          external_link?: string | null
           id?: string
+          image_url?: string | null
           is_active?: boolean | null
-          link?: string | null
-          reward?: string | null
-          reward_amount?: number | null
-          task_type?: string | null
-          title?: string | null
-          title_key?: string | null
+          max_completions?: number | null
+          reward_amount?: number
+          status?: Database["public"]["Enums"]["task_status"] | null
+          title?: string
           updated_at?: string | null
         }
         Relationships: []
       }
-      transactions: {
-        Row: {
-          amount: number
-          created_at: string
-          currency: string
-          from_address: string | null
-          id: string
-          status: string
-          to_address: string | null
-          transaction_hash: string | null
-          transaction_type: string
-          updated_at: string
-          user_address: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          currency?: string
-          from_address?: string | null
-          id?: string
-          status?: string
-          to_address?: string | null
-          transaction_hash?: string | null
-          transaction_type: string
-          updated_at?: string
-          user_address: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          currency?: string
-          from_address?: string | null
-          id?: string
-          status?: string
-          to_address?: string | null
-          transaction_hash?: string | null
-          transaction_type?: string
-          updated_at?: string
-          user_address?: string
-        }
-        Relationships: []
-      }
-      user_balances: {
-        Row: {
-          id: string
-          last_updated: string
-          shrouk_balance: number
-          ton_balance: number
-          user_address: string
-        }
-        Insert: {
-          id?: string
-          last_updated?: string
-          shrouk_balance?: number
-          ton_balance?: number
-          user_address: string
-        }
-        Update: {
-          id?: string
-          last_updated?: string
-          shrouk_balance?: number
-          ton_balance?: number
-          user_address?: string
-        }
-        Relationships: []
-      }
-      user_cards: {
-        Row: {
-          card_id: string
-          id: string
-          last_yield_claim: string | null
-          level: number
-          owned_at: string
-          user_address: string
-        }
-        Insert: {
-          card_id: string
-          id?: string
-          last_yield_claim?: string | null
-          level?: number
-          owned_at?: string
-          user_address: string
-        }
-        Update: {
-          card_id?: string
-          id?: string
-          last_yield_claim?: string | null
-          level?: number
-          owned_at?: string
-          user_address?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_cards_card_id_fkey"
-            columns: ["card_id"]
-            isOneToOne: false
-            referencedRelation: "cards"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_game_data: {
+      user_roles: {
         Row: {
           created_at: string | null
-          energy_level: number | null
           id: string
-          last_mining_claim: string | null
-          max_energy: number | null
-          mining_rate: number | null
-          referral_count: number | null
-          tap_multiplier: number | null
-          total_balance: number | null
-          updated_at: string | null
+          role: Database["public"]["Enums"]["app_role"]
           user_id: string | null
         }
         Insert: {
           created_at?: string | null
-          energy_level?: number | null
           id?: string
-          last_mining_claim?: string | null
-          max_energy?: number | null
-          mining_rate?: number | null
-          referral_count?: number | null
-          tap_multiplier?: number | null
-          total_balance?: number | null
-          updated_at?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
           user_id?: string | null
         }
         Update: {
           created_at?: string | null
-          energy_level?: number | null
           id?: string
-          last_mining_claim?: string | null
-          max_energy?: number | null
-          mining_rate?: number | null
-          referral_count?: number | null
-          tap_multiplier?: number | null
-          total_balance?: number | null
-          updated_at?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
           user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "user_game_data_user_id_fkey"
+            foreignKeyName: "user_roles_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "user_profiles"
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
-      }
-      user_invitations: {
-        Row: {
-          created_at: string | null
-          id: string
-          invite_code: string
-          invited_user_id: string | null
-          inviter_id: string
-          reward_amount: number | null
-          reward_claimed: boolean | null
-          status: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          invite_code: string
-          invited_user_id?: string | null
-          inviter_id: string
-          reward_amount?: number | null
-          reward_claimed?: boolean | null
-          status?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          invite_code?: string
-          invited_user_id?: string | null
-          inviter_id?: string
-          reward_amount?: number | null
-          reward_claimed?: boolean | null
-          status?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_invitations_invited_user_id_fkey"
-            columns: ["invited_user_id"]
-            isOneToOne: false
-            referencedRelation: "user_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_invitations_inviter_id_fkey"
-            columns: ["inviter_id"]
-            isOneToOne: false
-            referencedRelation: "user_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_profiles: {
-        Row: {
-          created_at: string | null
-          first_name: string | null
-          id: string
-          invite_code: string | null
-          invited_by: string | null
-          last_name: string | null
-          telegram_stars_balance: number | null
-          telegram_user_id: number
-          ton_balance: number | null
-          updated_at: string | null
-          username: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          first_name?: string | null
-          id?: string
-          invite_code?: string | null
-          invited_by?: string | null
-          last_name?: string | null
-          telegram_stars_balance?: number | null
-          telegram_user_id: number
-          ton_balance?: number | null
-          updated_at?: string | null
-          username?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          first_name?: string | null
-          id?: string
-          invite_code?: string | null
-          invited_by?: string | null
-          last_name?: string | null
-          telegram_stars_balance?: number | null
-          telegram_user_id?: number
-          ton_balance?: number | null
-          updated_at?: string | null
-          username?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_profiles_invited_by_fkey"
-            columns: ["invited_by"]
-            isOneToOne: false
-            referencedRelation: "user_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_tap_points: {
-        Row: {
-          created_at: string | null
-          last_tap_at: string | null
-          max_taps: number
-          tap_points: number
-          tap_upgrade_level: number
-          tap_value: number
-          updated_at: string | null
-          user_address: string
-        }
-        Insert: {
-          created_at?: string | null
-          last_tap_at?: string | null
-          max_taps?: number
-          tap_points?: number
-          tap_upgrade_level?: number
-          tap_value?: number
-          updated_at?: string | null
-          user_address: string
-        }
-        Update: {
-          created_at?: string | null
-          last_tap_at?: string | null
-          max_taps?: number
-          tap_points?: number
-          tap_upgrade_level?: number
-          tap_value?: number
-          updated_at?: string | null
-          user_address?: string
-        }
-        Relationships: []
       }
       user_task_completions: {
         Row: {
-          completed_at: string
+          claimed_at: string | null
+          completed_at: string | null
           id: string
-          reward_claimed: boolean
+          reward_claimed: boolean | null
           task_id: string
-          user_address: string
+          user_id: string
         }
         Insert: {
-          completed_at?: string
+          claimed_at?: string | null
+          completed_at?: string | null
           id?: string
-          reward_claimed?: boolean
+          reward_claimed?: boolean | null
           task_id: string
-          user_address: string
+          user_id: string
         }
         Update: {
-          completed_at?: string
+          claimed_at?: string | null
+          completed_at?: string | null
           id?: string
-          reward_claimed?: boolean
+          reward_claimed?: boolean | null
           task_id?: string
-          user_address?: string
+          user_id?: string
         }
         Relationships: [
           {
@@ -647,6 +654,13 @@ export type Database = {
             referencedRelation: "tasks"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_task_completions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
@@ -654,31 +668,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_user_complete_data: {
-        Args: { p_user_id: string }
-        Returns: Json
-      }
-      get_user_hourly_earnings: {
-        Args: { user_addr: string }
-        Returns: number
-      }
-      process_card_yields: {
-        Args: { user_addr: string }
-        Returns: number
-      }
-      sync_telegram_user: {
+      has_role: {
         Args: {
-          p_telegram_user_id: number
-          p_first_name: string
-          p_last_name?: string
-          p_username?: string
-          p_referral_code?: string
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
         }
-        Returns: string
+        Returns: boolean
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      notification_type:
+        | "like"
+        | "comment"
+        | "follow"
+        | "task_complete"
+        | "system"
+      post_type: "image" | "video" | "text"
+      task_status: "pending" | "in_progress" | "completed" | "failed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -793,6 +800,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      notification_type: [
+        "like",
+        "comment",
+        "follow",
+        "task_complete",
+        "system",
+      ],
+      post_type: ["image", "video", "text"],
+      task_status: ["pending", "in_progress", "completed", "failed"],
+    },
   },
 } as const
