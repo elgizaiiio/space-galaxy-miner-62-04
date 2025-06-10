@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,7 +34,13 @@ const TasksPage = () => {
       is_active: true,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      image_url: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=100&h=100&fit=crop&crop=center'
+      image_url: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=100&h=100&fit=crop&crop=center',
+      category: null,
+      completed: false,
+      description: 'Check in daily to earn rewards',
+      link: null,
+      reward_type: null,
+      title: 'Daily Check-in'
     },
     {
       id: 'daily-share-x',
@@ -47,7 +52,13 @@ const TasksPage = () => {
       is_active: true,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      image_url: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=100&h=100&fit=crop&crop=center'
+      image_url: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=100&h=100&fit=crop&crop=center',
+      category: null,
+      completed: false,
+      description: 'Share our mining bot on X to earn rewards',
+      link: 'https://twitter.com/intent/tweet?text=Check%20out%20this%20amazing%20mining%20bot!&url=http://t.me/botspacelbot/Mining',
+      reward_type: null,
+      title: 'Share on X (Twitter)'
     }
   ];
 
@@ -241,18 +252,7 @@ const TasksPage = () => {
   };
 
   return (
-    <div 
-      className="min-h-screen p-4 pb-20 relative"
-      style={{
-        backgroundImage: `url(/lovable-uploads/1b18cac4-761a-4a7d-9b9e-cdd86d973e07.png)`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
-      {/* Dark overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/60"></div>
-      
+    <div className="min-h-screen p-4 pb-20 bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <div className="max-w-md mx-auto space-y-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-4">
@@ -286,23 +286,23 @@ const TasksPage = () => {
 
         {/* Tasks Tabs */}
         <Tabs defaultValue="daily" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-xl border border-indigo-500/30 rounded-xl">
+          <TabsList className="grid w-full grid-cols-3 bg-gradient-to-r from-gray-800/80 to-gray-700/80 backdrop-blur-xl border border-gray-600/30 rounded-xl">
             <TabsTrigger 
               value="daily" 
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-gray-300 text-sm"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-gray-300 text-sm transition-all duration-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/50 hover:to-purple-600/50"
             >
               <Clock className="w-4 h-4 mr-1" />
               Daily
             </TabsTrigger>
             <TabsTrigger 
               value="main" 
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-gray-300 text-sm"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white text-gray-300 text-sm transition-all duration-300 hover:text-white hover:bg-gradient-to-r hover:from-orange-500/50 hover:to-red-600/50"
             >
               Main
             </TabsTrigger>
             <TabsTrigger 
               value="partners" 
-              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white text-gray-300 text-sm"
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white text-gray-300 text-sm transition-all duration-300 hover:text-white hover:bg-gradient-to-r hover:from-purple-500/50 hover:to-pink-600/50"
             >
               Partners
             </TabsTrigger>
