@@ -12,7 +12,6 @@ const MiningPage = () => {
   const [miningActive, setMiningActive] = useState(false);
   const [remainingTime, setRemainingTime] = useState(28800); // 8 hours
   const [username, setUsername] = useState('');
-  const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
 
   // منع التمرير عند تحميل الصفحة
   useEffect(() => {
@@ -30,8 +29,6 @@ const MiningPage = () => {
     const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
       setUsername(storedUsername);
-    } else {
-      setShowUsernamePrompt(true);
     }
 
     const storedCoins = localStorage.getItem('spaceCoins');
@@ -114,14 +111,6 @@ const MiningPage = () => {
     return () => clearInterval(intervalId);
   }, [miningActive, coinsPerSecond]);
 
-  const handleUsernameSubmit = (inputUsername: string) => {
-    if (inputUsername.trim()) {
-      setUsername(inputUsername.trim());
-      localStorage.setItem('username', inputUsername.trim());
-      setShowUsernamePrompt(false);
-    }
-  };
-
   const handleStartMining = () => {
     if (miningActive) {
       // Stop mining
@@ -150,36 +139,6 @@ const MiningPage = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden">
-      {/* Username Prompt Modal */}
-      {showUsernamePrompt && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 rounded-2xl p-6 w-full max-w-sm border border-gray-700">
-            <h2 className="text-xl font-bold text-white mb-4 text-center">Welcome!</h2>
-            <p className="text-gray-300 mb-4 text-center">Please enter your username:</p>
-            <input
-              type="text"
-              placeholder="Enter your username"
-              className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:border-blue-500 focus:outline-none mb-4"
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleUsernameSubmit((e.target as HTMLInputElement).value);
-                }
-              }}
-              autoFocus
-            />
-            <Button
-              onClick={() => {
-                const input = document.querySelector('input') as HTMLInputElement;
-                handleUsernameSubmit(input.value);
-              }}
-              className="w-full bg-blue-600 hover:bg-blue-700"
-            >
-              Continue
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* Background Image - Full Screen Coverage */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
