@@ -168,7 +168,7 @@ const TasksPage = () => {
   };
 
   const renderTaskCard = (task: Task) => {
-    const TaskIcon = getTaskIcon(task.task_type);
+    const TaskIcon = getTaskIcon(task.task_type || 'default');
     const isCompleted = isTaskCompleted(task.id);
     const inProgress = isTaskInProgress[task.id];
     const category = task.task_type === 'social' ? 'partner' : 
@@ -183,7 +183,7 @@ const TasksPage = () => {
               {task.image_url ? (
                 <img 
                   src={task.image_url} 
-                  alt={task.title_key}
+                  alt={task.title_key || 'Task image'}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -204,7 +204,7 @@ const TasksPage = () => {
                     className="w-3 h-3 rounded-full"
                   />
                   <span className="text-yellow-400 font-bold text-xs">
-                    +{formatReward(task.reward_amount)}
+                    +{formatReward(task.reward_amount || 0)}
                   </span>
                   {task.title_key === 'daily check-in' && (
                     <span className="text-orange-400 text-xs ml-1">(0.1 TON)</span>

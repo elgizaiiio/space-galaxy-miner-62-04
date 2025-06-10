@@ -77,7 +77,7 @@ const TaskAdminTable: React.FC<TaskAdminTableProps> = ({
                 {task.image_url ? (
                   <img 
                     src={task.image_url} 
-                    alt={task.title_key}
+                    alt={task.title_key || 'Task image'}
                     className="w-10 h-10 rounded-full object-cover"
                   />
                 ) : (
@@ -90,7 +90,7 @@ const TaskAdminTable: React.FC<TaskAdminTableProps> = ({
                 <div className="text-white font-medium">{task.title_key}</div>
               </TableCell>
               <TableCell>
-                <Badge className={getTypeColor(task.task_type)}>
+                <Badge className={getTypeColor(task.task_type || 'default')}>
                   {task.task_type}
                 </Badge>
               </TableCell>
