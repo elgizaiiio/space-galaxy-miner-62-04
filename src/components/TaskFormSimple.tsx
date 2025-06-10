@@ -1,12 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Save, X } from 'lucide-react';
+import { Save, X, Upload, Image, Trash2 } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
 
 type Task = Database['public']['Tables']['tasks']['Row'];
@@ -31,15 +31,27 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
     task_type: task?.task_type || 'daily',
     reward_amount: task?.reward_amount || 100,
     action_url: task?.action_url || '',
-    is_active: task?.is_active ?? true
+    is_active: task?.is_active ?? true,
+    image_url: task?.image_url || ''
   });
+
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>(task?.image_url || '');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Form submitted with data:', formData);
     
     try {
-      await onSubmit(formData);
+      // If there's a selected image, we would normally upload it first
+      // For now, we'll just use the preview URL
+      const finalData = {
+        ...formData,
+        image_url: imagePreview || formData.image_url
+      };
+      
+      await onSubmit(finalData);
     } catch (error) {
       console.error('Form submission error:', error);
     }
@@ -51,6 +63,29 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setImagePreview(result);
+        handleInputChange('image_url', result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedImage(null);
+    setImagePreview('');
+    handleInputChange('image_url', '');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -134,6 +169,64 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
               required
               disabled={isLoading}
             />
+          </div>
+
+          {/* Image Upload Section */}
+          <div>
+            <Label className="text-white mb-3 block">صورة المهمة (اختياري)</Label>
+            
+            {imagePreview ? (
+              <div className="space-y-3">
+                <div className="relative w-full h-40 bg-gray-800 rounded-lg overflow-hidden">
+                  <img 
+                    src={imagePreview} 
+                    alt="معاينة صورة المهمة" 
+                    className="w-full h-full object-cover"
+                  />
+                  <Button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full"
+                    disabled={isLoading}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div 
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full h-40 border-2 border-dashed border-white/30 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-white/50 transition-colors bg-white/5"
+              >
+                <Image className="w-12 h-12 text-gray-400 mb-2" />
+                <p className="text-gray-400 text-sm text-center">
+                  اضغط لاختيار صورة<br />
+                  <span className="text-xs">PNG, JPG, GIF (حد أقصى 5MB)</span>
+                </p>
+              </div>
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageSelect}
+              className="hidden"
+              disabled={isLoading}
+            />
+
+            {!imagePreview && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isLoading}
+                className="mt-3 text-white border-white/20 hover:bg-white/10"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                اختيار صورة
+              </Button>
+            )}
           </div>
 
           <div className="flex justify-end gap-3 pt-4">

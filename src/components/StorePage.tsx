@@ -38,8 +38,7 @@ const StorePage = () => {
       features: [
         'سرعة تعدين 2x',
         'تعدين تلقائي 24 ساعة',
-        'خلفيات أساسية',
-        'دعم أولوية'
+        'خلفيات أساسية'
       ]
     },
     {
@@ -55,9 +54,7 @@ const StorePage = () => {
         'سرعة تعدين 5x',
         'تعدين تلقائي غير محدود',
         'جميع الخلفيات',
-        'شارة VIP',
-        'مهام حصرية',
-        'دعم 24/7'
+        'شارة VIP'
       ]
     },
     {
@@ -72,10 +69,7 @@ const StorePage = () => {
         'سرعة تعدين 10x',
         'تعدين تلقائي غير محدود',
         'خلفيات VIP حصرية',
-        'شارة النخبة',
-        'مهام VIP فقط',
-        'مدير شخصي',
-        'وصول مبكر للميزات'
+        'شارة النخبة'
       ]
     }
   ];
@@ -165,34 +159,34 @@ const StorePage = () => {
 
   return (
     <div 
-      className="min-h-screen p-3 pb-24 relative"
+      className="min-h-screen p-2 pb-20 relative"
       style={{
-        backgroundImage: `url(/lovable-uploads/a61fe220-a4a1-4863-bf49-f46aaea61a74.png)`,
+        backgroundImage: `url(/lovable-uploads/0636abc4-6032-4f0c-872d-cfc4ff30f6f3.png)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <div className="absolute inset-0 bg-black/60"></div>
+      <div className="absolute inset-0 bg-black/50"></div>
       
-      <div className="max-w-md mx-auto space-y-4 relative z-10">
-        <div className="text-center mb-4">
+      <div className="max-w-md mx-auto space-y-3 relative z-10">
+        <div className="text-center mb-3">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="flex items-center justify-center mb-3"
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-center mb-2"
           >
-            <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-2xl">
-              <Crown className="w-8 h-8 text-white" />
+            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full shadow-lg">
+              <Crown className="w-6 h-6 text-white" />
             </div>
           </motion.div>
           
           <motion.h1 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2"
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2"
           >
             متجر TON
           </motion.h1>
@@ -200,23 +194,23 @@ const StorePage = () => {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex items-center justify-center gap-2 bg-gradient-to-br from-slate-800/60 to-blue-900/50 backdrop-blur-xl border border-blue-400/30 rounded-xl p-3 shadow-lg"
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="flex items-center justify-center gap-2 bg-gradient-to-br from-slate-800/60 to-blue-900/50 backdrop-blur-lg border border-blue-400/30 rounded-lg p-2 shadow-lg"
           >
-            <Coins className="w-5 h-5 text-blue-400" />
-            <span className="text-white font-bold text-lg">{formatTON(tonBalance)}</span>
-            <Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" />
+            <Coins className="w-4 h-4 text-blue-400" />
+            <span className="text-white font-bold text-sm">{formatTON(tonBalance)}</span>
+            <Sparkles className="w-3 h-3 text-yellow-400 animate-pulse" />
           </motion.div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <motion.h2 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-xl font-bold text-white flex items-center gap-2"
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="text-lg font-bold text-white flex items-center gap-2"
           >
-            <Crown className="w-6 h-6 text-yellow-400" />
+            <Crown className="w-5 h-5 text-yellow-400" />
             اشتراكات بريميوم
           </motion.h2>
           
@@ -227,46 +221,46 @@ const StorePage = () => {
             return (
               <motion.div
                 key={sub.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
+                transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="relative"
               >
                 {sub.popular && (
-                  <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10 bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-bold">
+                  <Badge className="absolute -top-1 left-1/2 transform -translate-x-1/2 z-10 bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-bold text-xs">
                     الأكثر شعبية
                   </Badge>
                 )}
                 
-                <Card className={`bg-gradient-to-br from-slate-800/50 via-blue-900/40 to-purple-900/50 backdrop-blur-xl border ${sub.popular ? 'border-yellow-400/50' : 'border-blue-400/30'} rounded-2xl shadow-2xl ${sub.popular ? 'ring-2 ring-yellow-400/40' : ''}`}>
-                  <CardHeader className="text-center pb-3">
-                    <div className="flex justify-center mb-3">
-                      <div className={`p-4 rounded-full bg-gradient-to-r ${sub.color} shadow-lg`}>
-                        <Icon className="w-8 h-8 text-white" />
+                <Card className={`bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-lg border ${sub.popular ? 'border-yellow-400/50' : 'border-blue-400/20'} rounded-xl shadow-lg ${sub.popular ? 'ring-1 ring-yellow-400/30' : ''}`}>
+                  <CardHeader className="text-center pb-2 pt-3">
+                    <div className="flex justify-center mb-2">
+                      <div className={`p-2 rounded-full bg-gradient-to-r ${sub.color} shadow-md`}>
+                        <Icon className="w-5 h-5 text-white" />
                       </div>
                     </div>
-                    <CardTitle className="text-white text-xl font-bold">
+                    <CardTitle className="text-white text-lg font-bold">
                       {sub.name}
                     </CardTitle>
-                    <p className="text-gray-300 text-sm">{sub.description}</p>
-                    <div className="text-center mt-3">
-                      <span className="text-3xl font-bold text-white">
+                    <p className="text-gray-300 text-xs">{sub.description}</p>
+                    <div className="text-center mt-2">
+                      <span className="text-xl font-bold text-white">
                         {formatTON(sub.price)}
                       </span>
-                      <span className="text-sm ml-2 text-gray-300 font-bold">
+                      <span className="text-xs ml-1 text-gray-300 font-medium">
                         / {sub.duration}
                       </span>
                     </div>
                   </CardHeader>
 
-                  <CardContent className="space-y-4">
-                    <div className="space-y-3">
+                  <CardContent className="space-y-3 pt-0">
+                    <div className="space-y-2">
                       {sub.features.map((feature, index) => (
-                        <div key={index} className="flex items-center gap-3">
-                          <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                          <span className="text-sm text-gray-200 font-medium">{feature}</span>
+                        <div key={index} className="flex items-center gap-2">
+                          <CheckCircle className="w-3 h-3 text-green-400 flex-shrink-0" />
+                          <span className="text-xs text-gray-200 font-medium">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -274,11 +268,11 @@ const StorePage = () => {
                     <Button 
                       onClick={() => handlePurchase(sub, 'subscription')} 
                       disabled={isPurchased || isProcessing} 
-                      className={`w-full mt-4 ${
+                      className={`w-full mt-3 ${
                         isPurchased 
                           ? 'bg-green-600 hover:bg-green-600 cursor-default' 
                           : `bg-gradient-to-r ${sub.color} hover:opacity-90`
-                      } rounded-xl font-bold py-3 text-sm shadow-lg transition-all duration-300`}
+                      } rounded-lg font-bold py-2 text-xs shadow-md transition-all duration-300`}
                     >
                       {isProcessing 
                         ? 'جاري المعالجة...' 
@@ -294,14 +288,14 @@ const StorePage = () => {
           })}
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <motion.h2 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 1.2 }}
-            className="text-xl font-bold text-white flex items-center gap-2"
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className="text-lg font-bold text-white flex items-center gap-2"
           >
-            <Zap className="w-6 h-6 text-yellow-400" />
+            <Zap className="w-5 h-5 text-yellow-400" />
             ترقيات التعدين
           </motion.h2>
           
@@ -314,36 +308,36 @@ const StorePage = () => {
                 key={upgrade.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.4 + index * 0.1 }}
+                transition={{ duration: 0.5, delay: 0.9 + index * 0.1 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="bg-gradient-to-br from-slate-800/50 via-blue-900/40 to-purple-900/50 backdrop-blur-xl border border-blue-400/30 rounded-2xl p-4 shadow-xl"
+                className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-lg border border-blue-400/20 rounded-xl p-3 shadow-lg"
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-3 rounded-full bg-gradient-to-r ${upgrade.color} shadow-lg`}>
-                      <Icon className="w-6 h-6 text-white" />
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className={`p-2 rounded-full bg-gradient-to-r ${upgrade.color} shadow-md`}>
+                      <Icon className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-white font-bold text-lg">
+                      <h3 className="text-white font-bold text-sm">
                         {upgrade.name}
                       </h3>
-                      <p className="text-gray-300 text-sm">
+                      <p className="text-gray-300 text-xs">
                         {upgrade.description}
                       </p>
                     </div>
                   </div>
                   {isPurchased && (
-                    <CheckCircle className="w-6 h-6 text-green-400" />
+                    <CheckCircle className="w-4 h-4 text-green-400" />
                   )}
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-white font-bold text-lg">
+                  <div className="flex items-center gap-2">
+                    <span className="text-white font-bold text-sm">
                       {formatTON(upgrade.price)}
                     </span>
-                    <Badge className="bg-blue-500/30 text-blue-300 text-sm font-medium">
+                    <Badge className="bg-blue-500/30 text-blue-300 text-xs font-medium">
                       {upgrade.duration}
                     </Badge>
                   </div>
@@ -351,7 +345,7 @@ const StorePage = () => {
                   <Button
                     onClick={() => handlePurchase(upgrade, 'upgrade')}
                     disabled={isPurchased || isProcessing}
-                    className={`text-sm py-2 px-6 rounded-lg font-bold shadow-lg transition-all duration-300 ${
+                    className={`text-xs py-1 px-4 rounded-lg font-bold shadow-md transition-all duration-300 ${
                       isPurchased 
                         ? 'bg-green-600 cursor-not-allowed' 
                         : `bg-gradient-to-r ${upgrade.color} hover:opacity-90 hover:scale-105`
@@ -366,17 +360,17 @@ const StorePage = () => {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.8 }}
-          className="p-6 bg-gradient-to-br from-yellow-900/40 to-orange-900/40 backdrop-blur-xl border border-yellow-400/30 rounded-2xl text-center shadow-2xl"
+          transition={{ duration: 0.6, delay: 1.2 }}
+          className="p-4 bg-gradient-to-br from-yellow-900/40 to-orange-900/40 backdrop-blur-lg border border-yellow-400/30 rounded-xl text-center shadow-lg"
         >
-          <Star className="w-10 h-10 text-yellow-400 mx-auto mb-3 animate-pulse" />
-          <h2 className="text-lg font-bold text-white mb-2">
+          <Star className="w-6 h-6 text-yellow-400 mx-auto mb-2 animate-pulse" />
+          <h2 className="text-sm font-bold text-white mb-1">
             مزايا البريميوم
           </h2>
-          <p className="text-gray-300 text-sm">
-            افتح التعدين الأسرع والميزات الحصرية والدعم المميز مع خطط الاشتراك لدينا
+          <p className="text-gray-300 text-xs">
+            افتح التعدين الأسرع والميزات الحصرية مع خطط الاشتراك
           </p>
         </motion.div>
       </div>
