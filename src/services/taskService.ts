@@ -31,15 +31,16 @@ export const taskService = {
       console.log('Creating task with data:', task);
       
       // Validate required fields
-      if (!task.title_key || !task.task_type || task.reward_amount === undefined) {
+      if (!task.title || task.reward_amount === undefined) {
         throw new Error('Missing required task fields');
       }
 
       const taskData: any = {
-        title_key: task.title_key,
-        task_type: task.task_type,
+        title: task.title,
+        status: task.status || 'pending',
         reward_amount: task.reward_amount,
-        action_url: task.action_url || null,
+        external_link: task.external_link || null,
+        description: task.description || null,
         is_active: task.is_active ?? true
       };
 
@@ -171,8 +172,8 @@ export const taskService = {
       const { data: existingTask, error: checkError } = await supabase
         .from('tasks')
         .select('*')
-        .eq('title_key', 'daily check-in')
-        .eq('task_type', 'daily')
+        .eq('title', 'daily check-in')
+        .eq('status', 'pending')
         .single();
 
       if (checkError && checkError.code !== 'PGRST116') {
@@ -190,10 +191,11 @@ export const taskService = {
       const { data, error } = await supabase
         .from('tasks')
         .insert({
-          title_key: 'daily check-in',
-          task_type: 'daily',
+          title: 'daily check-in',
+          status: 'pending',
           reward_amount: 50,
-          action_url: null,
+          external_link: null,
+          description: 'Complete daily check-in to earn rewards',
           is_active: true
         })
         .select()

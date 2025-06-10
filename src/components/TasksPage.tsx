@@ -38,22 +38,22 @@ const TasksPage = () => {
   const mockTelegramUserId = 123456789;
   const { userProfile, completedTasks, completeTask, isLoading: userLoading } = useUserData(mockTelegramUserId);
 
-  const getTaskIcon = (taskType: string) => {
-    switch (taskType) {
-      case 'social': return Share2;
-      case 'referral': return UserPlus;
-      case 'wallet': return Wallet;
-      case 'mining': return Pickaxe;
-      case 'daily': return Calendar;
+  const getTaskIcon = (status: string) => {
+    switch (status) {
+      case 'pending': return Calendar;
+      case 'in_progress': return Clock;
+      case 'completed': return CheckCircle;
+      case 'failed': return Share2;
       default: return Gift;
     }
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'main': return 'from-green-500 to-emerald-600';
-      case 'social': return 'from-purple-500 to-pink-600';
-      case 'daily': return 'from-blue-500 to-cyan-600';
+  const getCategoryColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'from-yellow-500 to-orange-600';
+      case 'in_progress': return 'from-blue-500 to-cyan-600';
+      case 'completed': return 'from-green-500 to-emerald-600';
+      case 'failed': return 'from-red-500 to-pink-600';
       default: return 'from-gray-500 to-slate-600';
     }
   };
@@ -82,7 +82,7 @@ const TasksPage = () => {
 
     try {
       // Handle daily check-in task (requires TON payment)
-      if (task.title_key === 'daily check-in' && task.task_type === 'daily') {
+      if (task.title === 'daily check-in' && task.status === 'pending') {
         try {
           // Check wallet connection
           if (!tonService.isWalletConnected()) {
@@ -123,8 +123,8 @@ const TasksPage = () => {
         }
       } else {
         // Open URL if exists for other tasks
-        if (task.action_url) {
-          window.open(task.action_url, '_blank');
+        if (task.external_link) {
+          window.open(task.external_link, '_blank');
         }
       }
 
@@ -160,31 +160,30 @@ const TasksPage = () => {
 
   const getTasksByCategory = (category: string) => {
     return tasks.filter(task => {
-      if (category === 'main') return task.task_type === 'wallet' || task.task_type === 'mining' || task.task_type === 'referral';
-      if (category === 'partner') return task.task_type === 'social';
-      if (category === 'daily') return task.task_type === 'daily';
+      if (category === 'main') return task.status === 'pending' || task.status === 'in_progress';
+      if (category === 'partner') return task.status === 'completed';
+      if (category === 'daily') return task.status === 'pending';
       return false;
     }).filter(task => task.is_active);
   };
 
   const renderTaskCard = (task: Task) => {
-    const taskWithImage = task as Task & { image_url?: string | null };
-    const TaskIcon = getTaskIcon(task.task_type || 'default');
+    const TaskIcon = getTaskIcon(task.status || 'pending');
     const isCompleted = isTaskCompleted(task.id);
     const inProgress = isTaskInProgress[task.id];
-    const category = task.task_type === 'social' ? 'partner' : 
-                    task.task_type === 'daily' ? 'daily' : 'main';
+    const category = task.status === 'completed' ? 'partner' : 
+                    task.status === 'pending' ? 'daily' : 'main';
     
     return (
       <Card key={task.id} className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border border-blue-400/20 rounded-xl">
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
             {/* Task Image or Icon */}
-            <div className={`flex-shrink-0 ${taskWithImage.image_url ? 'w-12 h-12 rounded-full overflow-hidden' : `p-2 rounded-full bg-gradient-to-r ${getCategoryColor(category)}`}`}>
-              {taskWithImage.image_url ? (
+            <div className={`flex-shrink-0 ${task.image_url ? 'w-12 h-12 rounded-full overflow-hidden' : `p-2 rounded-full bg-gradient-to-r ${getCategoryColor(task.status || 'pending')}`}`}>
+              {task.image_url ? (
                 <img 
-                  src={taskWithImage.image_url} 
-                  alt={task.title_key || 'Task image'}
+                  src={task.image_url} 
+                  alt={task.title || 'Task image'}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -194,7 +193,7 @@ const TasksPage = () => {
             
             <div className="flex-1 min-w-0">
               <h3 className="text-white font-semibold text-sm truncate mb-2">
-                {task.title_key}
+                {task.title}
               </h3>
               
               <div className="flex items-center justify-between">
@@ -207,7 +206,7 @@ const TasksPage = () => {
                   <span className="text-yellow-400 font-bold text-xs">
                     +{formatReward(task.reward_amount || 0)}
                   </span>
-                  {task.title_key === 'daily check-in' && (
+                  {task.title === 'daily check-in' && (
                     <span className="text-orange-400 text-xs ml-1">(0.1 TON)</span>
                   )}
                 </div>
@@ -221,7 +220,7 @@ const TasksPage = () => {
                       ? 'bg-green-600 cursor-not-allowed' 
                       : inProgress
                         ? 'bg-yellow-600 cursor-not-allowed'
-                        : `bg-gradient-to-r ${getCategoryColor(category)} hover:opacity-90`
+                        : `bg-gradient-to-r ${getCategoryColor(task.status || 'pending')} hover:opacity-90`
                   }`}
                 >
                   {isCompleted ? (
@@ -229,7 +228,7 @@ const TasksPage = () => {
                   ) : inProgress ? (
                     <Clock className="w-3 h-3 animate-spin" />
                   ) : (
-                    task.action_url ? <ExternalLink className="w-3 h-3" /> : <Gift className="w-3 h-3" />
+                    task.external_link ? <ExternalLink className="w-3 h-3" /> : <Gift className="w-3 h-3" />
                   )}
                 </Button>
               </div>

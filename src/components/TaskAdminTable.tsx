@@ -31,12 +31,12 @@ const TaskAdminTable: React.FC<TaskAdminTableProps> = ({
   onToggleStatus,
   isLoading = false
 }) => {
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'daily': return 'bg-blue-500/20 text-blue-300';
-      case 'social': return 'bg-purple-500/20 text-purple-300';
-      case 'mining': return 'bg-orange-500/20 text-orange-300';
-      case 'wallet': return 'bg-pink-500/20 text-pink-300';
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-500/20 text-yellow-300';
+      case 'in_progress': return 'bg-blue-500/20 text-blue-300';
+      case 'completed': return 'bg-green-500/20 text-green-300';
+      case 'failed': return 'bg-red-500/20 text-red-300';
       default: return 'bg-gray-500/20 text-gray-300';
     }
   };
@@ -64,85 +64,79 @@ const TaskAdminTable: React.FC<TaskAdminTableProps> = ({
           <TableRow className="border-indigo-500/30">
             <TableHead className="text-white">الصورة</TableHead>
             <TableHead className="text-white">العنوان</TableHead>
-            <TableHead className="text-white">النوع</TableHead>
-            <TableHead className="text-white">المكافأة</TableHead>
             <TableHead className="text-white">الحالة</TableHead>
+            <TableHead className="text-white">المكافأة</TableHead>
+            <TableHead className="text-white">نشط</TableHead>
             <TableHead className="text-white">الإجراءات</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {tasks.map((task) => {
-            const taskWithImage = task as Task & { image_url?: string | null };
-            return (
-              <TableRow key={task.id} className="border-indigo-500/20 hover:bg-indigo-500/10">
-                <TableCell>
-                  {taskWithImage.image_url ? (
-                    <img 
-                      src={taskWithImage.image_url} 
-                      alt={task.title_key || 'Task image'}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center">
-                      <Image className="w-5 h-5 text-gray-400" />
-                    </div>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <div className="text-white font-medium">{task.title_key}</div>
-                </TableCell>
-                <TableCell>
-                  <Badge className={getTypeColor(task.task_type || 'default')}>
-                    {task.task_type}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <span className="text-pink-400 font-bold">
-                    {task.reward_amount} $SPACE
-                  </span>
-                  {task.title_key === 'daily check-in' && (
-                    <div className="text-orange-400 text-xs">(0.1 TON required)</div>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <Switch
-                    checked={task.is_active || false}
-                    onCheckedChange={(checked) => onToggleStatus(task.id, checked)}
+          {tasks.map((task) => (
+            <TableRow key={task.id} className="border-indigo-500/20 hover:bg-indigo-500/10">
+              <TableCell>
+                {task.image_url ? (
+                  <img 
+                    src={task.image_url} 
+                    alt={task.title || 'Task image'}
+                    className="w-10 h-10 rounded-full object-cover"
                   />
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => onEdit(task)}
-                      className="text-blue-400 hover:text-blue-300"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    {task.action_url && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => window.open(task.action_url!, '_blank')}
-                        className="text-green-400 hover:text-green-300"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </Button>
-                    )}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => onDelete(task.id)}
-                      className="text-red-400 hover:text-red-300"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center">
+                    <Image className="w-5 h-5 text-gray-400" />
                   </div>
-                </TableCell>
-              </TableRow>
-            );
-          })}
+                )}
+              </TableCell>
+              <TableCell>
+                <div className="text-white font-medium">{task.title}</div>
+              </TableCell>
+              <TableCell>
+                <Badge className={getStatusColor(task.status || 'pending')}>
+                  {task.status}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <span className="text-pink-400 font-bold">
+                  {task.reward_amount} $SPACE
+                </span>
+              </TableCell>
+              <TableCell>
+                <Switch
+                  checked={task.is_active || false}
+                  onCheckedChange={(checked) => onToggleStatus(task.id, checked)}
+                />
+              </TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onEdit(task)}
+                    className="text-blue-400 hover:text-blue-300"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                  {task.external_link && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => window.open(task.external_link!, '_blank')}
+                      className="text-green-400 hover:text-green-300"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  )}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onDelete(task.id)}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>

@@ -12,10 +12,11 @@ type Task = Database['public']['Tables']['tasks']['Row'];
 type NewTask = Database['public']['Tables']['tasks']['Insert'];
 
 interface TaskFormData {
-  title_key: string;
+  title: string;
   reward_amount: number;
-  task_type: string;
-  action_url?: string;
+  status: string;
+  external_link?: string;
+  description?: string;
   is_active: boolean;
 }
 
@@ -34,23 +35,24 @@ const TaskForm: React.FC<TaskFormProps> = ({
 }) => {
   const form = useForm<TaskFormData>({
     defaultValues: {
-      title_key: task?.title_key || '',
+      title: task?.title || '',
       reward_amount: task?.reward_amount || 0,
-      task_type: task?.task_type || 'daily',
-      action_url: task?.action_url || '',
+      status: task?.status || 'pending',
+      external_link: task?.external_link || '',
+      description: task?.description || '',
       is_active: task?.is_active ?? true
     }
   });
 
-  const taskTypes = [
-    { value: 'daily', label: 'Daily Task' },
-    { value: 'social', label: 'Social Media' },
-    { value: 'mining', label: 'Mining Related' },
-    { value: 'wallet', label: 'Wallet Connection' }
+  const statusOptions = [
+    { value: 'pending', label: 'Pending' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'failed', label: 'Failed' }
   ];
 
   const handleSubmit = (data: TaskFormData) => {
-    onSubmit(data);
+    onSubmit(data as NewTask);
   };
 
   return (
@@ -65,15 +67,15 @@ const TaskForm: React.FC<TaskFormProps> = ({
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="title_key"
+              name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">Title Key</FormLabel>
+                  <FormLabel className="text-white">Title</FormLabel>
                   <FormControl>
                     <Input 
                       {...field} 
                       className="bg-white/10 border-white/20 text-white"
-                      placeholder="e.g., joinTelegram"
+                      placeholder="e.g., Join Telegram"
                     />
                   </FormControl>
                 </FormItem>
@@ -102,18 +104,18 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
               <FormField
                 control={form.control}
-                name="task_type"
+                name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-white">Task Type</FormLabel>
+                    <FormLabel className="text-white">Status</FormLabel>
                     <FormControl>
                       <select 
                         {...field} 
                         className="w-full p-2 bg-white/10 border border-white/20 rounded-md text-white"
                       >
-                        {taskTypes.map(type => (
-                          <option key={type.value} value={type.value} className="bg-gray-800">
-                            {type.label}
+                        {statusOptions.map(option => (
+                          <option key={option.value} value={option.value} className="bg-gray-800">
+                            {option.label}
                           </option>
                         ))}
                       </select>
@@ -125,15 +127,32 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
             <FormField
               control={form.control}
-              name="action_url"
+              name="external_link"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white">Action URL (Optional)</FormLabel>
+                  <FormLabel className="text-white">External Link (Optional)</FormLabel>
                   <FormControl>
                     <Input 
                       {...field} 
                       className="bg-white/10 border-white/20 text-white"
                       placeholder="https://example.com"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white">Description (Optional)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      {...field} 
+                      className="bg-white/10 border-white/20 text-white"
+                      placeholder="Task description"
                     />
                   </FormControl>
                 </FormItem>

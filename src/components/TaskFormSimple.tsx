@@ -26,19 +26,18 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
   onCancel,
   isLoading = false
 }) => {
-  const taskWithImage = task as (Task & { image_url?: string | null }) | null;
-  
   const [formData, setFormData] = useState({
-    title_key: task?.title_key || '',
-    task_type: task?.task_type || 'daily',
+    title: task?.title || '',
+    status: task?.status || 'pending',
     reward_amount: task?.reward_amount || 100,
-    action_url: task?.action_url || '',
-    image_url: taskWithImage?.image_url || '',
+    external_link: task?.external_link || '',
+    image_url: task?.image_url || '',
+    description: task?.description || '',
     is_active: task?.is_active ?? true
   });
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(taskWithImage?.image_url || '');
+  const [imagePreview, setImagePreview] = useState<string>(task?.image_url || '');
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -126,11 +125,11 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="title_key" className="text-white">عنوان المهمة</Label>
+              <Label htmlFor="title" className="text-white">عنوان المهمة</Label>
               <Input
-                id="title_key"
-                value={formData.title_key}
-                onChange={(e) => handleInputChange('title_key', e.target.value)}
+                id="title"
+                value={formData.title}
+                onChange={(e) => handleInputChange('title', e.target.value)}
                 placeholder="مثال: انضم إلى التليجرام"
                 className="bg-white/10 border-white/20 text-white placeholder-gray-400"
                 required
@@ -139,20 +138,20 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
             </div>
 
             <div>
-              <Label htmlFor="task_type" className="text-white">نوع المهمة</Label>
+              <Label htmlFor="status" className="text-white">حالة المهمة</Label>
               <Select 
-                value={formData.task_type} 
-                onValueChange={(value) => handleInputChange('task_type', value)}
+                value={formData.status} 
+                onValueChange={(value) => handleInputChange('status', value)}
                 disabled={isLoading}
               >
                 <SelectTrigger className="bg-white/10 border-white/20 text-white">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="daily">يومية</SelectItem>
-                  <SelectItem value="social">وسائل التواصل</SelectItem>
-                  <SelectItem value="mining">التعدين</SelectItem>
-                  <SelectItem value="wallet">المحفظة</SelectItem>
+                  <SelectItem value="pending">في الانتظار</SelectItem>
+                  <SelectItem value="in_progress">قيد التنفيذ</SelectItem>
+                  <SelectItem value="completed">مكتملة</SelectItem>
+                  <SelectItem value="failed">فشلت</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -172,17 +171,29 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
             </div>
 
             <div>
-              <Label htmlFor="action_url" className="text-white">رابط المهمة (اختياري)</Label>
+              <Label htmlFor="external_link" className="text-white">رابط المهمة (اختياري)</Label>
               <Input
-                id="action_url"
+                id="external_link"
                 type="url"
-                value={formData.action_url}
-                onChange={(e) => handleInputChange('action_url', e.target.value)}
+                value={formData.external_link}
+                onChange={(e) => handleInputChange('external_link', e.target.value)}
                 placeholder="https://..."
                 className="bg-white/10 border-white/20 text-white placeholder-gray-400"
                 disabled={isLoading}
               />
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="description" className="text-white">وصف المهمة (اختياري)</Label>
+            <Input
+              id="description"
+              value={formData.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              placeholder="وصف تفصيلي للمهمة"
+              className="bg-white/10 border-white/20 text-white placeholder-gray-400"
+              disabled={isLoading}
+            />
           </div>
 
           {/* Image Upload Section */}
