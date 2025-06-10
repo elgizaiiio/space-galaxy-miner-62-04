@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from "@/hooks/use-toast";
+import { getTranslation } from '../utils/language';
 import { 
   CheckCircle, 
   ExternalLink, 
@@ -41,24 +42,24 @@ const TasksPage = () => {
   const basicTasks: TaskWithImage[] = [
     {
       id: 'connect-wallet',
-      title: 'ربط المحفظة',
-      description: 'اربط محفظة TON الخاصة بك',
+      title: getTranslation('connectWallet'),
+      description: getTranslation('connectWalletDesc'),
       reward: 500,
       icon: Wallet,
       category: 'basic'
     },
     {
       id: 'first-mine',
-      title: 'التعدين الأول',
-      description: 'ابدأ عملية التعدين لأول مرة',
+      title: getTranslation('firstMine'),
+      description: getTranslation('firstMineDesc'),
       reward: 250,
       icon: Pickaxe,
       category: 'basic'
     },
     {
       id: 'complete-profile',
-      title: 'إكمال الملف الشخصي',
-      description: 'أكمل معلومات ملفك الشخصي',
+      title: getTranslation('completeProfile'),
+      description: getTranslation('completeProfileDesc'),
       reward: 300,
       icon: UserPlus,
       category: 'basic'
@@ -69,8 +70,8 @@ const TasksPage = () => {
   const partnerTasks: TaskWithImage[] = [
     {
       id: 'follow-telegram',
-      title: 'انضم للتليجرام',
-      description: 'انضم لقناة التليجرام الرسمية',
+      title: getTranslation('joinTelegram'),
+      description: getTranslation('joinTelegramDesc'),
       reward: 200,
       icon: Share2,
       category: 'partner',
@@ -78,8 +79,8 @@ const TasksPage = () => {
     },
     {
       id: 'follow-twitter',
-      title: 'تابع تويتر',
-      description: 'تابع الحساب الرسمي على تويتر',
+      title: getTranslation('followTwitter'),
+      description: getTranslation('followTwitterDesc'),
       reward: 150,
       icon: Share2,
       category: 'partner',
@@ -87,8 +88,8 @@ const TasksPage = () => {
     },
     {
       id: 'youtube-subscribe',
-      title: 'اشترك باليوتيوب',
-      description: 'اشترك في القناة الرسمية',
+      title: getTranslation('subscribeYoutube'),
+      description: getTranslation('subscribeYoutubeDesc'),
       reward: 175,
       icon: Share2,
       category: 'partner',
@@ -100,24 +101,24 @@ const TasksPage = () => {
   const dailyTasks: TaskWithImage[] = [
     {
       id: 'daily-login',
-      title: 'تسجيل دخول يومي',
-      description: 'سجل دخولك يومياً',
+      title: getTranslation('dailyLogin'),
+      description: getTranslation('dailyLoginDesc'),
       reward: 50,
       icon: Calendar,
       category: 'daily'
     },
     {
       id: 'daily-mine',
-      title: 'تعدين يومي',
-      description: 'قم بالتعدين لمدة 30 دقيقة',
+      title: getTranslation('dailyMine'),
+      description: getTranslation('dailyMineDesc'),
       reward: 100,
       icon: Pickaxe,
       category: 'daily'
     },
     {
       id: 'daily-share',
-      title: 'مشاركة يومية',
-      description: 'شارك التطبيق مع الأصدقاء',
+      title: getTranslation('dailyShare'),
+      description: getTranslation('dailyShareDesc'),
       reward: 75,
       icon: Share2,
       category: 'daily'
@@ -151,8 +152,9 @@ const TasksPage = () => {
       const task = allTasks.find(t => t.id === taskId);
       
       toast({
-        title: 'تم إكمال المهمة!',
-        description: `لقد حصلت على ${task?.reward} $SPACE!`
+        title: getTranslation('taskCompleted'),
+        description: `${getTranslation('earnedReward')} ${task?.reward} $SPACE!`,
+        className: "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-none max-w-xs"
       });
 
       setIsTaskInProgress(prev => ({ ...prev, [taskId]: false }));
@@ -244,10 +246,10 @@ const TasksPage = () => {
       <div className="max-w-md mx-auto relative z-10">
         <div className="text-center mb-4">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-1">
-            المهام
+            {getTranslation('tasks')}
           </h1>
           <p className="text-gray-300 text-sm">
-            أكمل المهام واحصل على $SPACE
+            {getTranslation('completeTasksEarn')}
           </p>
         </div>
 
@@ -258,21 +260,21 @@ const TasksPage = () => {
               className="text-xs data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400"
             >
               <UserPlus className="w-3 h-3 mr-1" />
-              أساسية
+              {getTranslation('basicTasks')}
             </TabsTrigger>
             <TabsTrigger 
               value="partner" 
               className="text-xs data-[state=active]:bg-purple-500/20 data-[state=active]:text-purple-400"
             >
               <Handshake className="w-3 h-3 mr-1" />
-              شركاء
+              {getTranslation('partnerTasks')}
             </TabsTrigger>
             <TabsTrigger 
               value="daily" 
               className="text-xs data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400"
             >
               <Calendar className="w-3 h-3 mr-1" />
-              يومية
+              {getTranslation('dailyTasks')}
             </TabsTrigger>
           </TabsList>
 

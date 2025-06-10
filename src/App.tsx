@@ -1,10 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
-import SplashScreen from './components/SplashScreen';
 import MiningPage from './components/MiningPage';
 import TasksPage from './components/TasksPage';
 import WalletPage from './components/WalletPage';
@@ -19,7 +19,6 @@ const queryClient = new QueryClient();
 type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'store' | 'admin';
 
 const App = () => {
-  const [showSplash, setShowSplash] = useState(true);
   const [currentPage, setCurrentPage] = useState<Page>('mining');
   const [showAdminAccess, setShowAdminAccess] = useState(false);
   const [taskClickCount, setTaskClickCount] = useState(0);
@@ -66,10 +65,6 @@ const App = () => {
     } else {
       setCurrentPage('tasks');
     }
-  };
-
-  const handleSplashComplete = () => {
-    setShowSplash(false);
   };
 
   const navigationItems = [{
@@ -121,16 +116,29 @@ const App = () => {
     }
   };
 
-  if (showSplash) {
-    return <SplashScreen onComplete={handleSplashComplete} />;
-  }
-
   return (
     <TonConnectUIProvider manifestUrl={window.location.origin + '/tonconnect-manifest.json'}>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
+          <Toaster 
+            toastOptions={{
+              className: "max-w-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white border-none rounded-lg shadow-lg",
+              duration: 3000,
+            }}
+          />
+          <Sonner 
+            position="top-center"
+            toastOptions={{
+              style: {
+                background: 'linear-gradient(to right, #3b82f6, #8b5cf6)',
+                border: 'none',
+                color: 'white',
+                borderRadius: '8px',
+                fontSize: '14px',
+                maxWidth: '300px'
+              },
+            }}
+          />
           
           <div className={`min-h-screen flex flex-col ${currentPage === 'mining' ? 'overflow-hidden' : ''}`}>
             <div className="flex-1 pb-16">

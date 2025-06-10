@@ -1,3 +1,4 @@
+
 import * as React from "react"
 
 import type {
@@ -6,7 +7,7 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_REMOVE_DELAY = 3000
 
 type ToasterToast = ToastProps & {
   id: string
@@ -90,8 +91,6 @@ export const reducer = (state: State, action: Action): State => {
     case "DISMISS_TOAST": {
       const { toastId } = action
 
-      // ! Side effects ! - This could be extracted into a dismissToast() action,
-      // but I'll keep it here for simplicity
       if (toastId) {
         addToRemoveQueue(toastId)
       } else {
@@ -155,6 +154,7 @@ function toast({ ...props }: Toast) {
       ...props,
       id,
       open: true,
+      className: `max-w-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white border-none rounded-lg shadow-lg ${props.className || ''}`,
       onOpenChange: (open) => {
         if (!open) dismiss()
       },
