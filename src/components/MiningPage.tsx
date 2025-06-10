@@ -1,7 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { 
-  Coins, 
   Play,
 } from 'lucide-react';
 
@@ -149,8 +149,12 @@ const MiningPage = () => {
 
         {/* Balance */}
         <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
-            <Coins className="w-6 h-6 text-white" />
+          <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
+            <img 
+              src="/lovable-uploads/46b9f7e6-4f32-4240-9fc4-16d1bcdec0d0.png" 
+              alt="Space Coin"
+              className="w-full h-full object-cover"
+            />
           </div>
           <span className="text-white text-3xl font-bold">
             {Math.floor(spaceCoins).toLocaleString()}
