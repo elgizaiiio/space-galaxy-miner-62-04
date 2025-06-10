@@ -15,7 +15,6 @@ import {
   UserPlus,
   Pickaxe,
   Clock,
-  Star,
   Users,
   Wallet,
   Gift,
@@ -154,7 +153,6 @@ const TasksPage = () => {
       toast({
         title: getTranslation('taskCompleted'),
         description: `${getTranslation('earnedReward')} ${task?.reward} $SPACE!`,
-        className: "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-none max-w-xs"
       });
 
       setIsTaskInProgress(prev => ({ ...prev, [taskId]: false }));
@@ -197,7 +195,11 @@ const TasksPage = () => {
               
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1">
-                  <Star className="w-3 h-3 text-yellow-400" />
+                  <img 
+                    src="/lovable-uploads/a61fe220-a4a1-4863-bf49-f46aaea61a74.png" 
+                    alt="Space Coin"
+                    className="w-3 h-3"
+                  />
                   <span className="text-yellow-400 font-bold text-xs">
                     +{formatReward(task.reward)}
                   </span>

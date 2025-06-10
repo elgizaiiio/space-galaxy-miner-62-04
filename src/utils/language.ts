@@ -88,8 +88,6 @@ const translations: Record<string, string> = {
   'pleaseSelectWallet': 'Please select a wallet',
   'smartWallet': 'Smart Wallet',
   'walletDescription': 'Connect your TON wallet to start mining $SPACE coins',
-  'connectWallet': 'Connect Wallet',
-  'connectWalletToAccess': 'Connect your wallet to access wallet features',
   'receiveCoins': 'Receive Coins',
   'walletAddress': 'Wallet Address',
   'shareAddressInstruction': 'Share this address to receive payments',
@@ -112,6 +110,7 @@ const translations: Record<string, string> = {
   'tonWalletDisconnected': 'TON wallet disconnected successfully',
   'loadingDataError': 'Loading Error',
   'failedToLoadWallet': 'Failed to load wallet data',
+  'connectWalletToAccess': 'Connect your wallet to access wallet features',
   
   // Friends/Referral
   'inviteFriendsEarn': 'Invite friends and earn $SPACE coins together',

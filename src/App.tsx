@@ -120,22 +120,20 @@ const App = () => {
     <TonConnectUIProvider manifestUrl={window.location.origin + '/tonconnect-manifest.json'}>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <Toaster 
-            toastOptions={{
-              className: "max-w-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white border-none rounded-lg shadow-lg",
-              duration: 3000,
-            }}
-          />
+          <Toaster />
           <Sonner 
             position="top-center"
             toastOptions={{
               style: {
-                background: 'linear-gradient(to right, #3b82f6, #8b5cf6)',
-                border: 'none',
+                background: 'rgba(15, 23, 42, 0.95)',
+                border: '1px solid rgba(59, 130, 246, 0.2)',
                 color: 'white',
-                borderRadius: '8px',
-                fontSize: '14px',
-                maxWidth: '300px'
+                borderRadius: '6px',
+                fontSize: '12px',
+                maxWidth: '280px',
+                padding: '8px 12px',
+                backdropFilter: 'blur(8px)',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)'
               },
             }}
           />

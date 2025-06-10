@@ -7,7 +7,7 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 3000
+const TOAST_REMOVE_DELAY = 2000
 
 type ToasterToast = ToastProps & {
   id: string
@@ -154,7 +154,7 @@ function toast({ ...props }: Toast) {
       ...props,
       id,
       open: true,
-      className: `max-w-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white border-none rounded-lg shadow-lg ${props.className || ''}`,
+      className: `max-w-xs bg-slate-900/95 text-white border border-slate-700 rounded-lg shadow-xl backdrop-blur-sm text-sm p-3 ${props.className || ''}`,
       onOpenChange: (open) => {
         if (!open) dismiss()
       },
