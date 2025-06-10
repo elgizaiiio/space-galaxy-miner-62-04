@@ -20,8 +20,6 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, balance, currenc
   const [amount, setAmount] = useState('');
   const [address, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
-  const t = (key: string) => getTranslation(key);
 
   const handleSend = async () => {
     if (!amount || !address) {

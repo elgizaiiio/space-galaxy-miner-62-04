@@ -22,8 +22,8 @@ const ReceiveModal: React.FC<ReceiveModalProps> = ({ isOpen, onClose, address })
     navigator.clipboard.writeText(address);
     setCopied(true);
     toast({
-      title: t('copied'),
-      description: t('walletAddressCopied'),
+      title: 'Copied',
+      description: 'Wallet address copied to clipboard',
     });
   };
 
@@ -40,7 +40,7 @@ const ReceiveModal: React.FC<ReceiveModalProps> = ({ isOpen, onClose, address })
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              {t('receiveCoins')}
+              Receive Coins
             </DialogTitle>
             <Button
               variant="ghost"
@@ -66,7 +66,7 @@ const ReceiveModal: React.FC<ReceiveModalProps> = ({ isOpen, onClose, address })
 
           {/* Address */}
           <div className="space-y-2">
-            <Label className="text-white font-semibold text-sm">{t('walletAddress')}</Label>
+            <Label className="text-white font-semibold text-sm">Wallet Address</Label>
             <div className="flex items-center gap-2 p-3 bg-white/5 rounded-lg border border-white/10">
               <code className="text-xs text-gray-200 flex-1 break-all leading-relaxed font-mono">
                 {address}
@@ -89,7 +89,7 @@ const ReceiveModal: React.FC<ReceiveModalProps> = ({ isOpen, onClose, address })
           {/* Instructions */}
           <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
             <p className="text-xs text-yellow-200 text-center leading-relaxed">
-              {t('shareAddressInstruction')}
+              Share this address to receive coins
             </p>
           </div>
 
@@ -100,12 +100,12 @@ const ReceiveModal: React.FC<ReceiveModalProps> = ({ isOpen, onClose, address })
             {copied ? (
               <>
                 <Check className="w-4 h-4 mr-2" />
-                {t('copied')}
+                Copied
               </>
             ) : (
               <>
                 <Copy className="w-4 h-4 mr-2" />
-                {t('copyAddress')}
+                Copy Address
               </>
             )}
           </Button>

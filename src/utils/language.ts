@@ -33,7 +33,13 @@ const enTranslations: Translations = {
   dailyShareDesc: 'Share the app daily',
   taskCompleted: 'Task Completed',
   earnedReward: 'You earned',
-  completeTasksEarn: 'Complete tasks and earn $SPACE coins'
+  completeTasksEarn: 'Complete tasks and earn $SPACE coins',
+  receiveCoins: 'Receive Coins',
+  walletAddress: 'Wallet Address',
+  shareAddressInstruction: 'Share this address to receive coins',
+  copied: 'Copied',
+  walletAddressCopied: 'Wallet address copied to clipboard',
+  copyAddress: 'Copy Address'
 };
 
 const getCurrentLanguage = (): string => {
@@ -41,7 +47,9 @@ const getCurrentLanguage = (): string => {
 };
 
 export const getTranslation = (key: string): string => {
-  return enTranslations[key] || key;
+  // Return the translation if it exists, otherwise return the key itself
+  const translation = enTranslations[key];
+  return translation || key;
 };
 
 export const setLanguage = (language: string) => {

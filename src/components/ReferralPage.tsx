@@ -22,7 +22,7 @@ const ReferralPage = () => {
 
   return (
     <div 
-      className="min-h-screen text-white p-4 pb-24 relative overflow-hidden"
+      className="min-h-screen text-white p-4 relative overflow-hidden"
       style={{
         backgroundImage: `url('/lovable-uploads/a7b161e7-5f3d-4df4-a8de-6688660edee0.png')`,
         backgroundSize: 'cover',
