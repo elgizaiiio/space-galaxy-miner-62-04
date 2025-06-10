@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,7 +33,7 @@ const StorePage = () => {
       description: 'Instant coin pack',
       price: 1.0,
       coins: 50000,
-      icon: 'image', // Using image instead of icon
+      icon: Coins,
       color: 'from-yellow-500 to-orange-500'
     },
     {
@@ -43,7 +42,7 @@ const StorePage = () => {
       description: 'Double coin pack',
       price: 2.0,
       coins: 100000,
-      icon: 'image',
+      icon: Coins,
       color: 'from-green-500 to-emerald-500'
     },
     {
@@ -52,7 +51,7 @@ const StorePage = () => {
       description: 'Mega coin pack',
       price: 5.0,
       coins: 250000,
-      icon: 'image',
+      icon: Coins,
       color: 'from-purple-500 to-pink-500',
       popular: true
     },
@@ -62,7 +61,7 @@ const StorePage = () => {
       description: 'Ultra coin pack',
       price: 10.0,
       coins: 500000,
-      icon: 'image',
+      icon: Coins,
       color: 'from-blue-500 to-cyan-500'
     }
   ];
@@ -224,17 +223,12 @@ const StorePage = () => {
         {/* SPACE Coins */}
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-5 h-5 rounded-full overflow-hidden bg-gradient-to-r from-yellow-400 to-orange-500 p-0.5">
-              <img 
-                src="/lovable-uploads/487ce26d-d030-4f5b-a0eb-2be721555e67.png" 
-                alt="SPACE Coin" 
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
+            <Coins className="w-4 h-4 text-yellow-400" />
             <h2 className="text-lg font-bold text-white">SPACE Coins</h2>
           </div>
           
           {coinPacks.map((pack, index) => {
+            const Icon = pack.icon;
             const isPurchased = purchasedItems.includes(pack.id);
             
             return (
@@ -256,13 +250,7 @@ const StorePage = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <div className={`p-1.5 rounded-lg bg-gradient-to-r ${pack.color}`}>
-                          <div className="w-4 h-4 rounded-full overflow-hidden">
-                            <img 
-                              src="/lovable-uploads/487ce26d-d030-4f5b-a0eb-2be721555e67.png" 
-                              alt="SPACE Coin" 
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
+                          <Icon className="w-4 h-4 text-white" />
                         </div>
                         <div>
                           <CardTitle className="text-white text-base font-bold">
