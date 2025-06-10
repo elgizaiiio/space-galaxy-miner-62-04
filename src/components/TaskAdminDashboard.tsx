@@ -34,8 +34,8 @@ const TaskAdminDashboard = () => {
     } catch (error) {
       console.error('Error loading tasks:', error);
       toast({
-        title: 'خطأ',
-        description: 'فشل في تحميل المهام',
+        title: 'Error',
+        description: 'Failed to load tasks',
         variant: 'destructive'
       });
     } finally {
@@ -50,8 +50,8 @@ const TaskAdminDashboard = () => {
     try {
       await taskService.createTask(taskData);
       toast({
-        title: 'نجح',
-        description: 'تم إنشاء المهمة بنجاح',
+        title: 'Success',
+        description: 'Task created successfully',
       });
       setShowForm(false);
       setEditingTask(null);
@@ -59,8 +59,8 @@ const TaskAdminDashboard = () => {
     } catch (error) {
       console.error('Error creating task:', error);
       toast({
-        title: 'خطأ',
-        description: 'فشل في إنشاء المهمة',
+        title: 'Error',
+        description: 'Failed to create task',
         variant: 'destructive'
       });
     } finally {
@@ -77,8 +77,8 @@ const TaskAdminDashboard = () => {
     try {
       await taskService.updateTask(editingTask.id, taskData);
       toast({
-        title: 'نجح',
-        description: 'تم تحديث المهمة بنجاح',
+        title: 'Success',
+        description: 'Task updated successfully',
       });
       setShowForm(false);
       setEditingTask(null);
@@ -86,8 +86,8 @@ const TaskAdminDashboard = () => {
     } catch (error) {
       console.error('Error updating task:', error);
       toast({
-        title: 'خطأ',
-        description: 'فشل في تحديث المهمة',
+        title: 'Error',
+        description: 'Failed to update task',
         variant: 'destructive'
       });
     } finally {
@@ -102,19 +102,19 @@ const TaskAdminDashboard = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('هل أنت متأكد من حذف هذه المهمة؟')) {
+    if (window.confirm('Are you sure you want to delete this task?')) {
       try {
         await taskService.deleteTask(id);
         toast({
-          title: 'نجح',
-          description: 'تم حذف المهمة بنجاح'
+          title: 'Success',
+          description: 'Task deleted successfully'
         });
         await loadTasks();
       } catch (error) {
         console.error('Error deleting task:', error);
         toast({
-          title: 'خطأ',
-          description: 'فشل في حذف المهمة',
+          title: 'Error',
+          description: 'Failed to delete task',
           variant: 'destructive'
         });
       }
@@ -125,15 +125,15 @@ const TaskAdminDashboard = () => {
     try {
       await taskService.toggleTaskStatus(id, isActive);
       toast({
-        title: 'نجح',
-        description: `تم ${isActive ? 'تفعيل' : 'إلغاء تفعيل'} المهمة بنجاح`
+        title: 'Success',
+        description: `Task ${isActive ? 'activated' : 'deactivated'} successfully`
       });
       await loadTasks();
     } catch (error) {
       console.error('Error toggling task status:', error);
       toast({
-        title: 'خطأ',
-        description: 'فشل في تحديث حالة المهمة',
+        title: 'Error',
+        description: 'Failed to update task status',
         variant: 'destructive'
       });
     }
@@ -145,8 +145,19 @@ const TaskAdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-4 pb-24">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div 
+      className="min-h-screen p-4 pb-24 relative"
+      style={{
+        backgroundImage: `url(/lovable-uploads/a657c04d-35d5-4114-ad66-514b60fcdc0f.png)`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/70"></div>
+      
+      <div className="max-w-6xl mx-auto space-y-6 relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
@@ -155,10 +166,10 @@ const TaskAdminDashboard = () => {
             </div>
           </div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-3">
-            لوحة إدارة المهام
+            Task Management Dashboard
           </h1>
           <p className="text-gray-300">
-            إدارة المهام والمكافآت للمستخدمين
+            Manage tasks and rewards for users
           </p>
         </div>
 
@@ -168,7 +179,7 @@ const TaskAdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-200 text-sm">إجمالي المهام</p>
+                  <p className="text-blue-200 text-sm">Total Tasks</p>
                   <p className="text-white text-2xl font-bold">{tasks.length}</p>
                 </div>
                 <CheckSquare className="w-8 h-8 text-blue-400" />
@@ -180,7 +191,7 @@ const TaskAdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-200 text-sm">المهام النشطة</p>
+                  <p className="text-green-200 text-sm">Active Tasks</p>
                   <p className="text-white text-2xl font-bold">{tasks.filter(t => t.is_active).length}</p>
                 </div>
                 <CheckSquare className="w-8 h-8 text-green-400" />
@@ -192,7 +203,7 @@ const TaskAdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-200 text-sm">المهام غير النشطة</p>
+                  <p className="text-purple-200 text-sm">Inactive Tasks</p>
                   <p className="text-white text-2xl font-bold">{tasks.filter(t => !t.is_active).length}</p>
                 </div>
                 <Users className="w-8 h-8 text-purple-400" />
@@ -203,14 +214,14 @@ const TaskAdminDashboard = () => {
 
         {/* Action Bar */}
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-white">إدارة المهام</h2>
+          <h2 className="text-2xl font-bold text-white">Task Management</h2>
           {!showForm && (
             <Button 
               onClick={() => setShowForm(true)}
               className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
             >
               <Plus className="w-4 h-4 mr-2" />
-              إضافة مهمة جديدة
+              Add New Task
             </Button>
           )}
         </div>

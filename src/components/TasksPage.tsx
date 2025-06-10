@@ -240,8 +240,19 @@ const TasksPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 p-4 pb-20">
-      <div className="max-w-md mx-auto space-y-4">
+    <div 
+      className="min-h-screen p-4 pb-20 relative"
+      style={{
+        backgroundImage: `url(/lovable-uploads/a657c04d-35d5-4114-ad66-514b60fcdc0f.png)`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/60"></div>
+      
+      <div className="max-w-md mx-auto space-y-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-4">
           <div className="flex items-center justify-center mb-2">
