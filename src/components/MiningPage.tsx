@@ -43,6 +43,39 @@ const MiningPage = () => {
     if (storedMiningSpeed) {
       setMiningSpeed(parseFloat(storedMiningSpeed));
     }
+
+    // Check if mining was active when user left
+    const miningStartTime = localStorage.getItem('miningStartTime');
+    const miningDuration = localStorage.getItem('miningDuration');
+    
+    if (miningStartTime && miningDuration) {
+      const startTime = parseInt(miningStartTime);
+      const duration = parseInt(miningDuration);
+      const currentTime = Date.now();
+      const elapsedTime = Math.floor((currentTime - startTime) / 1000);
+      
+      if (elapsedTime < duration) {
+        // Mining is still active
+        setMiningActive(true);
+        setRemainingTime(duration - elapsedTime);
+        
+        // Calculate coins earned while away
+        const coinsEarned = elapsedTime * (0.1 * (storedMiningSpeed ? parseFloat(storedMiningSpeed) : 1));
+        const previousCoins = storedCoins ? parseFloat(storedCoins) : 0;
+        setSpaceCoins(previousCoins + coinsEarned);
+      } else {
+        // Mining session completed while away
+        localStorage.removeItem('miningStartTime');
+        localStorage.removeItem('miningDuration');
+        setMiningActive(false);
+        setRemainingTime(28800);
+        
+        // Add all coins from completed session
+        const totalCoinsEarned = duration * (0.1 * (storedMiningSpeed ? parseFloat(storedMiningSpeed) : 1));
+        const previousCoins = storedCoins ? parseFloat(storedCoins) : 0;
+        setSpaceCoins(previousCoins + totalCoinsEarned);
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -59,14 +92,21 @@ const MiningPage = () => {
 
     if (miningActive) {
       intervalId = setInterval(() => {
-        setSpaceCoins((prevCoins) => prevCoins + coinsPerSecond);
+        setSpaceCoins((prevCoins) => {
+          const newCoins = prevCoins + coinsPerSecond;
+          localStorage.setItem('spaceCoins', newCoins.toString());
+          return newCoins;
+        });
+        
         setRemainingTime((prevTime) => {
-          if (prevTime <= 1) {
+          const newTime = prevTime - 1;
+          if (newTime <= 0) {
             setMiningActive(false);
+            localStorage.removeItem('miningStartTime');
+            localStorage.removeItem('miningDuration');
             return 0;
-          } else {
-            return prevTime - 1;
           }
+          return newTime;
         });
       }, 1000);
     }
@@ -84,10 +124,20 @@ const MiningPage = () => {
 
   const handleStartMining = () => {
     if (miningActive) {
+      // Stop mining
       setMiningActive(false);
+      localStorage.removeItem('miningStartTime');
+      localStorage.removeItem('miningDuration');
     } else {
+      // Start mining
+      const currentTime = Date.now();
+      const duration = 28800; // 8 hours in seconds
+      
+      localStorage.setItem('miningStartTime', currentTime.toString());
+      localStorage.setItem('miningDuration', duration.toString());
+      
       setMiningActive(true);
-      setRemainingTime(28800); // 8 hours
+      setRemainingTime(duration);
     }
   };
 
