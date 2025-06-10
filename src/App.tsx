@@ -141,7 +141,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           
-          <div className="min-h-screen flex flex-col">
+          <div className={`min-h-screen flex flex-col ${currentPage === 'mining' ? 'overflow-hidden' : ''}`}>
             <div className="flex-1 pb-16">
               {renderCurrentPage()}
             </div>

@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
@@ -44,7 +45,6 @@
 
   html, body {
     height: 100%;
-    overflow: hidden;
   }
 
   body {
@@ -61,7 +61,6 @@
 
   #root {
     height: 100vh;
-    overflow: hidden;
   }
 
   /* Enhanced Arabic and RTL support */
@@ -90,7 +89,6 @@
   /* Telegram WebApp styles */
   .tg-viewport {
     height: 100vh;
-    overflow: hidden;
   }
 }
 
