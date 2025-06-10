@@ -18,12 +18,12 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
     e.preventDefault();
     
     if (!username.trim()) {
-      setError('Please enter a username');
+      setError('Please enter a name');
       return;
     }
     
     if (username.trim().length < 3) {
-      setError('Username must be at least 3 characters');
+      setError('Name must be at least 3 characters');
       return;
     }
     
@@ -42,14 +42,14 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
             Welcome to Space Coin
           </DialogTitle>
           <DialogDescription id="username-description" className="text-center text-gray-300 text-sm">
-            Please enter your username to continue
+            Please enter your name to continue
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-3 mt-3">
           <div className="space-y-2">
             <Label htmlFor="username" className="text-gray-300 text-sm">
-              Username
+              Name
             </Label>
             <Input
               id="username"
@@ -59,7 +59,7 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
                 setUsername(e.target.value);
                 setError('');
               }}
-              placeholder="Enter username"
+              placeholder="Enter name"
               className="bg-slate-800 border-slate-600 text-white placeholder-gray-400 h-9 text-sm"
               autoFocus
             />
