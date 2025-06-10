@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { X, History, Clock } from 'lucide-react';
+import { History, Clock } from 'lucide-react';
 import { TONTransaction } from '../services/tonService';
 import TransactionItem from './TransactionItem';
 import { getTranslation } from '@/utils/language';
@@ -32,23 +31,13 @@ const TransactionHistoryModal: React.FC<TransactionHistoryModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-gradient-to-br from-slate-900/98 via-gray-900/95 to-black/98 backdrop-blur-xl border-2 border-gray-700/50 text-white max-w-xs max-h-[60vh] overflow-hidden rounded-2xl">
         <DialogHeader>
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-gradient-to-r from-green-500/20 to-teal-600/20 rounded-lg">
-                <History className="w-3 h-3 text-green-400" />
-              </div>
-              <DialogTitle className="text-sm font-bold bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
-                Transaction History
-              </DialogTitle>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="p-1.5 bg-gradient-to-r from-green-500/20 to-teal-600/20 rounded-lg">
+              <History className="w-3 h-3 text-green-400" />
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="text-gray-400 hover:text-white hover:bg-white/10 h-5 w-5 p-0 rounded-full"
-            >
-              <X className="w-2.5 h-2.5" />
-            </Button>
+            <DialogTitle className="text-sm font-bold bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
+              Transaction History
+            </DialogTitle>
           </div>
           
           {/* Wallet Address Display */}

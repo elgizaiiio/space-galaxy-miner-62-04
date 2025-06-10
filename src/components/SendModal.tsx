@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Send, X, Wallet } from 'lucide-react';
+import { Send, Wallet } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { getTranslation } from '@/utils/language';
 
@@ -61,23 +61,13 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, balance, currenc
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-gradient-to-br from-slate-900/98 via-indigo-900/95 to-purple-900/98 backdrop-blur-xl border-2 border-indigo-500/30 text-white max-w-xs rounded-2xl">
         <DialogHeader>
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-gradient-to-r from-blue-500/20 to-purple-600/20 rounded-lg">
-                <Send className="w-3 h-3 text-blue-400" />
-              </div>
-              <DialogTitle className="text-sm font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Send {currency}
-              </DialogTitle>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="p-1.5 bg-gradient-to-r from-blue-500/20 to-purple-600/20 rounded-lg">
+              <Send className="w-3 h-3 text-blue-400" />
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="text-gray-400 hover:text-white hover:bg-white/10 h-5 w-5 p-0 rounded-full"
-            >
-              <X className="w-2.5 h-2.5" />
-            </Button>
+            <DialogTitle className="text-sm font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Send {currency}
+            </DialogTitle>
           </div>
         </DialogHeader>
         

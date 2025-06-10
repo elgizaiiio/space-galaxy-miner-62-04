@@ -11,6 +11,8 @@ import WalletPage from './components/WalletPage';
 import ReferralPage from './components/ReferralPage';
 import StorePage from './components/StorePage';
 import TaskAdminPage from './components/TaskAdminPage';
+import SplashScreen from './components/SplashScreen';
+import UsernameModal from './components/UsernameModal';
 import { Button } from '@/components/ui/button';
 import { Home, CheckSquare, Wallet, Users, Settings, ShoppingBag } from 'lucide-react';
 import { getTranslation } from './utils/language';
@@ -22,6 +24,17 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState<Page>('mining');
   const [showAdminAccess, setShowAdminAccess] = useState(false);
   const [taskClickCount, setTaskClickCount] = useState(0);
+  const [showSplash, setShowSplash] = useState(true);
+  const [showUsernameModal, setShowUsernameModal] = useState(false);
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    // Check if username is already saved
+    const savedUsername = localStorage.getItem('username');
+    if (savedUsername) {
+      setUsername(savedUsername);
+    }
+  }, []);
 
   useEffect(() => {
     let clickCount = 0;
@@ -55,6 +68,19 @@ const App = () => {
     }
   }, [taskClickCount]);
 
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+    const savedUsername = localStorage.getItem('username');
+    if (!savedUsername) {
+      setShowUsernameModal(true);
+    }
+  };
+
+  const handleUsernameComplete = (newUsername: string) => {
+    setUsername(newUsername);
+    setShowUsernameModal(false);
+  };
+
   const handleTaskButtonClick = () => {
     const newCount = taskClickCount + 1;
     setTaskClickCount(newCount);
@@ -66,6 +92,11 @@ const App = () => {
       setCurrentPage('tasks');
     }
   };
+
+  // Show splash screen
+  if (showSplash) {
+    return <SplashScreen onComplete={handleSplashComplete} />;
+  }
 
   const navigationItems = [{
     id: 'mining',
@@ -175,6 +206,12 @@ const App = () => {
               </div>
             </div>
           </div>
+
+          {/* Username Modal */}
+          <UsernameModal 
+            isOpen={showUsernameModal} 
+            onComplete={handleUsernameComplete} 
+          />
         </TooltipProvider>
       </QueryClientProvider>
     </TonConnectUIProvider>
