@@ -311,7 +311,7 @@ const TasksPage = () => {
     <div 
       className="min-h-screen p-3 pb-24 relative"
       style={{
-        backgroundImage: `url(/lovable-uploads/a6cb204d-521a-4ad8-a09e-95704625c1fc.png)`,
+        backgroundImage: `url(/lovable-uploads/a886f619-aae7-4a46-b7ec-1dfcb2019fb0.png)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'

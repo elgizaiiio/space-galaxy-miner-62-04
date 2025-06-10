@@ -145,7 +145,7 @@ const MiningPage = () => {
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('/lovable-uploads/e81290d1-496b-463f-8504-08f1bd2ce75c.png')`
+          backgroundImage: `url('/lovable-uploads/a6cb204d-521a-4ad8-a09e-95704625c1fc.png')`
         }}
       />
       
