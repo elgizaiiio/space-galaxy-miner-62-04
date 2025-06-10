@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -140,12 +139,9 @@ const TasksPage = () => {
             </div>
             
             <div className="flex-1 min-w-0">
-              <h3 className="text-white font-semibold text-sm truncate">
+              <h3 className="text-white font-semibold text-sm truncate mb-2">
                 {task.title_key}
               </h3>
-              <p className="text-gray-300 text-xs mb-2 line-clamp-1">
-                {task.description_key}
-              </p>
               
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1">

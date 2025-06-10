@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Save, X, Upload, Image, Trash2 } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
@@ -27,7 +26,6 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
 }) => {
   const [formData, setFormData] = useState({
     title_key: task?.title_key || '',
-    description_key: task?.description_key || '',
     task_type: task?.task_type || 'daily',
     reward_amount: task?.reward_amount || 100,
     action_url: task?.action_url || '',
@@ -146,19 +144,6 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
                 disabled={isLoading}
               />
             </div>
-          </div>
-
-          <div>
-            <Label htmlFor="description_key" className="text-white">وصف المهمة</Label>
-            <Textarea
-              id="description_key"
-              value={formData.description_key}
-              onChange={(e) => handleInputChange('description_key', e.target.value)}
-              placeholder="وصف تفصيلي للمهمة..."
-              className="bg-white/10 border-white/20 text-white placeholder-gray-400 min-h-[100px]"
-              required
-              disabled={isLoading}
-            />
           </div>
 
           {/* Image Upload Section */}

@@ -3,7 +3,6 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { Save, X } from 'lucide-react';
@@ -14,7 +13,6 @@ type NewTask = Database['public']['Tables']['tasks']['Insert'];
 
 interface TaskFormData {
   title_key: string;
-  description_key: string;
   reward_amount: number;
   task_type: string;
   action_url?: string;
@@ -37,7 +35,6 @@ const TaskForm: React.FC<TaskFormProps> = ({
   const form = useForm<TaskFormData>({
     defaultValues: {
       title_key: task?.title_key || '',
-      description_key: task?.description_key || '',
       reward_amount: task?.reward_amount || 0,
       task_type: task?.task_type || 'daily',
       action_url: task?.action_url || '',
@@ -77,23 +74,6 @@ const TaskForm: React.FC<TaskFormProps> = ({
                       {...field} 
                       className="bg-white/10 border-white/20 text-white"
                       placeholder="e.g., joinTelegram"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description_key"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Description Key</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      {...field} 
-                      className="bg-white/10 border-white/20 text-white"
-                      placeholder="e.g., joinTelegramDesc"
                     />
                   </FormControl>
                 </FormItem>
