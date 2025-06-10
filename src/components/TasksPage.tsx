@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -66,24 +67,7 @@ const TasksPage = () => {
 
   const handleTaskClick = (task: Task) => {
     console.log('Task clicked:', task.title, task);
-    
-    // Always handle task completion for daily check-in
-    if (task.title === 'daily check-in') {
-      console.log('Daily check-in clicked - calling handleTaskComplete');
-      handleTaskComplete(task);
-      return;
-    }
-    
-    // For other tasks, open external link if exists
-    if (task.external_link && task.external_link !== '#') {
-      console.log('Opening external link:', task.external_link);
-      window.open(task.external_link, '_blank');
-      // Also trigger task completion flow
-      handleTaskComplete(task);
-    } else {
-      console.log('No external link, calling handleTaskComplete directly');
-      handleTaskComplete(task);
-    }
+    handleTaskComplete(task);
   };
 
   const handleDailyCheckInPayment = async () => {
@@ -151,8 +135,8 @@ const TasksPage = () => {
   const handleTaskComplete = async (task: Task) => {
     console.log('handleTaskComplete called for task:', task.title, task.id);
     
-    if (!userProfile || isTaskInProgress[task.id]) {
-      console.log('Cannot complete task - userProfile:', userProfile, 'inProgress:', isTaskInProgress[task.id]);
+    if (isTaskInProgress[task.id]) {
+      console.log('Task already in progress');
       return;
     }
 
@@ -182,9 +166,9 @@ const TasksPage = () => {
           return;
         }
         console.log('Payment successful, proceeding with task completion');
-      } else {
-        console.log('Regular task - no payment required');
-        // Open URL if exists for other tasks (this is already handled in handleTaskClick)
+      } else if (task.external_link && task.external_link !== '#') {
+        console.log('Opening external link:', task.external_link);
+        window.open(task.external_link, '_blank');
       }
 
       // Simulate task completion delay
@@ -327,7 +311,7 @@ const TasksPage = () => {
     <div 
       className="min-h-screen p-3 pb-24 relative"
       style={{
-        backgroundImage: `url(/lovable-uploads/a886f619-aae7-4a46-b7ec-1dfcb2019fb0.png)`,
+        backgroundImage: `url(/lovable-uploads/a6cb204d-521a-4ad8-a09e-95704625c1fc.png)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
