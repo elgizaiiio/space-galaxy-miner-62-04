@@ -2,19 +2,15 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
-type UserProfile = Database['public']['Tables']['user_profiles']['Row'];
-type NewUserProfile = Database['public']['Tables']['user_profiles']['Insert'];
-type UpdateUserProfile = Database['public']['Tables']['user_profiles']['Update'];
-
-type UserGameData = Database['public']['Tables']['user_game_data']['Row'];
-type NewUserGameData = Database['public']['Tables']['user_game_data']['Insert'];
-type UpdateUserGameData = Database['public']['Tables']['user_game_data']['Update'];
+type UserProfile = Database['public']['Tables']['profiles']['Row'];
+type NewUserProfile = Database['public']['Tables']['profiles']['Insert'];
+type UpdateUserProfile = Database['public']['Tables']['profiles']['Update'];
 
 export const userService = {
   // User Profile Management
   async createUserProfile(profile: NewUserProfile): Promise<UserProfile> {
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('profiles')
       .insert(profile)
       .select()
       .single();
@@ -27,11 +23,11 @@ export const userService = {
     return data;
   },
 
-  async getUserProfile(telegramUserId: number): Promise<UserProfile | null> {
+  async getUserProfile(userId: string): Promise<UserProfile | null> {
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('profiles')
       .select('*')
-      .eq('telegram_user_id', telegramUserId)
+      .eq('id', userId)
       .single();
     
     if (error && error.code !== 'PGRST116') {
@@ -44,7 +40,7 @@ export const userService = {
 
   async updateUserProfile(userId: string, updates: UpdateUserProfile): Promise<UserProfile> {
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('profiles')
       .update(updates)
       .eq('id', userId)
       .select()
@@ -58,97 +54,30 @@ export const userService = {
     return data;
   },
 
-  // Game Data Management
-  async createUserGameData(gameData: NewUserGameData): Promise<UserGameData> {
+  async updateUserEarnings(userId: string, amount: number): Promise<UserProfile> {
     const { data, error } = await supabase
-      .from('user_game_data')
-      .insert(gameData)
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Error creating user game data:', error);
-      throw error;
-    }
-    
-    return data;
-  },
-
-  async getUserGameData(userId: string): Promise<UserGameData | null> {
-    const { data, error } = await supabase
-      .from('user_game_data')
-      .select('*')
-      .eq('user_id', userId)
-      .single();
-    
-    if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching user game data:', error);
-      throw error;
-    }
-    
-    return data;
-  },
-
-  async updateUserGameData(userId: string, updates: UpdateUserGameData): Promise<UserGameData> {
-    const { data, error } = await supabase
-      .from('user_game_data')
-      .update(updates)
-      .eq('user_id', userId)
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Error updating user game data:', error);
-      throw error;
-    }
-    
-    return data;
-  },
-
-  async updateUserBalance(userId: string, amount: number): Promise<UserGameData> {
-    const { data, error } = await supabase
-      .from('user_game_data')
+      .from('profiles')
       .update({ 
-        total_balance: amount,
-        updated_at: new Date().toISOString()
+        earnings: amount
       })
-      .eq('user_id', userId)
+      .eq('id', userId)
       .select()
       .single();
     
     if (error) {
-      console.error('Error updating user balance:', error);
+      console.error('Error updating user earnings:', error);
       throw error;
     }
     
     return data;
   },
 
-  async addMiningReward(userId: string, reward: number): Promise<UserGameData> {
-    // First get current balance
-    const gameData = await this.getUserGameData(userId);
-    const currentBalance = gameData?.total_balance || 0;
-    const newBalance = currentBalance + reward;
+  async addUserEarnings(userId: string, reward: number): Promise<UserProfile> {
+    // First get current earnings
+    const profile = await this.getUserProfile(userId);
+    const currentEarnings = profile?.earnings || 0;
+    const newEarnings = currentEarnings + reward;
     
-    return this.updateUserBalance(userId, newBalance);
-  },
-
-  async claimMiningReward(userId: string): Promise<UserGameData> {
-    const { data, error } = await supabase
-      .from('user_game_data')
-      .update({ 
-        last_mining_claim: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
-      .eq('user_id', userId)
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Error claiming mining reward:', error);
-      throw error;
-    }
-    
-    return data;
+    return this.updateUserEarnings(userId, newEarnings);
   }
 };

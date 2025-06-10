@@ -6,14 +6,14 @@ type TaskCompletion = Database['public']['Tables']['user_task_completions']['Row
 type NewTaskCompletion = Database['public']['Tables']['user_task_completions']['Insert'];
 
 export const taskUserService = {
-  async completeTask(taskId: string, userAddress: string): Promise<TaskCompletion> {
-    console.log('Completing task:', taskId, 'for user:', userAddress);
+  async completeTask(taskId: string, userId: string): Promise<TaskCompletion> {
+    console.log('Completing task:', taskId, 'for user:', userId);
     
     const { data, error } = await supabase
       .from('user_task_completions')
       .insert({
         task_id: taskId,
-        user_address: userAddress,
+        user_id: userId,
         completed_at: new Date().toISOString(),
         reward_claimed: false
       })
@@ -28,11 +28,11 @@ export const taskUserService = {
     return data;
   },
 
-  async getUserCompletedTasks(userAddress: string): Promise<TaskCompletion[]> {
+  async getUserCompletedTasks(userId: string): Promise<TaskCompletion[]> {
     const { data, error } = await supabase
       .from('user_task_completions')
       .select('*')
-      .eq('user_address', userAddress);
+      .eq('user_id', userId);
     
     if (error) {
       console.error('Error fetching completed tasks:', error);
@@ -45,7 +45,10 @@ export const taskUserService = {
   async claimTaskReward(completionId: string): Promise<TaskCompletion> {
     const { data, error } = await supabase
       .from('user_task_completions')
-      .update({ reward_claimed: true })
+      .update({ 
+        reward_claimed: true,
+        claimed_at: new Date().toISOString()
+      })
       .eq('id', completionId)
       .select()
       .single();
@@ -58,12 +61,12 @@ export const taskUserService = {
     return data;
   },
 
-  async isTaskCompleted(taskId: string, userAddress: string): Promise<boolean> {
+  async isTaskCompleted(taskId: string, userId: string): Promise<boolean> {
     const { data, error } = await supabase
       .from('user_task_completions')
       .select('id')
       .eq('task_id', taskId)
-      .eq('user_address', userAddress)
+      .eq('user_id', userId)
       .single();
     
     if (error && error.code !== 'PGRST116') {

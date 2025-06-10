@@ -4,37 +4,31 @@ import { userService } from '@/services/userService';
 import { taskUserService } from '@/services/taskUserService';
 import type { Database } from '@/integrations/supabase/types';
 
-type UserProfile = Database['public']['Tables']['user_profiles']['Row'];
-type UserGameData = Database['public']['Tables']['user_game_data']['Row'];
+type UserProfile = Database['public']['Tables']['profiles']['Row'];
 type TaskCompletion = Database['public']['Tables']['user_task_completions']['Row'];
 
-export const useUserData = (telegramUserId?: number) => {
+export const useUserData = (profileId?: string) => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [gameData, setGameData] = useState<UserGameData | null>(null);
   const [completedTasks, setCompletedTasks] = useState<TaskCompletion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (telegramUserId) {
+    if (profileId) {
       loadUserData();
     }
-  }, [telegramUserId]);
+  }, [profileId]);
 
   const loadUserData = async () => {
-    if (!telegramUserId) return;
+    if (!profileId) return;
     
     setIsLoading(true);
     try {
       // Get user profile
-      const profile = await userService.getUserProfile(telegramUserId);
+      const profile = await userService.getUserProfile(profileId);
       setUserProfile(profile);
       
       if (profile) {
-        // Get game data
-        const gameInfo = await userService.getUserGameData(profile.id);
-        setGameData(gameInfo);
-        
-        // Get completed tasks - using a dummy address for now
+        // Get completed tasks
         const tasks = await taskUserService.getUserCompletedTasks(profile.id);
         setCompletedTasks(tasks);
       }
@@ -45,25 +39,14 @@ export const useUserData = (telegramUserId?: number) => {
     }
   };
 
-  const updateBalance = async (amount: number) => {
+  const updateProfile = async (updates: Partial<UserProfile>) => {
     if (!userProfile) return;
     
     try {
-      const updatedGameData = await userService.updateUserBalance(userProfile.id, amount);
-      setGameData(updatedGameData);
+      const updatedProfile = await userService.updateUserProfile(userProfile.id, updates);
+      setUserProfile(updatedProfile);
     } catch (error) {
-      console.error('Error updating balance:', error);
-    }
-  };
-
-  const addMiningReward = async (reward: number) => {
-    if (!userProfile) return;
-    
-    try {
-      const updatedGameData = await userService.addMiningReward(userProfile.id, reward);
-      setGameData(updatedGameData);
-    } catch (error) {
-      console.error('Error adding mining reward:', error);
+      console.error('Error updating profile:', error);
     }
   };
 
@@ -81,11 +64,9 @@ export const useUserData = (telegramUserId?: number) => {
 
   return {
     userProfile,
-    gameData,
     completedTasks,
     isLoading,
-    updateBalance,
-    addMiningReward,
+    updateProfile,
     completeTask,
     reloadData: loadUserData
   };
