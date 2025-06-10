@@ -26,17 +26,19 @@ const TaskFormSimple: React.FC<TaskFormProps> = ({
   onCancel,
   isLoading = false
 }) => {
+  const taskWithImage = task as (Task & { image_url?: string | null }) | null;
+  
   const [formData, setFormData] = useState({
     title_key: task?.title_key || '',
     task_type: task?.task_type || 'daily',
     reward_amount: task?.reward_amount || 100,
     action_url: task?.action_url || '',
-    image_url: task?.image_url || '',
+    image_url: taskWithImage?.image_url || '',
     is_active: task?.is_active ?? true
   });
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(task?.image_url || '');
+  const [imagePreview, setImagePreview] = useState<string>(taskWithImage?.image_url || '');
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();

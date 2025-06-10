@@ -168,6 +168,7 @@ const TasksPage = () => {
   };
 
   const renderTaskCard = (task: Task) => {
+    const taskWithImage = task as Task & { image_url?: string | null };
     const TaskIcon = getTaskIcon(task.task_type || 'default');
     const isCompleted = isTaskCompleted(task.id);
     const inProgress = isTaskInProgress[task.id];
@@ -179,10 +180,10 @@ const TasksPage = () => {
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
             {/* Task Image or Icon */}
-            <div className={`flex-shrink-0 ${task.image_url ? 'w-12 h-12 rounded-full overflow-hidden' : `p-2 rounded-full bg-gradient-to-r ${getCategoryColor(category)}`}`}>
-              {task.image_url ? (
+            <div className={`flex-shrink-0 ${taskWithImage.image_url ? 'w-12 h-12 rounded-full overflow-hidden' : `p-2 rounded-full bg-gradient-to-r ${getCategoryColor(category)}`}`}>
+              {taskWithImage.image_url ? (
                 <img 
-                  src={task.image_url} 
+                  src={taskWithImage.image_url} 
                   alt={task.title_key || 'Task image'}
                   className="w-full h-full object-cover"
                 />

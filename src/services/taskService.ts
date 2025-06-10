@@ -35,16 +35,22 @@ export const taskService = {
         throw new Error('Missing required task fields');
       }
 
+      const taskData: any = {
+        title_key: task.title_key,
+        task_type: task.task_type,
+        reward_amount: task.reward_amount,
+        action_url: task.action_url || null,
+        is_active: task.is_active ?? true
+      };
+
+      // Only include image_url if it's provided
+      if (task.image_url) {
+        taskData.image_url = task.image_url;
+      }
+
       const { data, error } = await supabase
         .from('tasks')
-        .insert({
-          title_key: task.title_key,
-          task_type: task.task_type,
-          reward_amount: task.reward_amount,
-          action_url: task.action_url || null,
-          image_url: task.image_url || null,
-          is_active: task.is_active ?? true
-        })
+        .insert(taskData)
         .select()
         .single();
       
@@ -188,7 +194,6 @@ export const taskService = {
           task_type: 'daily',
           reward_amount: 50,
           action_url: null,
-          image_url: null,
           is_active: true
         })
         .select()
