@@ -22,7 +22,7 @@ const TasksPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  // Daily tasks data
+  // Daily tasks data - properly structured to match Task interface
   const dailyTasks: TaskWithImage[] = [
     {
       id: 'daily-checkin',
@@ -243,7 +243,7 @@ const TasksPage = () => {
     <div 
       className="min-h-screen p-4 pb-20 relative"
       style={{
-        backgroundImage: `url(/lovable-uploads/a657c04d-35d5-4114-ad66-514b60fcdc0f.png)`,
+        backgroundImage: `url(/lovable-uploads/4ffd5e26-18ef-4590-9c0e-47f3db73709e.png)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
