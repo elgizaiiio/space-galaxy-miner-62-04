@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Settings, CheckSquare, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { taskService } from '@/services/taskService';
+import { useTaskManagement } from '@/hooks/useTaskManagement';
 import TaskAdminTable from './TaskAdminTable';
 import TaskFormSimple from './TaskFormSimple';
 import type { Database } from '@/integrations/supabase/types';
@@ -13,58 +13,31 @@ type Task = Database['public']['Tables']['tasks']['Row'];
 type NewTask = Database['public']['Tables']['tasks']['Insert'];
 
 const TaskAdminDashboard = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   
   const { toast } = useToast();
-
-  useEffect(() => {
-    loadTasks();
-  }, []);
-
-  const loadTasks = async () => {
-    setIsLoading(true);
-    try {
-      console.log('Loading tasks...');
-      const data = await taskService.getAllTasks();
-      console.log('Loaded tasks:', data);
-      setTasks(data);
-    } catch (error) {
-      console.error('Error loading tasks:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load tasks',
-        variant: 'destructive'
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  
+  // Use the task management hook
+  const {
+    tasks,
+    isLoading,
+    createTask,
+    updateTask,
+    deleteTask,
+    toggleTaskStatus,
+    reloadTasks
+  } = useTaskManagement();
 
   const handleCreateTask = async (taskData: NewTask) => {
     console.log('Creating new task:', taskData);
-    setIsLoading(true);
     
     try {
-      await taskService.createTask(taskData);
-      toast({
-        title: 'Success',
-        description: 'Task created successfully',
-      });
+      await createTask(taskData);
       setShowForm(false);
       setEditingTask(null);
-      await loadTasks();
     } catch (error) {
       console.error('Error creating task:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to create task',
-        variant: 'destructive'
-      });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -72,26 +45,13 @@ const TaskAdminDashboard = () => {
     if (!editingTask) return;
     
     console.log('Updating task:', editingTask.id, taskData);
-    setIsLoading(true);
     
     try {
-      await taskService.updateTask(editingTask.id, taskData);
-      toast({
-        title: 'Success',
-        description: 'Task updated successfully',
-      });
+      await updateTask(editingTask.id, taskData);
       setShowForm(false);
       setEditingTask(null);
-      await loadTasks();
     } catch (error) {
       console.error('Error updating task:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to update task',
-        variant: 'destructive'
-      });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -104,38 +64,18 @@ const TaskAdminDashboard = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       try {
-        await taskService.deleteTask(id);
-        toast({
-          title: 'Success',
-          description: 'Task deleted successfully'
-        });
-        await loadTasks();
+        await deleteTask(id);
       } catch (error) {
         console.error('Error deleting task:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to delete task',
-          variant: 'destructive'
-        });
       }
     }
   };
 
   const handleToggleStatus = async (id: string, isActive: boolean) => {
     try {
-      await taskService.toggleTaskStatus(id, isActive);
-      toast({
-        title: 'Success',
-        description: `Task ${isActive ? 'activated' : 'deactivated'} successfully`
-      });
-      await loadTasks();
+      await toggleTaskStatus(id, isActive);
     } catch (error) {
       console.error('Error toggling task status:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to update task status',
-        variant: 'destructive'
-      });
     }
   };
 

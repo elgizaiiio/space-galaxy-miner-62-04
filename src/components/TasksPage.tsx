@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -5,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from "@/hooks/use-toast";
+import { useTaskManagement } from '@/hooks/useTaskManagement';
+import { useUserData } from '@/hooks/useUserData';
 import { getTranslation } from '../utils/language';
 import { 
   CheckCircle, 
@@ -19,149 +22,36 @@ import {
   Gift,
   Handshake
 } from 'lucide-react';
+import type { Database } from '@/integrations/supabase/types';
+
+type Task = Database['public']['Tables']['tasks']['Row'];
 
 const TasksPage = () => {
-  const [completedTasks, setCompletedTasks] = useState<string[]>([]);
   const [isTaskInProgress, setIsTaskInProgress] = useState<{ [key: string]: boolean }>({});
   const { toast } = useToast();
+  
+  // Get real tasks from database
+  const { tasks, isLoading: tasksLoading, checkTaskCompletion } = useTaskManagement();
+  
+  // Mock user data - in real app this would come from authentication
+  const mockTelegramUserId = 123456789;
+  const { userProfile, completedTasks, completeTask, isLoading: userLoading } = useUserData(mockTelegramUserId);
 
-  interface TaskWithImage {
-    id: string;
-    title: string;
-    description: string;
-    reward: number;
-    icon: React.ComponentType<any>;
-    category: 'main' | 'partner' | 'daily';
-    action?: () => void;
-    url?: string;
-  }
-
-  // Main Tasks
-  const mainTasks: TaskWithImage[] = [
-    {
-      id: 'connect-wallet',
-      title: getTranslation('connectWallet'),
-      description: getTranslation('connectWalletDesc'),
-      reward: 500,
-      icon: Wallet,
-      category: 'main'
-    },
-    {
-      id: 'first-mine',
-      title: getTranslation('firstMine'),
-      description: getTranslation('firstMineDesc'),
-      reward: 250,
-      icon: Pickaxe,
-      category: 'main'
-    },
-    {
-      id: 'complete-profile',
-      title: getTranslation('completeProfile'),
-      description: getTranslation('completeProfileDesc'),
-      reward: 300,
-      icon: UserPlus,
-      category: 'main'
+  const getTaskIcon = (taskType: string) => {
+    switch (taskType) {
+      case 'social': return Share2;
+      case 'referral': return UserPlus;
+      case 'wallet': return Wallet;
+      case 'mining': return Pickaxe;
+      case 'daily': return Calendar;
+      default: return Gift;
     }
-  ];
-
-  // Partner Tasks
-  const partnerTasks: TaskWithImage[] = [
-    {
-      id: 'follow-telegram',
-      title: getTranslation('joinTelegram'),
-      description: getTranslation('joinTelegramDesc'),
-      reward: 200,
-      icon: Share2,
-      category: 'partner',
-      url: 'https://t.me/spacecoin'
-    },
-    {
-      id: 'follow-twitter',
-      title: getTranslation('followTwitter'),
-      description: getTranslation('followTwitterDesc'),
-      reward: 150,
-      icon: Share2,
-      category: 'partner',
-      url: 'https://twitter.com/spacecoin'
-    },
-    {
-      id: 'youtube-subscribe',
-      title: getTranslation('subscribeYoutube'),
-      description: getTranslation('subscribeYoutubeDesc'),
-      reward: 175,
-      icon: Share2,
-      category: 'partner',
-      url: 'https://youtube.com/spacecoin'
-    }
-  ];
-
-  // Daily Tasks
-  const dailyTasks: TaskWithImage[] = [
-    {
-      id: 'daily-login',
-      title: getTranslation('dailyLogin'),
-      description: getTranslation('dailyLoginDesc'),
-      reward: 50,
-      icon: Calendar,
-      category: 'daily'
-    },
-    {
-      id: 'daily-mine',
-      title: getTranslation('dailyMine'),
-      description: getTranslation('dailyMineDesc'),
-      reward: 100,
-      icon: Pickaxe,
-      category: 'daily'
-    },
-    {
-      id: 'daily-share',
-      title: getTranslation('dailyShare'),
-      description: getTranslation('dailyShareDesc'),
-      reward: 75,
-      icon: Share2,
-      category: 'daily'
-    }
-  ];
-
-  useEffect(() => {
-    const saved = localStorage.getItem('completedTasks');
-    if (saved) {
-      setCompletedTasks(JSON.parse(saved));
-    }
-  }, []);
-
-  const handleTaskComplete = async (taskId: string, url?: string) => {
-    if (completedTasks.includes(taskId) || isTaskInProgress[taskId]) {
-      return;
-    }
-
-    setIsTaskInProgress(prev => ({ ...prev, [taskId]: true }));
-
-    if (url) {
-      window.open(url, '_blank');
-    }
-
-    setTimeout(() => {
-      const newCompleted = [...completedTasks, taskId];
-      setCompletedTasks(newCompleted);
-      localStorage.setItem('completedTasks', JSON.stringify(newCompleted));
-      
-      const allTasks = [...mainTasks, ...partnerTasks, ...dailyTasks];
-      const task = allTasks.find(t => t.id === taskId);
-      
-      toast({
-        title: getTranslation('taskCompleted'),
-        description: `${getTranslation('earnedReward')} ${task?.reward} $SPACE!`,
-      });
-
-      setIsTaskInProgress(prev => ({ ...prev, [taskId]: false }));
-    }, 2000);
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'main': return 'from-green-500 to-emerald-600';
-      case 'partner': return 'from-purple-500 to-pink-600';
+      case 'social': return 'from-purple-500 to-pink-600';
       case 'daily': return 'from-blue-500 to-cyan-600';
       default: return 'from-gray-500 to-slate-600';
     }
@@ -171,25 +61,90 @@ const TasksPage = () => {
     return reward.toLocaleString();
   };
 
-  const renderTaskCard = (task: TaskWithImage) => {
-    const TaskIcon = task.icon;
-    const isCompleted = completedTasks.includes(task.id);
+  const handleTaskComplete = async (task: Task) => {
+    if (!userProfile || isTaskInProgress[task.id]) {
+      return;
+    }
+
+    // Check if task is already completed
+    const isCompleted = completedTasks.some(ct => ct.task_id === task.id);
+    if (isCompleted) {
+      toast({
+        title: getTranslation('taskCompleted'),
+        description: 'هذه المهمة مكتملة بالفعل',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    setIsTaskInProgress(prev => ({ ...prev, [task.id]: true }));
+
+    try {
+      // Open URL if exists
+      if (task.action_url) {
+        window.open(task.action_url, '_blank');
+      }
+
+      // Simulate task completion delay
+      setTimeout(async () => {
+        try {
+          await completeTask(task.id);
+          
+          toast({
+            title: getTranslation('taskCompleted'),
+            description: `${getTranslation('earnedReward')} ${task.reward_amount} $SPACE!`,
+          });
+        } catch (error) {
+          console.error('Error completing task:', error);
+          toast({
+            title: 'خطأ',
+            description: 'فشل في إتمام المهمة',
+            variant: 'destructive'
+          });
+        } finally {
+          setIsTaskInProgress(prev => ({ ...prev, [task.id]: false }));
+        }
+      }, 2000);
+    } catch (error) {
+      console.error('Error handling task completion:', error);
+      setIsTaskInProgress(prev => ({ ...prev, [task.id]: false }));
+    }
+  };
+
+  const isTaskCompleted = (taskId: string) => {
+    return completedTasks.some(ct => ct.task_id === taskId);
+  };
+
+  const getTasksByCategory = (category: string) => {
+    return tasks.filter(task => {
+      if (category === 'main') return task.task_type === 'wallet' || task.task_type === 'mining' || task.task_type === 'referral';
+      if (category === 'partner') return task.task_type === 'social';
+      if (category === 'daily') return task.task_type === 'daily';
+      return false;
+    }).filter(task => task.is_active);
+  };
+
+  const renderTaskCard = (task: Task) => {
+    const TaskIcon = getTaskIcon(task.task_type);
+    const isCompleted = isTaskCompleted(task.id);
     const inProgress = isTaskInProgress[task.id];
+    const category = task.task_type === 'social' ? 'partner' : 
+                    task.task_type === 'daily' ? 'daily' : 'main';
     
     return (
       <Card key={task.id} className="bg-gradient-to-br from-slate-800/40 via-blue-900/30 to-purple-900/40 backdrop-blur-xl border border-blue-400/20 rounded-xl">
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-full bg-gradient-to-r ${getCategoryColor(task.category)} flex-shrink-0`}>
+            <div className={`p-2 rounded-full bg-gradient-to-r ${getCategoryColor(category)} flex-shrink-0`}>
               <TaskIcon className="w-4 h-4 text-white" />
             </div>
             
             <div className="flex-1 min-w-0">
               <h3 className="text-white font-semibold text-sm truncate">
-                {task.title}
+                {task.title_key}
               </h3>
               <p className="text-gray-300 text-xs mb-2 line-clamp-1">
-                {task.description}
+                {task.description_key}
               </p>
               
               <div className="flex items-center justify-between">
@@ -200,12 +155,12 @@ const TasksPage = () => {
                     className="w-3 h-3 rounded-full"
                   />
                   <span className="text-yellow-400 font-bold text-xs">
-                    +{formatReward(task.reward)}
+                    +{formatReward(task.reward_amount)}
                   </span>
                 </div>
                 
                 <Button
-                  onClick={() => handleTaskComplete(task.id, task.url)}
+                  onClick={() => handleTaskComplete(task)}
                   disabled={isCompleted || inProgress}
                   size="sm"
                   className={`text-xs py-1 px-2 h-7 ${
@@ -213,7 +168,7 @@ const TasksPage = () => {
                       ? 'bg-green-600 cursor-not-allowed' 
                       : inProgress
                         ? 'bg-yellow-600 cursor-not-allowed'
-                        : `bg-gradient-to-r ${getCategoryColor(task.category)} hover:opacity-90`
+                        : `bg-gradient-to-r ${getCategoryColor(category)} hover:opacity-90`
                   }`}
                 >
                   {isCompleted ? (
@@ -221,7 +176,7 @@ const TasksPage = () => {
                   ) : inProgress ? (
                     <Clock className="w-3 h-3 animate-spin" />
                   ) : (
-                    task.url ? <ExternalLink className="w-3 h-3" /> : <Gift className="w-3 h-3" />
+                    task.action_url ? <ExternalLink className="w-3 h-3" /> : <Gift className="w-3 h-3" />
                   )}
                 </Button>
               </div>
@@ -231,6 +186,14 @@ const TasksPage = () => {
       </Card>
     );
   };
+
+  if (tasksLoading || userLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white">جاري التحميل...</div>
+      </div>
+    );
+  }
 
   return (
     <div 
@@ -280,7 +243,7 @@ const TasksPage = () => {
           </TabsList>
 
           <TabsContent value="main" className="space-y-3">
-            {mainTasks.map((task, index) => (
+            {getTasksByCategory('main').map((task, index) => (
               <motion.div
                 key={task.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -293,7 +256,7 @@ const TasksPage = () => {
           </TabsContent>
 
           <TabsContent value="partner" className="space-y-3">
-            {partnerTasks.map((task, index) => (
+            {getTasksByCategory('partner').map((task, index) => (
               <motion.div
                 key={task.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -306,7 +269,7 @@ const TasksPage = () => {
           </TabsContent>
 
           <TabsContent value="daily" className="space-y-3">
-            {dailyTasks.map((task, index) => (
+            {getTasksByCategory('daily').map((task, index) => (
               <motion.div
                 key={task.id}
                 initial={{ opacity: 0, y: 20 }}
