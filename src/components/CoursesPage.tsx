@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Clock, CheckCircle, Star, Users, PlayCircle } from 'lucide-react';
+import { Clock, Users, PlayCircle, Star } from 'lucide-react';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatTON } from '../utils/ton';
@@ -52,12 +52,12 @@ const CoursesPage = () => {
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 300,
         messages: [{
-          address: 'UQASDdSDAEVR8h5faVs7m8ZSxt-ib4I87gQHUoSrOXszNxxf',
-          amount: (4.5 * 1e9).toString(), // 4.5 TON
-          payload: btoa('millionaire_course_purchase')
+          address: 'UQCiVNm22dMF9S3YsHPcgrmqXEQHt4MIdk_N7VJu88NrLr4R',
+          amount: (4.5 * 1000000000).toString(), // 4.5 TON in nanoTON
         }]
       };
 
+      console.log('Sending TON transaction:', transaction);
       await tonConnectUI.sendTransaction(transaction);
       
       // Store purchase in localStorage
@@ -72,7 +72,7 @@ const CoursesPage = () => {
       console.error('Course purchase failed:', error);
       toast({
         title: "Payment Failed",
-        description: "An error occurred while processing payment",
+        description: "Transaction was declined or cancelled",
         variant: "destructive"
       });
     } finally {
