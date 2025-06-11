@@ -1,10 +1,9 @@
+
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { 
-  Play,
-} from 'lucide-react';
+import { Play } from 'lucide-react';
 import { useSpaceCoins } from '../hooks/useSpaceCoins';
 
 const MiningPage = () => {
@@ -14,7 +13,8 @@ const MiningPage = () => {
   const [miningActive, setMiningActive] = useState(false);
   const [remainingTime, setRemainingTime] = useState(28800); // 8 hours
   const [username, setUsername] = useState('');
-  const [lastUpdateTime, setLastUpdateTime] = useState(Date.now());
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const initializedRef = useRef(false);
 
   // Prevent scrolling when component loads
   useEffect(() => {
@@ -27,8 +27,13 @@ const MiningPage = () => {
     };
   }, []);
 
-  // Load saved data on component mount
+  // Initialize component data once
   useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
+    console.log('Initializing mining page...');
+
     // Load username
     const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
@@ -37,9 +42,9 @@ const MiningPage = () => {
 
     // Load mining speed
     const storedMiningSpeed = localStorage.getItem('miningSpeed');
-    if (storedMiningSpeed) {
-      setMiningSpeed(parseFloat(storedMiningSpeed));
-    }
+    const currentMiningSpeed = storedMiningSpeed ? parseFloat(storedMiningSpeed) : 1;
+    setMiningSpeed(currentMiningSpeed);
+    setCoinsPerSecond(0.1 * currentMiningSpeed);
 
     // Check if mining was active and restore state
     const miningStartTime = localStorage.getItem('miningStartTime');
@@ -63,12 +68,11 @@ const MiningPage = () => {
       
       if (elapsedTimeSeconds < duration) {
         // Mining is still active
+        const newRemainingTime = duration - elapsedTimeSeconds;
         setMiningActive(true);
-        setRemainingTime(duration - elapsedTimeSeconds);
-        setLastUpdateTime(currentTime);
+        setRemainingTime(newRemainingTime);
         
         // Calculate coins earned while away
-        const currentMiningSpeed = storedMiningSpeed ? parseFloat(storedMiningSpeed) : 1;
         const baseCoinsPerSecond = 0.1;
         const coinsEarned = Math.floor(elapsedTimeSeconds * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
         
@@ -84,7 +88,6 @@ const MiningPage = () => {
         setRemainingTime(28800);
         
         // Add coins from completed session
-        const currentMiningSpeed = storedMiningSpeed ? parseFloat(storedMiningSpeed) : 1;
         const baseCoinsPerSecond = 0.1;
         const totalCoinsEarned = Math.floor(duration * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
         
@@ -102,45 +105,20 @@ const MiningPage = () => {
     }
   }, [addCoins]);
 
-  // Update coins per second when mining speed changes
+  // Handle mining interval
   useEffect(() => {
-    localStorage.setItem('miningSpeed', miningSpeed.toString());
-    setCoinsPerSecond(0.1 * miningSpeed);
-  }, [miningSpeed]);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
 
-  // Save mining state whenever it changes
-  useEffect(() => {
-    localStorage.setItem('miningActive', miningActive.toString());
-  }, [miningActive]);
-
-  // Mining interval for active mining
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    if (miningActive) {
-      // Update every 5 seconds for more responsive mining
-      intervalId = setInterval(() => {
-        const currentTime = Date.now();
-        const timeDiff = (currentTime - lastUpdateTime) / 1000; // seconds
-        
-        // Add coins based on actual time passed
-        const coinsToAdd = Math.floor((coinsPerSecond * timeDiff) * 100) / 100;
-        
-        console.log('Mining update:', {
-          timeDiff,
-          coinsPerSecond,
-          coinsToAdd,
-          remainingTime
-        });
-        
-        if (coinsToAdd > 0) {
-          addCoins(coinsToAdd);
-        }
-        
-        setLastUpdateTime(currentTime);
-        
+    if (miningActive && remainingTime > 0) {
+      console.log('Starting mining interval');
+      
+      intervalRef.current = setInterval(() => {
         setRemainingTime((prevTime) => {
-          const newTime = prevTime - Math.floor(timeDiff);
+          const newTime = prevTime - 1;
+          
           if (newTime <= 0) {
             console.log('Mining session completed');
             setMiningActive(false);
@@ -149,17 +127,39 @@ const MiningPage = () => {
             localStorage.setItem('miningActive', 'false');
             return 0;
           }
+          
+          // Add coins every second
+          const coinsToAdd = Math.floor(coinsPerSecond * 100) / 100;
+          if (coinsToAdd > 0) {
+            addCoins(coinsToAdd);
+          }
+          
           return newTime;
         });
-      }, 5000); // Update every 5 seconds
+      }, 1000); // Update every second
     }
 
-    return () => clearInterval(intervalId);
-  }, [miningActive, coinsPerSecond, addCoins, lastUpdateTime]);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [miningActive, coinsPerSecond, addCoins]);
+
+  // Save mining speed when it changes
+  useEffect(() => {
+    localStorage.setItem('miningSpeed', miningSpeed.toString());
+    setCoinsPerSecond(0.1 * miningSpeed);
+  }, [miningSpeed]);
+
+  // Save mining state when it changes
+  useEffect(() => {
+    localStorage.setItem('miningActive', miningActive.toString());
+  }, [miningActive]);
 
   const handleStartMining = () => {
     if (!miningActive) {
-      // Start mining
       const currentTime = Date.now();
       const duration = 28800; // 8 hours in seconds
       
@@ -171,7 +171,6 @@ const MiningPage = () => {
       
       setMiningActive(true);
       setRemainingTime(duration);
-      setLastUpdateTime(currentTime);
     }
   };
 
