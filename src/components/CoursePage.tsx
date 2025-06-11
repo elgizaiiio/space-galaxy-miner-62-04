@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Star, Users, Clock, Award } from 'lucide-react';
+import { CheckCircle, Clock } from 'lucide-react';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { useToast } from '@/hooks/use-toast';
 import { sendTONPayment, TON_PAYMENT_ADDRESS } from '@/utils/ton';
@@ -18,13 +18,6 @@ const CoursePage = () => {
     'Social Skills & Confidence',
     'Fitness & Masculinity',
     'Business & Time Management'
-  ];
-
-  const stats = [
-    { icon: Users, value: '10K+', label: 'Students' },
-    { icon: Star, value: '4.9', label: 'Rating' },
-    { icon: Clock, value: '50+', label: 'Hours' },
-    { icon: Award, value: '100%', label: 'Success' }
   ];
 
   const handleJoinCourse = async () => {
@@ -88,26 +81,27 @@ const CoursePage = () => {
             </CardHeader>
 
             <CardContent className="px-6 pb-6">
-              {/* Stats */}
-              <div className="grid grid-cols-4 gap-3 my-6">
-                {stats.map((stat, index) => (
-                  <motion.div
-                    key={stat.label}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                    className="text-center"
-                  >
-                    <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-1">
-                      <stat.icon className="w-4 h-4 text-white" />
-                    </div>
-                    <p className="text-lg font-bold text-gray-900">{stat.value}</p>
-                    <p className="text-xs text-gray-600">{stat.label}</p>
-                  </motion.div>
-                ))}
-              </div>
-
-              <hr className="border-gray-200 my-6" />
+              {/* 72-Hour Discount Alert */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="mt-6 mb-6"
+              >
+                <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-4 text-center">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Clock className="w-5 h-5 text-red-600" />
+                    <span className="text-red-800 font-bold text-lg">72-Hour Flash Sale!</span>
+                  </div>
+                  <p className="text-red-700 text-sm font-medium">
+                    Limited time offer - Save $135!
+                  </p>
+                  <div className="flex items-center justify-center gap-3 mt-2">
+                    <span className="text-2xl font-bold text-red-600 line-through">$150</span>
+                    <span className="text-3xl font-bold text-green-600">$15</span>
+                  </div>
+                </div>
+              </motion.div>
 
               {/* Price */}
               <motion.div
@@ -124,7 +118,7 @@ const CoursePage = () => {
                       <p>≈ 4.5 TON</p>
                     </div>
                   </div>
-                  <p className="text-xs text-green-600 font-medium mt-1">Limited Time Offer!</p>
+                  <p className="text-xs text-green-600 font-medium mt-1">90% OFF!</p>
                 </div>
               </motion.div>
 
@@ -173,22 +167,6 @@ const CoursePage = () => {
                     <span className="text-gray-800 font-medium">{feature}</span>
                   </motion.div>
                 ))}
-              </motion.div>
-
-              {/* Guarantee */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 1.8 }}
-                className="mt-6 text-center"
-              >
-                <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <Award className="w-5 h-5 text-yellow-600" />
-                    <span className="text-yellow-800 font-bold">30-Day Money Back Guarantee</span>
-                  </div>
-                  <p className="text-yellow-700 text-sm">Not satisfied? Get your full refund, no questions asked.</p>
-                </div>
               </motion.div>
             </CardContent>
           </Card>
