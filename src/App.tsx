@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -10,14 +11,15 @@ import TasksPage from './components/TasksPage';
 import WalletPage from './components/WalletPage';
 import ReferralPage from './components/ReferralPage';
 import StorePage from './components/StorePage';
+import CoursePage from './components/CoursePage';
 import TaskAdminPage from './components/TaskAdminPage';
 import UsernameModal from './components/UsernameModal';
 import { Button } from '@/components/ui/button';
-import { Home, CheckSquare, Wallet, Users, Settings, ShoppingBag } from 'lucide-react';
+import { Home, CheckSquare, Wallet, Users, Settings, ShoppingBag, GraduationCap } from 'lucide-react';
 import { getTranslation } from './utils/language';
 
 const queryClient = new QueryClient();
-type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'store' | 'admin';
+type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'store' | 'course' | 'admin';
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -127,6 +129,10 @@ const App = () => {
     label: 'Store',
     icon: ShoppingBag
   }, {
+    id: 'course',
+    label: 'Course',
+    icon: GraduationCap
+  }, {
     id: 'wallet',
     label: getTranslation('wallet'),
     icon: Wallet
@@ -152,6 +158,8 @@ const App = () => {
         return <TasksPage />;
       case 'store':
         return <StorePage />;
+      case 'course':
+        return <CoursePage />;
       case 'wallet':
         return <WalletPage />;
       case 'referral':
@@ -198,7 +206,7 @@ const App = () => {
 
             <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/20 p-2 z-50">
               <div className="max-w-md mx-auto">
-                <div className={`grid gap-1 ${showAdminAccess ? 'grid-cols-6' : 'grid-cols-5'}`}>
+                <div className={`grid gap-1 ${showAdminAccess ? 'grid-cols-7' : 'grid-cols-6'}`}>
                   {navigationItems.map(item => {
                     const Icon = item.icon;
                     return (
