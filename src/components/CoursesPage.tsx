@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,8 @@ const CoursesPage = () => {
   const [tonConnectUI] = useTonConnectUI();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [timeLeft, setTimeLeft] = useState({ hours: 72, minutes: 0, seconds: 0 });
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [discountActive, setDiscountActive] = useState(true);
 
   // Prevent scrolling when component loads
   useEffect(() => {
@@ -24,27 +26,50 @@ const CoursesPage = () => {
     };
   }, []);
 
-  // Countdown timer for the discount
+  // Initialize countdown timer
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev.hours === 0 && prev.minutes === 0 && prev.seconds === 0) {
-          return prev;
-        }
-        
-        if (prev.seconds > 0) {
-          return { ...prev, seconds: prev.seconds - 1 };
-        } else if (prev.minutes > 0) {
-          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        } else if (prev.hours > 0) {
-          return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        }
-        
-        return prev;
-      });
-    }, 1000);
+    const initializeCountdown = () => {
+      const savedEndTime = localStorage.getItem('discountEndTime');
+      let endTime;
 
-    return () => clearInterval(timer);
+      if (savedEndTime) {
+        endTime = parseInt(savedEndTime);
+      } else {
+        // Set countdown to 72 hours from now
+        endTime = Date.now() + (72 * 60 * 60 * 1000);
+        localStorage.setItem('discountEndTime', endTime.toString());
+      }
+
+      const updateTimer = () => {
+        const now = Date.now();
+        const timeDiff = endTime - now;
+
+        if (timeDiff <= 0) {
+          setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+          setDiscountActive(false);
+          localStorage.removeItem('discountEndTime');
+          return;
+        }
+
+        const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+        setTimeLeft({ hours, minutes, seconds });
+        setDiscountActive(true);
+      };
+
+      // Update immediately
+      updateTimer();
+
+      // Set up interval to update every second
+      const interval = setInterval(updateTimer, 1000);
+
+      return interval;
+    };
+
+    const interval = initializeCountdown();
+    return () => clearInterval(interval);
   }, []);
 
   const handlePurchase = async () => {
@@ -59,15 +84,16 @@ const CoursesPage = () => {
 
     setIsProcessing(true);
     try {
+      const priceInTON = discountActive ? 4.5 : 45; // Use discount price if active
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 300,
         messages: [{
           address: 'UQCiVNm22dMF9S3YsHPcgrmqXEQHt4MIdk_N7VJu88NrLr4R',
-          amount: (4.5 * 1000000000).toString(), // 4.5 TON in nanoTON
+          amount: (priceInTON * 1000000000).toString(), // Convert to nanoTON
         }]
       };
 
-      console.log('Sending TON transaction for 4.5 TON:', transaction);
+      console.log(`Sending TON transaction for ${priceInTON} TON:`, transaction);
       await tonConnectUI.sendTransaction(transaction);
       
       // Store purchase in localStorage
@@ -120,30 +146,45 @@ const CoursesPage = () => {
               {/* Price Section */}
               <div className="space-y-1">
                 <div className="flex items-center justify-center gap-1">
-                  <span className="text-2xl font-bold text-gray-900">4.5 TON</span>
+                  <span className="text-2xl font-bold text-gray-900">
+                    {discountActive ? '4.5' : '45'} TON
+                  </span>
                   <span className="text-gray-600 text-sm">/month</span>
                 </div>
                 
-                {/* Discount Badge */}
-                <div className="flex items-center justify-center gap-1">
-                  <Badge className="bg-red-500 text-white font-bold px-1.5 py-0.5 text-xs">
-                    90% OFF
-                  </Badge>
-                  <span className="line-through text-gray-500 text-sm">45 TON</span>
-                </div>
+                {/* Discount Badge - Only show if discount is active */}
+                {discountActive && (
+                  <div className="flex items-center justify-center gap-1">
+                    <Badge className="bg-red-500 text-white font-bold px-1.5 py-0.5 text-xs">
+                      90% OFF
+                    </Badge>
+                    <span className="line-through text-gray-500 text-sm">45 TON</span>
+                  </div>
+                )}
                 
-                {/* Countdown Timer */}
-                <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1.5 rounded-md">
-                  <div className="flex items-center justify-center gap-1 text-xs">
-                    <Clock className="w-2.5 h-2.5" />
-                    <span>Offer ends in:</span>
+                {/* Countdown Timer - Only show if discount is active */}
+                {discountActive && (
+                  <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1.5 rounded-md">
+                    <div className="flex items-center justify-center gap-1 text-xs">
+                      <Clock className="w-2.5 h-2.5" />
+                      <span>Offer ends in:</span>
+                    </div>
+                    <div className="text-sm font-bold">
+                      {timeLeft.hours.toString().padStart(2, '0')}:
+                      {timeLeft.minutes.toString().padStart(2, '0')}:
+                      {timeLeft.seconds.toString().padStart(2, '0')}
+                    </div>
                   </div>
-                  <div className="text-sm font-bold">
-                    {timeLeft.hours.toString().padStart(2, '0')}:
-                    {timeLeft.minutes.toString().padStart(2, '0')}:
-                    {timeLeft.seconds.toString().padStart(2, '0')}
+                )}
+
+                {/* Show message if discount expired */}
+                {!discountActive && (
+                  <div className="bg-gray-100 text-gray-700 px-2 py-1.5 rounded-md">
+                    <div className="text-xs text-center">
+                      Limited time offer has expired
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
 
