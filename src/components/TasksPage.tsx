@@ -139,19 +139,13 @@ const TasksPage = () => {
         description: 'Processing payment...',
       });
 
-      // Create payment transaction with properly encoded comment using TextEncoder
-      const comment = 'daily check-in payment';
-      const encoder = new TextEncoder();
-      const encodedComment = encoder.encode(comment);
-      const base64Comment = btoa(String.fromCharCode(...encodedComment));
-      
+      // Create payment transaction without payload (comment)
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
         messages: [
           {
             address: TON_PAYMENT_ADDRESS,
             amount: (0.1 * 1e9).toString(), // Convert 0.1 TON to nanoTON
-            payload: base64Comment,
           },
         ],
       };
