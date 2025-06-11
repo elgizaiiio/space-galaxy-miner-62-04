@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -60,7 +61,7 @@ const CoursePage = () => {
 
   return (
     <div 
-      className="min-h-screen p-4 pb-20 relative"
+      className="min-h-screen p-4 relative"
       style={{
         backgroundImage: `url('/lovable-uploads/8d6c6b4d-d501-4cd4-ae0c-48202028cc66.png')`,
         backgroundSize: 'cover',
