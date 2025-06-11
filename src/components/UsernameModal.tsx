@@ -27,8 +27,17 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
       return;
     }
     
+    // Check if this is a new user
+    const existingCoins = localStorage.getItem('spaceCoins');
+    const isNewUser = !existingCoins;
+    
     // Save username to localStorage
     localStorage.setItem('username', username.trim());
+    
+    // If new user, give them 20,000 free coins
+    if (isNewUser) {
+      localStorage.setItem('spaceCoins', '20000');
+    }
     
     // Complete the process
     onComplete(username.trim());
@@ -36,19 +45,19 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-sm bg-slate-900/95 border border-blue-400/30 text-white" aria-describedby="username-description">
+      <DialogContent className="sm:max-w-xs bg-slate-900/95 border border-blue-400/30 text-white" aria-describedby="username-description">
         <DialogHeader>
-          <DialogTitle className="text-center text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          <DialogTitle className="text-center text-sm font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Welcome to Space Coin
           </DialogTitle>
-          <DialogDescription id="username-description" className="text-center text-gray-300 text-sm">
+          <DialogDescription id="username-description" className="text-center text-gray-300 text-xs">
             Please enter your name to continue
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-3 mt-3">
+        <form onSubmit={handleSubmit} className="space-y-3 mt-2">
           <div className="space-y-2">
-            <Label htmlFor="username" className="text-gray-300 text-sm">
+            <Label htmlFor="username" className="text-gray-300 text-xs">
               Name
             </Label>
             <Input
@@ -60,7 +69,7 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
                 setError('');
               }}
               placeholder="Enter name"
-              className="bg-slate-800 border-slate-600 text-white placeholder-gray-400 h-9 text-sm"
+              className="bg-slate-800 border-slate-600 text-white placeholder-gray-400 h-8 text-xs"
               autoFocus
             />
             {error && (
@@ -70,7 +79,7 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
           
           <Button 
             type="submit" 
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 h-9 text-sm"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 h-8 text-xs"
           >
             Start Mining
           </Button>
