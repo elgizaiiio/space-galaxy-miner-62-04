@@ -1,3 +1,4 @@
+
 import { TonConnect } from '@tonconnect/sdk';
 
 export const TON_PAYMENT_ADDRESS = 'UQCiVNm22dMF9S3YsHPcgrmqXEQHt4MIdk_N7VJu88NrLr4R';
@@ -28,13 +29,20 @@ export const formatTON = (amount: number): string => {
   return amount.toFixed(2) + ' TON';
 };
 
-// Helper function to convert text to base64 for TON comment
+// Helper function to convert text to base64 for TON comment using proper encoding
 export const textToBase64 = (text: string): string => {
   try {
-    return btoa(unescape(encodeURIComponent(text)));
+    // Use Buffer for proper UTF-8 encoding instead of btoa
+    return Buffer.from(text, 'utf8').toString('base64');
   } catch (error) {
     console.error('Error encoding text to base64:', error);
-    return '';
+    // Fallback to btoa if Buffer is not available
+    try {
+      return btoa(unescape(encodeURIComponent(text)));
+    } catch (fallbackError) {
+      console.error('Fallback encoding also failed:', fallbackError);
+      return '';
+    }
   }
 };
 

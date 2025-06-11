@@ -11,7 +11,7 @@ import { useUserData } from '@/hooks/useUserData';
 import { useSpaceCoins } from '../hooks/useSpaceCoins';
 import { tonService } from '@/services/tonService';
 import { useTonConnectUI } from '@tonconnect/ui-react';
-import { TON_PAYMENT_ADDRESS, sendTONPayment, createTonConnector } from '@/utils/ton';
+import { TON_PAYMENT_ADDRESS } from '@/utils/ton';
 import { getTranslation } from '../utils/language';
 import { 
   CheckCircle, 
@@ -32,7 +32,7 @@ type Task = Database['public']['Tables']['tasks']['Row'];
 
 const TasksPage = () => {
   const [isTaskInProgress, setIsTaskInProgress] = useState<{ [key: string]: boolean }>({});
-  const [completedTasksState, setCompletedTasksState] = useState<Set<string>>(new Set());
+  const [permanentlyCompletedTasks, setPermanentlyCompletedTasks] = useState<Set<string>>(new Set());
   const [tonConnectUI] = useTonConnectUI();
   const { toast } = useToast();
   const { addCoins } = useSpaceCoins();
@@ -41,13 +41,30 @@ const TasksPage = () => {
   const { tasks, isLoading: tasksLoading, checkTaskCompletion } = useTaskManagement();
   
   // Mock user data - in real app this would come from authentication
-  const mockTelegramUserId = "123456789"; // Convert to string
+  const mockTelegramUserId = "123456789";
   const { userProfile, completedTasks, completeTask, isLoading: userLoading } = useUserData(mockTelegramUserId);
 
-  // Update completed tasks state when completedTasks changes
+  // Load permanently completed tasks from localStorage on component mount
   useEffect(() => {
-    const completedTaskIds = new Set(completedTasks.map(ct => ct.task_id));
-    setCompletedTasksState(completedTaskIds);
+    const savedCompletedTasks = localStorage.getItem('permanentlyCompletedTasks');
+    if (savedCompletedTasks) {
+      try {
+        const parsedTasks = JSON.parse(savedCompletedTasks);
+        setPermanentlyCompletedTasks(new Set(parsedTasks));
+      } catch (error) {
+        console.error('Error parsing saved completed tasks:', error);
+      }
+    }
+  }, []);
+
+  // Update permanently completed tasks when completedTasks changes
+  useEffect(() => {
+    const completedTaskIds = completedTasks.map(ct => ct.task_id);
+    const newPermanentlyCompleted = new Set([...permanentlyCompletedTasks, ...completedTaskIds]);
+    setPermanentlyCompletedTasks(newPermanentlyCompleted);
+    
+    // Save to localStorage
+    localStorage.setItem('permanentlyCompletedTasks', JSON.stringify([...newPermanentlyCompleted]));
   }, [completedTasks]);
 
   const getTaskIcon = (status: string) => {
@@ -100,14 +117,16 @@ const TasksPage = () => {
         description: 'Processing payment...',
       });
 
-      // Create payment transaction
+      // Create payment transaction with properly encoded comment
+      const comment = 'daily check-in payment';
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
         messages: [
           {
             address: TON_PAYMENT_ADDRESS,
             amount: (0.1 * 1e9).toString(), // Convert 0.1 TON to nanoTON
-            payload: btoa('daily check-in payment'), // Base64 encoded comment
+            // Use proper text encoding instead of btoa
+            payload: Buffer.from(comment, 'utf8').toString('base64'),
           },
         ],
       };
@@ -142,12 +161,9 @@ const TasksPage = () => {
       return;
     }
 
-    // Check if task is already completed using both state and database
-    const isCompletedInState = completedTasksState.has(task.id);
-    const isCompletedInDB = completedTasks.some(ct => ct.task_id === task.id);
-    
-    if (isCompletedInState || isCompletedInDB) {
-      console.log('Task already completed');
+    // Check if task is permanently completed
+    if (permanentlyCompletedTasks.has(task.id)) {
+      console.log('Task already permanently completed');
       toast({
         title: getTranslation('taskCompleted'),
         description: 'This task is already completed',
@@ -182,8 +198,12 @@ const TasksPage = () => {
           console.log('Completing task in database');
           await completeTask(task.id);
           
-          // Immediately add to completed state for instant UI update
-          setCompletedTasksState(prev => new Set([...prev, task.id]));
+          // Add to permanently completed tasks immediately
+          const newPermanentlyCompleted = new Set([...permanentlyCompletedTasks, task.id]);
+          setPermanentlyCompletedTasks(newPermanentlyCompleted);
+          
+          // Save to localStorage
+          localStorage.setItem('permanentlyCompletedTasks', JSON.stringify([...newPermanentlyCompleted]));
           
           // Add coins to the shared service
           addCoins(task.reward_amount || 0);
@@ -212,16 +232,16 @@ const TasksPage = () => {
   };
 
   const isTaskCompleted = (taskId: string) => {
-    // Check both state and database for completed tasks
-    return completedTasksState.has(taskId) || completedTasks.some(ct => ct.task_id === taskId);
+    // Check permanently completed tasks (includes localStorage data)
+    return permanentlyCompletedTasks.has(taskId);
   };
 
   const getTasksByCategory = (category: string) => {
     return tasks.filter(task => {
-      // Always hide completed tasks completely
+      // Always hide permanently completed tasks
       const isCompleted = isTaskCompleted(task.id);
       if (isCompleted) {
-        console.log('Hiding completed task:', task.title, task.id);
+        console.log('Hiding permanently completed task:', task.title, task.id);
         return false;
       }
 
@@ -243,7 +263,7 @@ const TasksPage = () => {
     const isCompleted = isTaskCompleted(task.id);
     const inProgress = isTaskInProgress[task.id];
     
-    // Don't render completed tasks at all
+    // Don't render permanently completed tasks at all
     if (isCompleted) {
       return null;
     }
