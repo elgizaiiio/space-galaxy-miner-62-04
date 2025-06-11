@@ -32,6 +32,7 @@ type Task = Database['public']['Tables']['tasks']['Row'];
 
 const TasksPage = () => {
   const [isTaskInProgress, setIsTaskInProgress] = useState<{ [key: string]: boolean }>({});
+  const [completedTasksState, setCompletedTasksState] = useState<Set<string>>(new Set());
   const [tonConnectUI] = useTonConnectUI();
   const { toast } = useToast();
   const { addCoins } = useSpaceCoins();
@@ -42,6 +43,12 @@ const TasksPage = () => {
   // Mock user data - in real app this would come from authentication
   const mockTelegramUserId = "123456789"; // Convert to string
   const { userProfile, completedTasks, completeTask, isLoading: userLoading } = useUserData(mockTelegramUserId);
+
+  // Update completed tasks state when completedTasks changes
+  useEffect(() => {
+    const completedTaskIds = new Set(completedTasks.map(ct => ct.task_id));
+    setCompletedTasksState(completedTaskIds);
+  }, [completedTasks]);
 
   const getTaskIcon = (status: string) => {
     switch (status) {
@@ -135,9 +142,11 @@ const TasksPage = () => {
       return;
     }
 
-    // Check if task is already completed
-    const isCompleted = completedTasks.some(ct => ct.task_id === task.id);
-    if (isCompleted) {
+    // Check if task is already completed using both state and database
+    const isCompletedInState = completedTasksState.has(task.id);
+    const isCompletedInDB = completedTasks.some(ct => ct.task_id === task.id);
+    
+    if (isCompletedInState || isCompletedInDB) {
       console.log('Task already completed');
       toast({
         title: getTranslation('taskCompleted'),
@@ -173,6 +182,9 @@ const TasksPage = () => {
           console.log('Completing task in database');
           await completeTask(task.id);
           
+          // Immediately add to completed state for instant UI update
+          setCompletedTasksState(prev => new Set([...prev, task.id]));
+          
           // Add coins to the shared service
           addCoins(task.reward_amount || 0);
           
@@ -200,14 +212,21 @@ const TasksPage = () => {
   };
 
   const isTaskCompleted = (taskId: string) => {
-    return completedTasks.some(ct => ct.task_id === taskId);
+    // Check both state and database for completed tasks
+    return completedTasksState.has(taskId) || completedTasks.some(ct => ct.task_id === taskId);
   };
 
   const getTasksByCategory = (category: string) => {
     return tasks.filter(task => {
-      // Hide completed tasks completely
+      // Always hide completed tasks completely
       const isCompleted = isTaskCompleted(task.id);
       if (isCompleted) {
+        console.log('Hiding completed task:', task.title, task.id);
+        return false;
+      }
+
+      // Only show active tasks
+      if (!task.is_active) {
         return false;
       }
 
@@ -216,15 +235,18 @@ const TasksPage = () => {
       if (category === 'partner') return task.status === 'completed'; // This will be empty since completed tasks are filtered out above
       if (category === 'daily') return task.status === 'pending' && task.title === 'daily check-in';
       return false;
-    }).filter(task => task.is_active);
+    });
   };
 
   const renderTaskCard = (task: Task) => {
     const TaskIcon = getTaskIcon(task.status || 'pending');
     const isCompleted = isTaskCompleted(task.id);
     const inProgress = isTaskInProgress[task.id];
-    const category = task.status === 'completed' ? 'partner' : 
-                    task.status === 'pending' ? 'daily' : 'main';
+    
+    // Don't render completed tasks at all
+    if (isCompleted) {
+      return null;
+    }
     
     console.log('Rendering task card:', task.title, 'isCompleted:', isCompleted, 'inProgress:', inProgress);
     
@@ -360,42 +382,57 @@ const TasksPage = () => {
           </TabsList>
 
           <TabsContent value="main" className="space-y-3">
-            {getTasksByCategory('main').map((task, index) => (
-              <motion.div
-                key={task.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-              >
-                {renderTaskCard(task)}
-              </motion.div>
-            ))}
+            {getTasksByCategory('main').map((task, index) => {
+              const taskCard = renderTaskCard(task);
+              if (!taskCard) return null;
+              
+              return (
+                <motion.div
+                  key={task.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  {taskCard}
+                </motion.div>
+              );
+            })}
           </TabsContent>
 
           <TabsContent value="partner" className="space-y-3">
-            {getTasksByCategory('partner').map((task, index) => (
-              <motion.div
-                key={task.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-              >
-                {renderTaskCard(task)}
-              </motion.div>
-            ))}
+            {getTasksByCategory('partner').map((task, index) => {
+              const taskCard = renderTaskCard(task);
+              if (!taskCard) return null;
+              
+              return (
+                <motion.div
+                  key={task.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  {taskCard}
+                </motion.div>
+              );
+            })}
           </TabsContent>
 
           <TabsContent value="daily" className="space-y-3">
-            {getTasksByCategory('daily').map((task, index) => (
-              <motion.div
-                key={task.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-              >
-                {renderTaskCard(task)}
-              </motion.div>
-            ))}
+            {getTasksByCategory('daily').map((task, index) => {
+              const taskCard = renderTaskCard(task);
+              if (!taskCard) return null;
+              
+              return (
+                <motion.div
+                  key={task.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  {taskCard}
+                </motion.div>
+              );
+            })}
           </TabsContent>
         </Tabs>
       </div>
