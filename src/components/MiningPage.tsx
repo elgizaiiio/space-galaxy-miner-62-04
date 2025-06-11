@@ -1,11 +1,9 @@
-
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { 
   Play,
-  Pause,
 } from 'lucide-react';
 import { useSpaceCoins } from '../hooks/useSpaceCoins';
 
@@ -160,14 +158,7 @@ const MiningPage = () => {
   }, [miningActive, coinsPerSecond, addCoins, lastUpdateTime]);
 
   const handleStartMining = () => {
-    if (miningActive) {
-      // Stop mining
-      console.log('Stopping mining');
-      setMiningActive(false);
-      localStorage.removeItem('miningStartTime');
-      localStorage.removeItem('miningDuration');
-      localStorage.setItem('miningActive', 'false');
-    } else {
+    if (!miningActive) {
       // Start mining
       const currentTime = Date.now();
       const duration = 28800; // 8 hours in seconds
@@ -243,22 +234,20 @@ const MiningPage = () => {
           </div>
         )}
 
-        {/* Mining Button */}
-        <div className="flex justify-center">
-          <Button
-            onClick={handleStartMining}
-            className={`py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 ${
-              miningActive 
-                ? 'bg-gradient-to-r from-red-500 to-orange-600 hover:from-red-600 hover:to-orange-700'
-                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              {miningActive ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-              <span>{miningActive ? 'Stop Mining' : 'Start Mining'}</span>
-            </div>
-          </Button>
-        </div>
+        {/* Mining Button - Only show Start Mining button when not mining */}
+        {!miningActive && (
+          <div className="flex justify-center">
+            <Button
+              onClick={handleStartMining}
+              className="py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Play className="w-5 h-5" />
+                <span>Start Mining</span>
+              </div>
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
