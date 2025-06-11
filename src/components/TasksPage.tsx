@@ -30,8 +30,10 @@ import type { Database } from '@/integrations/supabase/types';
 
 type Task = Database['public']['Tables']['tasks']['Row'];
 
+const COMPLETED_TASKS_KEY = 'completedTasks';
+
 const TasksPage = () => {
-  const [isTaskInProgress, setIsTaskInProgress] = useState<{ [key: string]: boolean }>({});
+  const [isTaskInProgress, setIsTaskInProgress] = useState<Record<string, boolean>>({});
   const [permanentlyCompletedTasks, setPermanentlyCompletedTasks] = useState<Set<string>>(new Set());
   const [tonConnectUI] = useTonConnectUI();
   const { toast } = useToast();
@@ -46,26 +48,48 @@ const TasksPage = () => {
 
   // Load permanently completed tasks from localStorage on component mount
   useEffect(() => {
-    const savedCompletedTasks = localStorage.getItem('permanentlyCompletedTasks');
+    const savedCompletedTasks = localStorage.getItem(COMPLETED_TASKS_KEY);
     if (savedCompletedTasks) {
       try {
         const parsedTasks = JSON.parse(savedCompletedTasks);
-        setPermanentlyCompletedTasks(new Set(parsedTasks));
+        if (Array.isArray(parsedTasks)) {
+          setPermanentlyCompletedTasks(new Set(parsedTasks));
+          console.log('Loaded completed tasks from localStorage:', parsedTasks);
+        }
       } catch (error) {
         console.error('Error parsing saved completed tasks:', error);
+        localStorage.removeItem(COMPLETED_TASKS_KEY);
       }
     }
   }, []);
 
+  // Save completed tasks to localStorage whenever the set changes
+  const saveCompletedTasksToStorage = (completedSet: Set<string>) => {
+    try {
+      const tasksArray = Array.from(completedSet);
+      localStorage.setItem(COMPLETED_TASKS_KEY, JSON.stringify(tasksArray));
+      console.log('Saved completed tasks to localStorage:', tasksArray);
+    } catch (error) {
+      console.error('Error saving completed tasks to localStorage:', error);
+    }
+  };
+
   // Update permanently completed tasks when completedTasks changes
   useEffect(() => {
-    const completedTaskIds = completedTasks.map(ct => ct.task_id);
-    const newPermanentlyCompleted = new Set([...permanentlyCompletedTasks, ...completedTaskIds]);
-    setPermanentlyCompletedTasks(newPermanentlyCompleted);
-    
-    // Save to localStorage
-    localStorage.setItem('permanentlyCompletedTasks', JSON.stringify([...newPermanentlyCompleted]));
+    if (completedTasks.length > 0) {
+      const completedTaskIds = completedTasks.map(ct => ct.task_id);
+      const newPermanentlyCompleted = new Set([...permanentlyCompletedTasks, ...completedTaskIds]);
+      setPermanentlyCompletedTasks(newPermanentlyCompleted);
+      saveCompletedTasksToStorage(newPermanentlyCompleted);
+    }
   }, [completedTasks]);
+
+  const markTaskAsCompleted = (taskId: string) => {
+    const newCompletedTasks = new Set([...permanentlyCompletedTasks, taskId]);
+    setPermanentlyCompletedTasks(newCompletedTasks);
+    saveCompletedTasksToStorage(newCompletedTasks);
+    console.log('Task marked as completed:', taskId);
+  };
 
   const getTaskIcon = (status: string) => {
     switch (status) {
@@ -107,7 +131,6 @@ const TasksPage = () => {
           description: 'Please connect your wallet first to complete this task',
           variant: 'destructive'
         });
-        // Open wallet connection modal
         await tonConnectUI.openModal();
         return false;
       }
@@ -125,7 +148,6 @@ const TasksPage = () => {
           {
             address: TON_PAYMENT_ADDRESS,
             amount: (0.1 * 1e9).toString(), // Convert 0.1 TON to nanoTON
-            // Use proper text encoding instead of btoa
             payload: Buffer.from(comment, 'utf8').toString('base64'),
           },
         ],
@@ -156,7 +178,8 @@ const TasksPage = () => {
   const handleTaskComplete = async (task: Task) => {
     console.log('handleTaskComplete called for task:', task.title, task.id);
     
-    if (isTaskInProgress[task.id]) {
+    // Check if task is already in progress
+    if (isTaskInProgress[task.id] === true) {
       console.log('Task already in progress');
       return;
     }
@@ -198,12 +221,8 @@ const TasksPage = () => {
           console.log('Completing task in database');
           await completeTask(task.id);
           
-          // Add to permanently completed tasks immediately
-          const newPermanentlyCompleted = new Set([...permanentlyCompletedTasks, task.id]);
-          setPermanentlyCompletedTasks(newPermanentlyCompleted);
-          
-          // Save to localStorage
-          localStorage.setItem('permanentlyCompletedTasks', JSON.stringify([...newPermanentlyCompleted]));
+          // Mark task as completed immediately
+          markTaskAsCompleted(task.id);
           
           // Add coins to the shared service
           addCoins(task.reward_amount || 0);
@@ -232,7 +251,6 @@ const TasksPage = () => {
   };
 
   const isTaskCompleted = (taskId: string) => {
-    // Check permanently completed tasks (includes localStorage data)
     return permanentlyCompletedTasks.has(taskId);
   };
 
@@ -252,7 +270,7 @@ const TasksPage = () => {
 
       // Filter by category for non-completed tasks only
       if (category === 'main') return task.status === 'pending' || task.status === 'in_progress';
-      if (category === 'partner') return task.status === 'completed'; // This will be empty since completed tasks are filtered out above
+      if (category === 'partner') return task.status === 'completed';
       if (category === 'daily') return task.status === 'pending' && task.title === 'daily check-in';
       return false;
     });
@@ -261,7 +279,7 @@ const TasksPage = () => {
   const renderTaskCard = (task: Task) => {
     const TaskIcon = getTaskIcon(task.status || 'pending');
     const isCompleted = isTaskCompleted(task.id);
-    const inProgress = isTaskInProgress[task.id];
+    const inProgress = isTaskInProgress[task.id] === true;
     
     // Don't render permanently completed tasks at all
     if (isCompleted) {
