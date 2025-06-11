@@ -1,105 +1,195 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Star, Users, Clock, Award } from 'lucide-react';
+import { useTonConnectUI } from '@tonconnect/ui-react';
+import { useToast } from '@/hooks/use-toast';
+import { sendTONPayment, TON_PAYMENT_ADDRESS } from '@/utils/ton';
 
 const CoursePage = () => {
+  const [tonConnectUI] = useTonConnectUI();
+  const { toast } = useToast();
+
   const features = [
     'Make Money Online',
-    'Improve Your Mindset',
+    'Improve Your Mindset', 
     'Social Skills & Confidence',
     'Fitness & Masculinity',
     'Business & Time Management'
   ];
 
+  const stats = [
+    { icon: Users, value: '10K+', label: 'Students' },
+    { icon: Star, value: '4.9', label: 'Rating' },
+    { icon: Clock, value: '50+', label: 'Hours' },
+    { icon: Award, value: '100%', label: 'Success' }
+  ];
+
+  const handleJoinCourse = async () => {
+    try {
+      if (!tonConnectUI.wallet) {
+        await tonConnectUI.openModal();
+        toast({
+          title: 'Connect Wallet',
+          description: 'Please connect your wallet to purchase the course'
+        });
+        return;
+      }
+
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 300,
+        messages: [
+          {
+            address: TON_PAYMENT_ADDRESS,
+            amount: (4.5 * 1e9).toString(), // 4.5 TON in nanoTON
+            payload: btoa('Millionaire Course Purchase - $15'),
+          },
+        ],
+      };
+
+      await tonConnectUI.sendTransaction(transaction);
+      
+      toast({
+        title: 'Payment Successful!',
+        description: 'Welcome to the Millionaire course! Check your email for access details.',
+      });
+
+    } catch (error) {
+      console.error('Payment failed:', error);
+      toast({
+        title: 'Payment Failed',
+        description: 'There was an error processing your payment. Please try again.',
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 p-3 pb-20">
-      <div className="max-w-sm mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 p-4 pb-20">
+      <div className="max-w-md mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mt-16"
+          className="mt-8"
         >
           <Card className="bg-white/95 backdrop-blur border-0 shadow-2xl rounded-3xl overflow-hidden">
-            <CardHeader className="text-center py-8 px-6">
-              <motion.h1
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
+            <CardHeader className="text-center py-6 px-6 bg-gradient-to-r from-purple-600 to-blue-600">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-4xl font-bold text-gray-900 mb-2"
               >
-                Become a member
-              </motion.h1>
+                <h1 className="text-3xl font-bold text-white mb-2">Become a Millionaire</h1>
+                <p className="text-blue-100 text-sm">Transform your life with our proven system</p>
+              </motion.div>
             </CardHeader>
 
-            <CardContent className="px-6 pb-8">
-              <div className="text-center mb-8">
-                <hr className="border-gray-200 mb-8" />
-                
-                <motion.h2
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                  className="text-4xl font-bold text-gray-900 mb-6"
-                >
-                  Millioner
-                </motion.h2>
-
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.6 }}
-                  className="mb-8"
-                >
-                  <span className="text-5xl font-bold text-gray-900">$20</span>
-                  <span className="text-xl text-gray-600">/month</span>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.8 }}
-                  className="mb-8"
-                >
-                  <Button 
-                    className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105"
+            <CardContent className="px-6 pb-6">
+              {/* Stats */}
+              <div className="grid grid-cols-4 gap-3 my-6">
+                {stats.map((stat, index) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
+                    className="text-center"
                   >
-                    Join
-                  </Button>
-                </motion.div>
-
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 1.0 }}
-                  className="text-gray-700 text-lg mb-8 font-medium"
-                >
-                  Are you ready to become a millionaire ?
-                </motion.p>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 1.2 }}
-                  className="space-y-4 text-left"
-                >
-                  {features.map((feature, index) => (
-                    <motion.div
-                      key={feature}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: 1.4 + index * 0.1 }}
-                      className="flex items-center gap-4"
-                    >
-                      <div className="w-2 h-2 bg-black rounded-full flex-shrink-0"></div>
-                      <span className="text-gray-800 text-lg font-medium">{feature}</span>
-                    </motion.div>
-                  ))}
-                </motion.div>
+                    <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-1">
+                      <stat.icon className="w-4 h-4 text-white" />
+                    </div>
+                    <p className="text-lg font-bold text-gray-900">{stat.value}</p>
+                    <p className="text-xs text-gray-600">{stat.label}</p>
+                  </motion.div>
+                ))}
               </div>
+
+              <hr className="border-gray-200 my-6" />
+
+              {/* Price */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="text-center mb-6"
+              >
+                <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-2xl p-4 mb-4">
+                  <p className="text-sm text-gray-600 mb-1">Special Price</p>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-4xl font-bold text-gray-900">$15</span>
+                    <div className="text-sm text-gray-500">
+                      <p>≈ 4.5 TON</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-green-600 font-medium mt-1">Limited Time Offer!</p>
+                </div>
+              </motion.div>
+
+              {/* CTA Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className="mb-6"
+              >
+                <Button 
+                  onClick={handleJoinCourse}
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-2xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  Join Now & Start Earning
+                </Button>
+              </motion.div>
+
+              {/* Question */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 1.0 }}
+                className="text-gray-700 text-center text-lg mb-6 font-medium"
+              >
+                Are you ready to become a millionaire?
+              </motion.p>
+
+              {/* Features */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.2 }}
+                className="space-y-3"
+              >
+                <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">What You'll Learn:</h3>
+                {features.map((feature, index) => (
+                  <motion.div
+                    key={feature}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 1.4 + index * 0.1 }}
+                    className="flex items-center gap-3 bg-gray-50 rounded-xl p-3"
+                  >
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-gray-800 font-medium">{feature}</span>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Guarantee */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 1.8 }}
+                className="mt-6 text-center"
+              >
+                <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Award className="w-5 h-5 text-yellow-600" />
+                    <span className="text-yellow-800 font-bold">30-Day Money Back Guarantee</span>
+                  </div>
+                  <p className="text-yellow-700 text-sm">Not satisfied? Get your full refund, no questions asked.</p>
+                </div>
+              </motion.div>
             </CardContent>
           </Card>
         </motion.div>
