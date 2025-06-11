@@ -126,7 +126,7 @@ const App = () => {
     icon: CheckSquare
   }, {
     id: 'courses',
-    label: 'الكورسات',
+    label: 'Courses',
     icon: GraduationCap
   }, {
     id: 'store',

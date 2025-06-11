@@ -15,7 +15,7 @@ const MiningPage = () => {
   const [remainingTime, setRemainingTime] = useState(28800); // 8 hours
   const [username, setUsername] = useState('');
 
-  // منع التمرير عند تحميل الصفحة
+  // Prevent scrolling when component loads
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
