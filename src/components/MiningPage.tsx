@@ -15,6 +15,7 @@ const MiningPage = () => {
   const [username, setUsername] = useState('');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const initializedRef = useRef(false);
+  const lastProcessedTimeRef = useRef<number>(0);
 
   // Memoized coin adding function to prevent unnecessary re-renders
   const addCoinsStable = useCallback((amount: number) => {
@@ -59,11 +60,13 @@ const MiningPage = () => {
     const miningStartTime = localStorage.getItem('miningStartTime');
     const miningDuration = localStorage.getItem('miningDuration');
     const wasMiningActive = localStorage.getItem('miningActive') === 'true';
+    const lastProcessedTime = localStorage.getItem('lastProcessedTime');
     
     console.log('Restoring mining state:', {
       wasMiningActive,
       miningStartTime,
-      miningDuration
+      miningDuration,
+      lastProcessedTime
     });
     
     if (wasMiningActive && miningStartTime && miningDuration) {
@@ -73,10 +76,17 @@ const MiningPage = () => {
       const elapsedTimeMs = currentTime - startTime;
       const elapsedTimeSeconds = Math.floor(elapsedTimeMs / 1000);
       
+      // Get the last processed time to avoid duplicate calculations
+      const lastProcessed = lastProcessedTime ? parseInt(lastProcessedTime) : startTime;
+      const unprocessedTimeMs = currentTime - lastProcessed;
+      const unprocessedTimeSeconds = Math.floor(unprocessedTimeMs / 1000);
+      
       console.log('Mining restoration details:', {
         startTime: new Date(startTime).toLocaleString(),
         currentTime: new Date(currentTime).toLocaleString(),
+        lastProcessed: new Date(lastProcessed).toLocaleString(),
         elapsedTimeSeconds,
+        unprocessedTimeSeconds,
         duration
       });
       
@@ -86,19 +96,23 @@ const MiningPage = () => {
         setMiningActive(true);
         setRemainingTime(newRemainingTime);
         
-        // Calculate coins earned while away
+        // Calculate coins earned only for unprocessed time
         const baseCoinsPerSecond = 0.1;
-        const coinsEarned = Math.round(elapsedTimeSeconds * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
+        const coinsEarned = Math.round(Math.max(0, unprocessedTimeSeconds) * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
         
-        console.log('Adding offline mining coins:', coinsEarned);
+        console.log('Adding offline mining coins for unprocessed time:', coinsEarned);
         
         if (coinsEarned > 0) {
           addCoinsStable(coinsEarned);
         }
+        
+        // Update last processed time
+        localStorage.setItem('lastProcessedTime', currentTime.toString());
+        lastProcessedTimeRef.current = currentTime;
       } else if (elapsedTimeSeconds >= duration) {
         // Mining session completed while away
         console.log('Mining session completed while offline');
-        completeMiningSession(duration, currentMiningSpeed);
+        completeMiningSession(duration, currentMiningSpeed, lastProcessed, startTime + (duration * 1000));
       } else {
         // Invalid state, reset
         resetMiningState();
@@ -106,15 +120,16 @@ const MiningPage = () => {
     }
   };
 
-  const completeMiningSession = (duration: number, currentMiningSpeed: number) => {
+  const completeMiningSession = (duration: number, currentMiningSpeed: number, lastProcessed: number, sessionEndTime: number) => {
     setMiningActive(false);
     setRemainingTime(28800);
     
-    // Add coins from completed session
+    // Calculate coins only for the remaining unprocessed time until session end
+    const unprocessedTime = Math.max(0, Math.floor((sessionEndTime - lastProcessed) / 1000));
     const baseCoinsPerSecond = 0.1;
-    const totalCoinsEarned = Math.round(duration * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
+    const totalCoinsEarned = Math.round(unprocessedTime * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
     
-    console.log('Adding coins from completed session:', totalCoinsEarned);
+    console.log('Adding coins from completed session (unprocessed time only):', totalCoinsEarned);
     
     if (totalCoinsEarned > 0) {
       addCoinsStable(totalCoinsEarned);
@@ -126,7 +141,9 @@ const MiningPage = () => {
   const resetMiningState = () => {
     localStorage.removeItem('miningStartTime');
     localStorage.removeItem('miningDuration');
+    localStorage.removeItem('lastProcessedTime');
     localStorage.setItem('miningActive', 'false');
+    lastProcessedTimeRef.current = 0;
   };
 
   // Handle mining interval - Fixed to prevent infinite loop
@@ -142,6 +159,8 @@ const MiningPage = () => {
       console.log('Starting mining interval');
       
       intervalRef.current = setInterval(() => {
+        const currentTime = Date.now();
+        
         setRemainingTime((prevTime) => {
           const newTime = Math.max(0, prevTime - 1);
           
@@ -155,11 +174,15 @@ const MiningPage = () => {
           return newTime;
         });
 
-        // Add coins with stable reference
+        // Add coins with stable reference and update last processed time
         const coinsToAdd = Math.round(coinsPerSecond * 100) / 100;
         if (coinsToAdd > 0) {
           addCoinsStable(coinsToAdd);
         }
+        
+        // Update last processed time every second
+        localStorage.setItem('lastProcessedTime', currentTime.toString());
+        lastProcessedTimeRef.current = currentTime;
       }, 1000);
     }
 
@@ -195,10 +218,12 @@ const MiningPage = () => {
       // Save mining state
       localStorage.setItem('miningStartTime', currentTime.toString());
       localStorage.setItem('miningDuration', duration.toString());
+      localStorage.setItem('lastProcessedTime', currentTime.toString());
       localStorage.setItem('miningActive', 'true');
       
       setMiningActive(true);
       setRemainingTime(duration);
+      lastProcessedTimeRef.current = currentTime;
     }
   };
 
@@ -215,15 +240,25 @@ const MiningPage = () => {
       if (document.hidden && miningActive) {
         // Save current state when page becomes hidden
         const currentTime = Date.now();
-        localStorage.setItem('miningLastSeen', currentTime.toString());
+        localStorage.setItem('lastProcessedTime', currentTime.toString());
+        lastProcessedTimeRef.current = currentTime;
         console.log('Saving mining state when page hidden');
       }
     };
 
+    const handleBeforeUnload = () => {
+      if (miningActive) {
+        const currentTime = Date.now();
+        localStorage.setItem('lastProcessedTime', currentTime.toString());
+      }
+    };
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [miningActive]);
 
@@ -301,6 +336,7 @@ const MiningPage = () => {
             <p>Mining Status: {miningActive ? 'Active' : 'Inactive'}</p>
             <p>Remaining Time: {remainingTime}s</p>
             <p>Mining Speed: {miningSpeed}x</p>
+            <p>Last Processed: {lastProcessedTimeRef.current > 0 ? new Date(lastProcessedTimeRef.current).toLocaleTimeString() : 'Never'}</p>
           </div>
         )}
       </div>
