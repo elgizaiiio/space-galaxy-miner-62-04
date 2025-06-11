@@ -13,6 +13,17 @@ const CoursesPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ hours: 72, minutes: 0, seconds: 0 });
 
+  // Prevent scrolling when component loads
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    };
+  }, []);
+
   // Countdown timer for the discount
   useEffect(() => {
     const timer = setInterval(() => {
