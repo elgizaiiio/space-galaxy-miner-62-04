@@ -205,8 +205,15 @@ const TasksPage = () => {
 
   const getTasksByCategory = (category: string) => {
     return tasks.filter(task => {
+      // Hide completed tasks completely
+      const isCompleted = isTaskCompleted(task.id);
+      if (isCompleted) {
+        return false;
+      }
+
+      // Filter by category for non-completed tasks only
       if (category === 'main') return task.status === 'pending' || task.status === 'in_progress';
-      if (category === 'partner') return task.status === 'completed';
+      if (category === 'partner') return task.status === 'completed'; // This will be empty since completed tasks are filtered out above
       if (category === 'daily') return task.status === 'pending' && task.title === 'daily check-in';
       return false;
     }).filter(task => task.is_active);
