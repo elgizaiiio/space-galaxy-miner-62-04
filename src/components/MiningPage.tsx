@@ -5,18 +5,18 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { 
   Play,
+  Pause,
 } from 'lucide-react';
 import { useSpaceCoins } from '../hooks/useSpaceCoins';
 
 const MiningPage = () => {
   const { spaceCoins, addCoins } = useSpaceCoins();
   const [miningSpeed, setMiningSpeed] = useState(1);
-  const [coinsPerSecond, setCoinsPerSecond] = useState(0.01);
+  const [coinsPerSecond, setCoinsPerSecond] = useState(0.1);
   const [miningActive, setMiningActive] = useState(false);
   const [remainingTime, setRemainingTime] = useState(28800); // 8 hours
   const [username, setUsername] = useState('');
   const [lastUpdateTime, setLastUpdateTime] = useState(Date.now());
-  const [recoveryProcessed, setRecoveryProcessed] = useState(false);
 
   // Prevent scrolling when component loads
   useEffect(() => {
@@ -29,42 +29,38 @@ const MiningPage = () => {
     };
   }, []);
 
+  // Load saved data on component mount
   useEffect(() => {
-    // Check if recovery was already processed in this session
-    const recoveryFlag = sessionStorage.getItem('miningRecoveryProcessed');
-    if (recoveryFlag) {
-      setRecoveryProcessed(true);
-      return;
-    }
-
-    // Check if username exists in localStorage
+    // Load username
     const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
       setUsername(storedUsername);
     }
 
+    // Load mining speed
     const storedMiningSpeed = localStorage.getItem('miningSpeed');
     if (storedMiningSpeed) {
       setMiningSpeed(parseFloat(storedMiningSpeed));
     }
 
-    // Check if mining was active when user left
+    // Check if mining was active and restore state
     const miningStartTime = localStorage.getItem('miningStartTime');
     const miningDuration = localStorage.getItem('miningDuration');
+    const wasMiningActive = localStorage.getItem('miningActive') === 'true';
     
-    if (miningStartTime && miningDuration && !recoveryProcessed) {
+    if (wasMiningActive && miningStartTime && miningDuration) {
       const startTime = parseInt(miningStartTime);
       const duration = parseInt(miningDuration);
       const currentTime = Date.now();
       const elapsedTimeMs = currentTime - startTime;
       const elapsedTimeSeconds = Math.floor(elapsedTimeMs / 1000);
       
-      console.log('Mining recovery data:', {
+      console.log('Restoring mining state:', {
         startTime: new Date(startTime),
         currentTime: new Date(currentTime),
-        elapsedTimeMs,
         elapsedTimeSeconds,
-        duration
+        duration,
+        wasMiningActive
       });
       
       if (elapsedTimeSeconds < duration) {
@@ -73,56 +69,58 @@ const MiningPage = () => {
         setRemainingTime(duration - elapsedTimeSeconds);
         setLastUpdateTime(currentTime);
         
-        // Calculate coins earned while away - using conservative calculation
+        // Calculate coins earned while away
         const currentMiningSpeed = storedMiningSpeed ? parseFloat(storedMiningSpeed) : 1;
-        const baseCoinsPerSecond = 0.01;
+        const baseCoinsPerSecond = 0.1;
         const coinsEarned = Math.floor(elapsedTimeSeconds * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
         
-        console.log('Coins calculation:', {
-          elapsedTimeSeconds,
-          currentMiningSpeed,
-          baseCoinsPerSecond,
-          coinsEarned
-        });
+        console.log('Adding coins from offline mining:', coinsEarned);
         
         if (coinsEarned > 0) {
           addCoins(coinsEarned);
         }
       } else {
         // Mining session completed while away
-        localStorage.removeItem('miningStartTime');
-        localStorage.removeItem('miningDuration');
+        console.log('Mining session completed while away');
         setMiningActive(false);
         setRemainingTime(28800);
         
         // Add coins from completed session
         const currentMiningSpeed = storedMiningSpeed ? parseFloat(storedMiningSpeed) : 1;
-        const baseCoinsPerSecond = 0.01;
+        const baseCoinsPerSecond = 0.1;
         const totalCoinsEarned = Math.floor(duration * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
         
-        console.log('Session completed, total coins:', totalCoinsEarned);
+        console.log('Adding coins from completed session:', totalCoinsEarned);
         
         if (totalCoinsEarned > 0) {
           addCoins(totalCoinsEarned);
         }
+        
+        // Clear mining data
+        localStorage.removeItem('miningStartTime');
+        localStorage.removeItem('miningDuration');
+        localStorage.setItem('miningActive', 'false');
       }
-      
-      // Mark recovery as processed
-      sessionStorage.setItem('miningRecoveryProcessed', 'true');
-      setRecoveryProcessed(true);
     }
   }, [addCoins]);
 
+  // Update coins per second when mining speed changes
   useEffect(() => {
     localStorage.setItem('miningSpeed', miningSpeed.toString());
-    setCoinsPerSecond(0.01 * miningSpeed);
+    setCoinsPerSecond(0.1 * miningSpeed);
   }, [miningSpeed]);
 
+  // Save mining state whenever it changes
+  useEffect(() => {
+    localStorage.setItem('miningActive', miningActive.toString());
+  }, [miningActive]);
+
+  // Mining interval for active mining
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
     if (miningActive) {
-      // Update every 10 seconds
+      // Update every 5 seconds for more responsive mining
       intervalId = setInterval(() => {
         const currentTime = Date.now();
         const timeDiff = (currentTime - lastUpdateTime) / 1000; // seconds
@@ -133,7 +131,8 @@ const MiningPage = () => {
         console.log('Mining update:', {
           timeDiff,
           coinsPerSecond,
-          coinsToAdd
+          coinsToAdd,
+          remainingTime
         });
         
         if (coinsToAdd > 0) {
@@ -145,14 +144,16 @@ const MiningPage = () => {
         setRemainingTime((prevTime) => {
           const newTime = prevTime - Math.floor(timeDiff);
           if (newTime <= 0) {
+            console.log('Mining session completed');
             setMiningActive(false);
             localStorage.removeItem('miningStartTime');
             localStorage.removeItem('miningDuration');
+            localStorage.setItem('miningActive', 'false');
             return 0;
           }
           return newTime;
         });
-      }, 10000); // Update every 10 seconds
+      }, 5000); // Update every 5 seconds
     }
 
     return () => clearInterval(intervalId);
@@ -161,22 +162,25 @@ const MiningPage = () => {
   const handleStartMining = () => {
     if (miningActive) {
       // Stop mining
+      console.log('Stopping mining');
       setMiningActive(false);
       localStorage.removeItem('miningStartTime');
       localStorage.removeItem('miningDuration');
-      sessionStorage.removeItem('miningRecoveryProcessed');
+      localStorage.setItem('miningActive', 'false');
     } else {
       // Start mining
       const currentTime = Date.now();
       const duration = 28800; // 8 hours in seconds
       
+      console.log('Starting mining session');
+      
       localStorage.setItem('miningStartTime', currentTime.toString());
       localStorage.setItem('miningDuration', duration.toString());
+      localStorage.setItem('miningActive', 'true');
       
       setMiningActive(true);
       setRemainingTime(duration);
       setLastUpdateTime(currentTime);
-      sessionStorage.removeItem('miningRecoveryProcessed');
     }
   };
 
@@ -239,20 +243,22 @@ const MiningPage = () => {
           </div>
         )}
 
-        {/* Start Mining Button - Only show when not mining */}
-        {!miningActive && (
-          <div className="flex justify-center">
-            <Button
-              onClick={handleStartMining}
-              className="py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <Play className="w-5 h-5" />
-                <span>Start Mining</span>
-              </div>
-            </Button>
-          </div>
-        )}
+        {/* Mining Button */}
+        <div className="flex justify-center">
+          <Button
+            onClick={handleStartMining}
+            className={`py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 ${
+              miningActive 
+                ? 'bg-gradient-to-r from-red-500 to-orange-600 hover:from-red-600 hover:to-orange-700'
+                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
+            }`}
+          >
+            <div className="flex items-center justify-center gap-2">
+              {miningActive ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+              <span>{miningActive ? 'Stop Mining' : 'Start Mining'}</span>
+            </div>
+          </Button>
+        </div>
       </div>
     </div>
   );
