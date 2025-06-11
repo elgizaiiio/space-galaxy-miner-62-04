@@ -34,8 +34,9 @@ const CoursePage = () => {
 
       console.log('Wallet connected, preparing transaction...');
       
+      // تأكد من أن القيمة 4.5 TON
       const tonAmount = 4.5;
-      const nanoTonAmount = (tonAmount * 1e9).toString();
+      const nanoTonAmount = Math.floor(tonAmount * 1e9).toString();
       
       console.log(`Creating transaction: ${tonAmount} TON (${nanoTonAmount} nanoTON)`);
 
@@ -45,12 +46,13 @@ const CoursePage = () => {
           {
             address: TON_PAYMENT_ADDRESS,
             amount: nanoTonAmount,
-            payload: btoa('Millionaire Course Purchase - $15'),
+            payload: btoa('Millionaire Course Purchase - $15 - 4.5 TON'),
           },
         ],
       };
 
       console.log('Transaction details:', transaction);
+      console.log('Amount in nanoTON:', nanoTonAmount);
       
       const result = await tonConnectUI.sendTransaction(transaction);
       console.log('Transaction sent successfully:', result);
