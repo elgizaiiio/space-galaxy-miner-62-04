@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Play } from 'lucide-react';
 import { useSpaceCoins } from '../hooks/useSpaceCoins';
@@ -15,6 +15,11 @@ const MiningPage = () => {
   const [username, setUsername] = useState('');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const initializedRef = useRef(false);
+
+  // Memoized coin adding function to prevent unnecessary re-renders
+  const addCoinsStable = useCallback((amount: number) => {
+    addCoins(amount);
+  }, [addCoins]);
 
   // Prevent scrolling when component loads
   useEffect(() => {
@@ -48,7 +53,7 @@ const MiningPage = () => {
 
     // Restore mining state
     restoreMiningState(currentMiningSpeed);
-  }, [addCoins]);
+  }, []);
 
   const restoreMiningState = (currentMiningSpeed: number) => {
     const miningStartTime = localStorage.getItem('miningStartTime');
@@ -88,7 +93,7 @@ const MiningPage = () => {
         console.log('Adding offline mining coins:', coinsEarned);
         
         if (coinsEarned > 0) {
-          addCoins(coinsEarned);
+          addCoinsStable(coinsEarned);
         }
       } else if (elapsedTimeSeconds >= duration) {
         // Mining session completed while away
@@ -112,7 +117,7 @@ const MiningPage = () => {
     console.log('Adding coins from completed session:', totalCoinsEarned);
     
     if (totalCoinsEarned > 0) {
-      addCoins(totalCoinsEarned);
+      addCoinsStable(totalCoinsEarned);
     }
     
     resetMiningState();
@@ -124,13 +129,15 @@ const MiningPage = () => {
     localStorage.setItem('miningActive', 'false');
   };
 
-  // Handle mining interval
+  // Handle mining interval - Fixed to prevent infinite loop
   useEffect(() => {
+    // Clear any existing interval
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
 
+    // Only start interval if mining is active and there's time remaining
     if (miningActive && remainingTime > 0) {
       console.log('Starting mining interval');
       
@@ -145,24 +152,25 @@ const MiningPage = () => {
             return 0;
           }
           
-          // Add coins every second with better precision
-          const coinsToAdd = Math.round(coinsPerSecond * 100) / 100;
-          if (coinsToAdd > 0) {
-            addCoins(coinsToAdd);
-          }
-          
           return newTime;
         });
+
+        // Add coins with stable reference
+        const coinsToAdd = Math.round(coinsPerSecond * 100) / 100;
+        if (coinsToAdd > 0) {
+          addCoinsStable(coinsToAdd);
+        }
       }, 1000);
     }
 
+    // Cleanup function
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     };
-  }, [miningActive, coinsPerSecond, addCoins]);
+  }, [miningActive, remainingTime, coinsPerSecond, addCoinsStable]);
 
   // Save mining speed when it changes
   useEffect(() => {
@@ -266,7 +274,7 @@ const MiningPage = () => {
         {/* Mining Time Display - Only show when mining is active */}
         {miningActive && (
           <div className="text-center mb-4">
-            <p className="text-white text-lg">Time remaining for mining:</p>
+            <p className="text-white text-lg">Mining time remaining:</p>
             <p className="text-white text-xl font-bold">{formatTime(remainingTime)}</p>
           </div>
         )}
