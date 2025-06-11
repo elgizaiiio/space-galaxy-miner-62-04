@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -110,7 +109,7 @@ const CoursesPage = () => {
               {/* Price Section */}
               <div className="space-y-2">
                 <div className="flex items-center justify-center gap-2">
-                  <span className="text-5xl font-bold text-gray-900">$15</span>
+                  <span className="text-5xl font-bold text-gray-900">4.5 TON</span>
                   <span className="text-gray-600 text-lg">/شهر</span>
                 </div>
                 
@@ -119,7 +118,7 @@ const CoursesPage = () => {
                   <Badge className="bg-red-500 text-white font-bold px-3 py-1">
                     خصم 90%
                   </Badge>
-                  <span className="line-through text-gray-500 text-xl">$150</span>
+                  <span className="line-through text-gray-500 text-xl">45 TON</span>
                 </div>
                 
                 {/* Countdown Timer */}
