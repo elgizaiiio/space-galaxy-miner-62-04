@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -60,8 +59,19 @@ const CoursePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 p-4 pb-20">
-      <div className="max-w-md mx-auto">
+    <div 
+      className="min-h-screen p-4 pb-20 relative"
+      style={{
+        backgroundImage: `url('/lovable-uploads/8d6c6b4d-d501-4cd4-ae0c-48202028cc66.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+      
+      <div className="max-w-md mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
