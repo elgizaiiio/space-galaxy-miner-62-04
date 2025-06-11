@@ -32,7 +32,7 @@ const MiningPage = () => {
     if (initializedRef.current) return;
     initializedRef.current = true;
 
-    console.log('Initializing mining page...');
+    console.log('تهيئة صفحة التعدين...');
 
     // Load username
     const storedUsername = localStorage.getItem('username');
@@ -46,10 +46,20 @@ const MiningPage = () => {
     setMiningSpeed(currentMiningSpeed);
     setCoinsPerSecond(0.1 * currentMiningSpeed);
 
-    // Check if mining was active and restore state
+    // Restore mining state
+    restoreMiningState(currentMiningSpeed);
+  }, [addCoins]);
+
+  const restoreMiningState = (currentMiningSpeed: number) => {
     const miningStartTime = localStorage.getItem('miningStartTime');
     const miningDuration = localStorage.getItem('miningDuration');
     const wasMiningActive = localStorage.getItem('miningActive') === 'true';
+    
+    console.log('استرداد حالة التعدين:', {
+      wasMiningActive,
+      miningStartTime,
+      miningDuration
+    });
     
     if (wasMiningActive && miningStartTime && miningDuration) {
       const startTime = parseInt(miningStartTime);
@@ -58,52 +68,61 @@ const MiningPage = () => {
       const elapsedTimeMs = currentTime - startTime;
       const elapsedTimeSeconds = Math.floor(elapsedTimeMs / 1000);
       
-      console.log('Restoring mining state:', {
-        startTime: new Date(startTime),
-        currentTime: new Date(currentTime),
+      console.log('تفاصيل استرداد التعدين:', {
+        startTime: new Date(startTime).toLocaleString(),
+        currentTime: new Date(currentTime).toLocaleString(),
         elapsedTimeSeconds,
-        duration,
-        wasMiningActive
+        duration
       });
       
-      if (elapsedTimeSeconds < duration) {
+      if (elapsedTimeSeconds < duration && elapsedTimeSeconds >= 0) {
         // Mining is still active
-        const newRemainingTime = duration - elapsedTimeSeconds;
+        const newRemainingTime = Math.max(0, duration - elapsedTimeSeconds);
         setMiningActive(true);
         setRemainingTime(newRemainingTime);
         
         // Calculate coins earned while away
         const baseCoinsPerSecond = 0.1;
-        const coinsEarned = Math.floor(elapsedTimeSeconds * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
+        const coinsEarned = Math.round(elapsedTimeSeconds * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
         
-        console.log('Adding coins from offline mining:', coinsEarned);
+        console.log('إضافة عملات من التعدين دون اتصال:', coinsEarned);
         
         if (coinsEarned > 0) {
           addCoins(coinsEarned);
         }
-      } else {
+      } else if (elapsedTimeSeconds >= duration) {
         // Mining session completed while away
-        console.log('Mining session completed while away');
-        setMiningActive(false);
-        setRemainingTime(28800);
-        
-        // Add coins from completed session
-        const baseCoinsPerSecond = 0.1;
-        const totalCoinsEarned = Math.floor(duration * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
-        
-        console.log('Adding coins from completed session:', totalCoinsEarned);
-        
-        if (totalCoinsEarned > 0) {
-          addCoins(totalCoinsEarned);
-        }
-        
-        // Clear mining data
-        localStorage.removeItem('miningStartTime');
-        localStorage.removeItem('miningDuration');
-        localStorage.setItem('miningActive', 'false');
+        console.log('جلسة التعدين اكتملت أثناء عدم الاتصال');
+        completeMiningSession(duration, currentMiningSpeed);
+      } else {
+        // Invalid state, reset
+        resetMiningState();
       }
     }
-  }, [addCoins]);
+  };
+
+  const completeMiningSession = (duration: number, currentMiningSpeed: number) => {
+    setMiningActive(false);
+    setRemainingTime(28800);
+    
+    // Add coins from completed session
+    const baseCoinsPerSecond = 0.1;
+    const totalCoinsEarned = Math.round(duration * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
+    
+    console.log('إضافة عملات من الجلسة المكتملة:', totalCoinsEarned);
+    
+    if (totalCoinsEarned > 0) {
+      addCoins(totalCoinsEarned);
+    }
+    
+    resetMiningState();
+  };
+
+  const resetMiningState = () => {
+    localStorage.removeItem('miningStartTime');
+    localStorage.removeItem('miningDuration');
+    localStorage.setItem('miningActive', 'false');
+  };
 
   // Handle mining interval
   useEffect(() => {
@@ -113,30 +132,28 @@ const MiningPage = () => {
     }
 
     if (miningActive && remainingTime > 0) {
-      console.log('Starting mining interval');
+      console.log('بدء فترة التعدين');
       
       intervalRef.current = setInterval(() => {
         setRemainingTime((prevTime) => {
-          const newTime = prevTime - 1;
+          const newTime = Math.max(0, prevTime - 1);
           
           if (newTime <= 0) {
-            console.log('Mining session completed');
+            console.log('جلسة التعدين اكتملت');
             setMiningActive(false);
-            localStorage.removeItem('miningStartTime');
-            localStorage.removeItem('miningDuration');
-            localStorage.setItem('miningActive', 'false');
+            resetMiningState();
             return 0;
           }
           
-          // Add coins every second
-          const coinsToAdd = Math.floor(coinsPerSecond * 100) / 100;
+          // Add coins every second with better precision
+          const coinsToAdd = Math.round(coinsPerSecond * 100) / 100;
           if (coinsToAdd > 0) {
             addCoins(coinsToAdd);
           }
           
           return newTime;
         });
-      }, 1000); // Update every second
+      }, 1000);
     }
 
     return () => {
@@ -149,8 +166,10 @@ const MiningPage = () => {
 
   // Save mining speed when it changes
   useEffect(() => {
-    localStorage.setItem('miningSpeed', miningSpeed.toString());
-    setCoinsPerSecond(0.1 * miningSpeed);
+    if (miningSpeed > 0) {
+      localStorage.setItem('miningSpeed', miningSpeed.toString());
+      setCoinsPerSecond(0.1 * miningSpeed);
+    }
   }, [miningSpeed]);
 
   // Save mining state when it changes
@@ -159,12 +178,13 @@ const MiningPage = () => {
   }, [miningActive]);
 
   const handleStartMining = () => {
-    if (!miningActive) {
+    if (!miningActive && remainingTime > 0) {
       const currentTime = Date.now();
       const duration = 28800; // 8 hours in seconds
       
-      console.log('Starting mining session');
+      console.log('بدء جلسة التعدين');
       
+      // Save mining state
       localStorage.setItem('miningStartTime', currentTime.toString());
       localStorage.setItem('miningDuration', duration.toString());
       localStorage.setItem('miningActive', 'true');
@@ -178,8 +198,26 @@ const MiningPage = () => {
     const hours = Math.floor(timeInSeconds / 3600);
     const minutes = Math.floor((timeInSeconds % 3600) / 60);
     const seconds = timeInSeconds % 60;
-    return `${hours}h ${minutes}m ${seconds}s`;
+    return `${hours}س ${minutes}د ${seconds}ث`;
   };
+
+  // Handle page visibility change to save state
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden && miningActive) {
+        // Save current state when page becomes hidden
+        const currentTime = Date.now();
+        localStorage.setItem('miningLastSeen', currentTime.toString());
+        console.log('حفظ حالة التعدين عند إخفاء الصفحة');
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [miningActive]);
 
   return (
     <div className="fixed inset-0 overflow-hidden">
@@ -220,7 +258,7 @@ const MiningPage = () => {
         {miningActive && (
           <div className="text-center mb-2">
             <p className="text-green-400 text-sm">
-              Mining: {(coinsPerSecond * 3600).toFixed(2)} coins/hour
+              التعدين: {(coinsPerSecond * 3600).toFixed(2)} عملة/ساعة
             </p>
           </div>
         )}
@@ -228,7 +266,7 @@ const MiningPage = () => {
         {/* Mining Time Display - Only show when mining is active */}
         {miningActive && (
           <div className="text-center mb-4">
-            <p className="text-white text-lg">Mining Time Left:</p>
+            <p className="text-white text-lg">الوقت المتبقي للتعدين:</p>
             <p className="text-white text-xl font-bold">{formatTime(remainingTime)}</p>
           </div>
         )}
@@ -238,13 +276,23 @@ const MiningPage = () => {
           <div className="flex justify-center">
             <Button
               onClick={handleStartMining}
-              className="py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+              disabled={remainingTime <= 0}
+              className="py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="flex items-center justify-center gap-2">
                 <Play className="w-5 h-5" />
-                <span>Start Mining</span>
+                <span>ابدأ التعدين</span>
               </div>
             </Button>
+          </div>
+        )}
+
+        {/* Debug info (will be removed in production) */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="text-white text-xs mt-4 text-center opacity-50">
+            <p>حالة التعدين: {miningActive ? 'نشط' : 'غير نشط'}</p>
+            <p>الوقت المتبقي: {remainingTime}ث</p>
+            <p>سرعة التعدين: {miningSpeed}x</p>
           </div>
         )}
       </div>
