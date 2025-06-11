@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Users, PlayCircle, Star } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatTON } from '../utils/ton';
@@ -57,7 +57,7 @@ const CoursesPage = () => {
         }]
       };
 
-      console.log('Sending TON transaction:', transaction);
+      console.log('Sending TON transaction for 4.5 TON:', transaction);
       await tonConnectUI.sendTransaction(transaction);
       
       // Store purchase in localStorage
@@ -162,78 +162,8 @@ const CoursesPage = () => {
                 </div>
               ))}
             </div>
-
-            {/* Course Stats */}
-            <div className="grid grid-cols-3 gap-3 pt-3 border-t border-gray-200">
-              <div className="text-center">
-                <Users className="w-4 h-4 text-gray-600 mx-auto mb-1" />
-                <div className="text-xs font-bold text-gray-900">10K+</div>
-                <div className="text-xs text-gray-600">Students</div>
-              </div>
-              <div className="text-center">
-                <PlayCircle className="w-4 h-4 text-gray-600 mx-auto mb-1" />
-                <div className="text-xs font-bold text-gray-900">50+</div>
-                <div className="text-xs text-gray-600">Videos</div>
-              </div>
-              <div className="text-center">
-                <Star className="w-4 h-4 text-gray-600 mx-auto mb-1" />
-                <div className="text-xs font-bold text-gray-900">4.9</div>
-                <div className="text-xs text-gray-600">Rating</div>
-              </div>
-            </div>
           </CardContent>
         </Card>
-
-        {/* Payment Info */}
-        <Card className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 backdrop-blur border border-blue-500/30">
-          <CardContent className="p-3 text-center">
-            <div className="text-white mb-1">
-              <span className="text-xs">Transaction price: </span>
-              <span className="font-bold text-sm">{formatTON(4.5)}</span>
-            </div>
-            <p className="text-blue-200 text-xs">
-              Pay using your TON wallet
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Testimonials */}
-        <div className="space-y-2">
-          <h3 className="text-white font-bold text-base text-center">Student Reviews</h3>
-          <div className="space-y-2">
-            <Card className="bg-white/10 backdrop-blur border border-white/20">
-              <CardContent className="p-2">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="flex text-yellow-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-2.5 h-2.5 fill-current" />
-                    ))}
-                  </div>
-                  <span className="text-white text-xs font-bold">Ahmed M.</span>
-                </div>
-                <p className="text-gray-300 text-xs">
-                  "Changed my life completely! Now earning over $5000 monthly"
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-white/10 backdrop-blur border border-white/20">
-              <CardContent className="p-2">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="flex text-yellow-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-2.5 h-2.5 fill-current" />
-                    ))}
-                  </div>
-                  <span className="text-white text-xs font-bold">Sarah A.</span>
-                </div>
-                <p className="text-gray-300 text-xs">
-                  "Best course ever. Learned invaluable skills"
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
       </div>
     </div>
   );
