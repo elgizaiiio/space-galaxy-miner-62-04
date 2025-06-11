@@ -11,11 +11,12 @@ import { useSpaceCoins } from '../hooks/useSpaceCoins';
 const MiningPage = () => {
   const { spaceCoins, addCoins } = useSpaceCoins();
   const [miningSpeed, setMiningSpeed] = useState(1);
-  const [coinsPerSecond, setCoinsPerSecond] = useState(0.01); // Reduced from 0.1 to 0.01
+  const [coinsPerSecond, setCoinsPerSecond] = useState(0.01);
   const [miningActive, setMiningActive] = useState(false);
   const [remainingTime, setRemainingTime] = useState(28800); // 8 hours
   const [username, setUsername] = useState('');
   const [lastUpdateTime, setLastUpdateTime] = useState(Date.now());
+  const [recoveryProcessed, setRecoveryProcessed] = useState(false);
 
   // Prevent scrolling when component loads
   useEffect(() => {
@@ -29,6 +30,13 @@ const MiningPage = () => {
   }, []);
 
   useEffect(() => {
+    // Check if recovery was already processed in this session
+    const recoveryFlag = sessionStorage.getItem('miningRecoveryProcessed');
+    if (recoveryFlag) {
+      setRecoveryProcessed(true);
+      return;
+    }
+
     // Check if username exists in localStorage
     const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
@@ -43,9 +51,8 @@ const MiningPage = () => {
     // Check if mining was active when user left
     const miningStartTime = localStorage.getItem('miningStartTime');
     const miningDuration = localStorage.getItem('miningDuration');
-    const lastSavedCoins = localStorage.getItem('lastSavedCoins');
     
-    if (miningStartTime && miningDuration) {
+    if (miningStartTime && miningDuration && !recoveryProcessed) {
       const startTime = parseInt(miningStartTime);
       const duration = parseInt(miningDuration);
       const currentTime = Date.now();
@@ -66,10 +73,10 @@ const MiningPage = () => {
         setRemainingTime(duration - elapsedTimeSeconds);
         setLastUpdateTime(currentTime);
         
-        // Calculate coins earned while away - using more conservative calculation
+        // Calculate coins earned while away - using conservative calculation
         const currentMiningSpeed = storedMiningSpeed ? parseFloat(storedMiningSpeed) : 1;
-        const baseCoinsPerSecond = 0.01; // Same as initial coinsPerSecond
-        const coinsEarned = Math.floor(elapsedTimeSeconds * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100; // Round to 2 decimal places
+        const baseCoinsPerSecond = 0.01;
+        const coinsEarned = Math.floor(elapsedTimeSeconds * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
         
         console.log('Coins calculation:', {
           elapsedTimeSeconds,
@@ -85,11 +92,10 @@ const MiningPage = () => {
         // Mining session completed while away
         localStorage.removeItem('miningStartTime');
         localStorage.removeItem('miningDuration');
-        localStorage.removeItem('lastSavedCoins');
         setMiningActive(false);
         setRemainingTime(28800);
         
-        // Add coins from completed session - using conservative calculation
+        // Add coins from completed session
         const currentMiningSpeed = storedMiningSpeed ? parseFloat(storedMiningSpeed) : 1;
         const baseCoinsPerSecond = 0.01;
         const totalCoinsEarned = Math.floor(duration * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
@@ -100,25 +106,29 @@ const MiningPage = () => {
           addCoins(totalCoinsEarned);
         }
       }
+      
+      // Mark recovery as processed
+      sessionStorage.setItem('miningRecoveryProcessed', 'true');
+      setRecoveryProcessed(true);
     }
   }, [addCoins]);
 
   useEffect(() => {
     localStorage.setItem('miningSpeed', miningSpeed.toString());
-    setCoinsPerSecond(0.01 * miningSpeed); // Updated base rate
+    setCoinsPerSecond(0.01 * miningSpeed);
   }, [miningSpeed]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
     if (miningActive) {
-      // Update every 10 seconds instead of every second to reduce frequency
+      // Update every 10 seconds
       intervalId = setInterval(() => {
         const currentTime = Date.now();
         const timeDiff = (currentTime - lastUpdateTime) / 1000; // seconds
         
         // Add coins based on actual time passed
-        const coinsToAdd = Math.floor((coinsPerSecond * timeDiff) * 100) / 100; // Round to 2 decimal places
+        const coinsToAdd = Math.floor((coinsPerSecond * timeDiff) * 100) / 100;
         
         console.log('Mining update:', {
           timeDiff,
@@ -138,12 +148,11 @@ const MiningPage = () => {
             setMiningActive(false);
             localStorage.removeItem('miningStartTime');
             localStorage.removeItem('miningDuration');
-            localStorage.removeItem('lastSavedCoins');
             return 0;
           }
           return newTime;
         });
-      }, 10000); // Update every 10 seconds instead of 1 second
+      }, 10000); // Update every 10 seconds
     }
 
     return () => clearInterval(intervalId);
@@ -155,7 +164,7 @@ const MiningPage = () => {
       setMiningActive(false);
       localStorage.removeItem('miningStartTime');
       localStorage.removeItem('miningDuration');
-      localStorage.removeItem('lastSavedCoins');
+      sessionStorage.removeItem('miningRecoveryProcessed');
     } else {
       // Start mining
       const currentTime = Date.now();
@@ -163,11 +172,11 @@ const MiningPage = () => {
       
       localStorage.setItem('miningStartTime', currentTime.toString());
       localStorage.setItem('miningDuration', duration.toString());
-      localStorage.setItem('lastSavedCoins', spaceCoins.toString());
       
       setMiningActive(true);
       setRemainingTime(duration);
       setLastUpdateTime(currentTime);
+      sessionStorage.removeItem('miningRecoveryProcessed');
     }
   };
 
