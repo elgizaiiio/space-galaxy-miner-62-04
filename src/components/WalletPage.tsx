@@ -1,16 +1,17 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Send, History, LogIn, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { tonService, type TONTransaction } from '../services/tonService';
+import { useSpaceCoins } from '../hooks/useSpaceCoins';
 import SendModal from './SendModal';
 import TransactionHistoryModal from './TransactionHistoryModal';
 
 const WalletPage = () => {
   const { toast } = useToast();
   const [tonConnectUI] = useTonConnectUI();
+  const { spaceCoins } = useSpaceCoins();
   const [spaceBalance] = useState(15420.5);
   const [tonBalance, setTonBalance] = useState(0);
   const [transactions, setTransactions] = useState<TONTransaction[]>([]);
@@ -19,6 +20,9 @@ const WalletPage = () => {
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
   const [showSendModal, setShowSendModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+
+  // SPACE coin price in USD
+  const spaceCoinPrice = 0.001;
 
   // Disable scrolling when component mounts
   useEffect(() => {
@@ -115,8 +119,10 @@ const WalletPage = () => {
 
   const isWalletConnected = !!tonConnectUI.wallet;
 
-  // Calculate total balance in USD (using TON balance for now)
-  const totalBalanceUSD = tonBalance * 5.2; // Assuming 1 TON = $5.2 (you can update this with real-time price)
+  // Calculate total balance in USD
+  const spaceBalanceUSD = spaceCoins * spaceCoinPrice;
+  const tonBalanceUSD = tonBalance * 5.2; // Assuming 1 TON = $5.2
+  const totalBalanceUSD = spaceBalanceUSD + tonBalanceUSD;
 
   // If no wallet connected, show connection screen
   if (!isWalletConnected) {
@@ -233,7 +239,7 @@ const WalletPage = () => {
                 <div className="text-gray-400 text-xs">{tonBalance.toFixed(1)} TON</div>
               </div>
             </div>
-            <div className="text-white font-medium text-xs">${(tonBalance * 5.2).toFixed(2)}</div>
+            <div className="text-white font-medium text-xs">${tonBalanceUSD.toFixed(2)}</div>
           </div>
 
           {/* SPACE */}
@@ -246,10 +252,10 @@ const WalletPage = () => {
               />
               <div>
                 <div className="text-white font-medium text-xs">SPACE</div>
-                <div className="text-gray-400 text-xs">{spaceBalance.toLocaleString()} $SPACE</div>
+                <div className="text-gray-400 text-xs">{Math.floor(spaceCoins).toLocaleString()} $SPACE</div>
               </div>
             </div>
-            <div className="text-white font-medium text-xs">$0</div>
+            <div className="text-white font-medium text-xs">${spaceBalanceUSD.toFixed(3)}</div>
           </div>
         </div>
       </div>

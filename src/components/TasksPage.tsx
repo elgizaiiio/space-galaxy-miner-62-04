@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from "@/hooks/use-toast";
 import { useTaskManagement } from '@/hooks/useTaskManagement';
 import { useUserData } from '@/hooks/useUserData';
+import { useSpaceCoins } from '../hooks/useSpaceCoins';
 import { tonService } from '@/services/tonService';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { TON_PAYMENT_ADDRESS, sendTONPayment, createTonConnector } from '@/utils/ton';
@@ -33,6 +34,7 @@ const TasksPage = () => {
   const [isTaskInProgress, setIsTaskInProgress] = useState<{ [key: string]: boolean }>({});
   const [tonConnectUI] = useTonConnectUI();
   const { toast } = useToast();
+  const { addCoins } = useSpaceCoins();
   
   // Get real tasks from database
   const { tasks, isLoading: tasksLoading, checkTaskCompletion } = useTaskManagement();
@@ -170,6 +172,9 @@ const TasksPage = () => {
         try {
           console.log('Completing task in database');
           await completeTask(task.id);
+          
+          // Add coins to the shared service
+          addCoins(task.reward_amount || 0);
           
           toast({
             title: getTranslation('taskCompleted'),
