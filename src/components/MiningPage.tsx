@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -5,10 +6,9 @@ import { Button } from '@/components/ui/button';
 import { 
   Play,
 } from 'lucide-react';
-import { useSpaceCoins } from '../hooks/useSpaceCoins';
 
 const MiningPage = () => {
-  const { spaceCoins, addCoins } = useSpaceCoins();
+  const [spaceCoins, setSpaceCoins] = useState(0);
   const [miningSpeed, setMiningSpeed] = useState(1);
   const [coinsPerSecond, setCoinsPerSecond] = useState(0.1);
   const [miningActive, setMiningActive] = useState(false);
@@ -33,6 +33,11 @@ const MiningPage = () => {
       setUsername(storedUsername);
     }
 
+    const storedCoins = localStorage.getItem('spaceCoins');
+    if (storedCoins) {
+      setSpaceCoins(parseFloat(storedCoins));
+    }
+
     const storedMiningSpeed = localStorage.getItem('miningSpeed');
     if (storedMiningSpeed) {
       setMiningSpeed(parseFloat(storedMiningSpeed));
@@ -55,7 +60,8 @@ const MiningPage = () => {
         
         // Calculate coins earned while away
         const coinsEarned = elapsedTime * (0.1 * (storedMiningSpeed ? parseFloat(storedMiningSpeed) : 1));
-        addCoins(coinsEarned);
+        const previousCoins = storedCoins ? parseFloat(storedCoins) : 0;
+        setSpaceCoins(previousCoins + coinsEarned);
       } else {
         // Mining session completed while away
         localStorage.removeItem('miningStartTime');
@@ -65,10 +71,15 @@ const MiningPage = () => {
         
         // Add all coins from completed session
         const totalCoinsEarned = duration * (0.1 * (storedMiningSpeed ? parseFloat(storedMiningSpeed) : 1));
-        addCoins(totalCoinsEarned);
+        const previousCoins = storedCoins ? parseFloat(storedCoins) : 0;
+        setSpaceCoins(previousCoins + totalCoinsEarned);
       }
     }
-  }, [addCoins]);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('spaceCoins', spaceCoins.toString());
+  }, [spaceCoins]);
 
   useEffect(() => {
     localStorage.setItem('miningSpeed', miningSpeed.toString());
@@ -80,7 +91,11 @@ const MiningPage = () => {
 
     if (miningActive) {
       intervalId = setInterval(() => {
-        addCoins(coinsPerSecond);
+        setSpaceCoins((prevCoins) => {
+          const newCoins = prevCoins + coinsPerSecond;
+          localStorage.setItem('spaceCoins', newCoins.toString());
+          return newCoins;
+        });
         
         setRemainingTime((prevTime) => {
           const newTime = prevTime - 1;
@@ -96,7 +111,7 @@ const MiningPage = () => {
     }
 
     return () => clearInterval(intervalId);
-  }, [miningActive, coinsPerSecond, addCoins]);
+  }, [miningActive, coinsPerSecond]);
 
   const handleStartMining = () => {
     if (miningActive) {
