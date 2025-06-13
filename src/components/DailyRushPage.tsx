@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,7 +10,6 @@ import { dailyRushService } from '../services/dailyRushService';
 import { TON_PAYMENT_ADDRESS } from '../utils/ton';
 import type { DailyRushEvent, UserDailyProgress, SurpriseBonus } from '../types/dailyRush';
 import { Crown, Clock, Gift, Zap, Star, Trophy, Users, Info, Sparkles } from 'lucide-react';
-
 const DailyRushPage = () => {
   const [event, setEvent] = useState<DailyRushEvent>(dailyRushService.getCurrentEvent());
   const [userProgress, setUserProgress] = useState<UserDailyProgress>(dailyRushService.getUserProgress('current_user'));
@@ -45,7 +43,6 @@ const DailyRushPage = () => {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
-
   const handleClaimTicket = async (ticketNumber: number) => {
     if (isProcessing) return;
     const ticket = event.tickets.find(t => t.number === ticketNumber);
@@ -121,14 +118,11 @@ const DailyRushPage = () => {
       setIsProcessing(false);
     }
   };
-
   const renderTicketGrid = () => {
     const startIndex = Math.max(0, userProgress.currentTicket - 8);
     const endIndex = Math.min(event.tickets.length, userProgress.currentTicket + 7);
     const visibleTickets = event.tickets.slice(startIndex, endIndex);
-    
-    return (
-      <div className="space-y-6">
+    return <div className="space-y-6">
         {/* Progress Overview */}
         <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl p-4 border border-blue-400/30">
           <div className="flex items-center justify-between mb-3">
@@ -143,10 +137,7 @@ const DailyRushPage = () => {
           </div>
           
           <div className="relative mb-3">
-            <Progress 
-              value={dailyRushService.getProgressPercentage()} 
-              className="h-3 bg-gray-700/50 rounded-full overflow-hidden"
-            />
+            <Progress value={dailyRushService.getProgressPercentage()} className="h-3 bg-gray-700/50 rounded-full overflow-hidden" />
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-20 animate-pulse"></div>
           </div>
           
@@ -166,130 +157,90 @@ const DailyRushPage = () => {
         {/* Ticket Grid */}
         <div className="grid grid-cols-4 gap-3">
           {visibleTickets.map((ticket, index) => {
-            const isClaimed = ticket.claimed;
-            const isUnlocked = ticket.unlocked;
-            const isCurrent = ticket.number === userProgress.currentTicket;
-            const isSpecial = [25, 40, 50].includes(ticket.number);
-            
-            return (
-              <motion.div
-                key={ticket.number}
-                initial={{ scale: 0.8, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className={`relative group ${
-                  isClaimed ? 'opacity-70' : 
-                  isUnlocked ? 'opacity-100' : 'opacity-40'
-                }`}
-              >
-                <motion.div
-                  whileHover={isUnlocked && !isClaimed ? { scale: 1.05, y: -2 } : {}}
-                  whileTap={isUnlocked && !isClaimed ? { scale: 0.95 } : {}}
-                  className={`relative aspect-square cursor-pointer transition-all duration-300 ${
-                    isCurrent ? 'ring-2 ring-yellow-400 ring-offset-2 ring-offset-black' : ''
-                  }`}
-                  onClick={() => isUnlocked && !isClaimed && handleClaimTicket(ticket.number)}
-                >
-                  <Card className={`h-full w-full relative overflow-hidden transition-all duration-300 ${
-                    isClaimed 
-                      ? 'bg-gradient-to-br from-green-600/30 to-green-800/30 border-green-400/50' 
-                      : isUnlocked 
-                        ? isSpecial
-                          ? 'bg-gradient-to-br from-yellow-500/30 to-orange-600/30 border-yellow-400/50 shadow-lg shadow-yellow-400/20'
-                          : `bg-gradient-to-br ${theme.primaryColor} border-white/30 hover:shadow-lg hover:shadow-blue-400/20`
-                        : 'bg-gradient-to-br from-gray-600/30 to-gray-800/30 border-gray-500/50'
-                  }`}>
+          const isClaimed = ticket.claimed;
+          const isUnlocked = ticket.unlocked;
+          const isCurrent = ticket.number === userProgress.currentTicket;
+          const isSpecial = [25, 40, 50].includes(ticket.number);
+          return <motion.div key={ticket.number} initial={{
+            scale: 0.8,
+            opacity: 0,
+            y: 20
+          }} animate={{
+            scale: 1,
+            opacity: 1,
+            y: 0
+          }} transition={{
+            delay: index * 0.05
+          }} className={`relative group ${isClaimed ? 'opacity-70' : isUnlocked ? 'opacity-100' : 'opacity-40'}`}>
+                <motion.div whileHover={isUnlocked && !isClaimed ? {
+              scale: 1.05,
+              y: -2
+            } : {}} whileTap={isUnlocked && !isClaimed ? {
+              scale: 0.95
+            } : {}} className={`relative aspect-square cursor-pointer transition-all duration-300 ${isCurrent ? 'ring-2 ring-yellow-400 ring-offset-2 ring-offset-black' : ''}`} onClick={() => isUnlocked && !isClaimed && handleClaimTicket(ticket.number)}>
+                  <Card className={`h-full w-full relative overflow-hidden transition-all duration-300 ${isClaimed ? 'bg-gradient-to-br from-green-600/30 to-green-800/30 border-green-400/50' : isUnlocked ? isSpecial ? 'bg-gradient-to-br from-yellow-500/30 to-orange-600/30 border-yellow-400/50 shadow-lg shadow-yellow-400/20' : `bg-gradient-to-br ${theme.primaryColor} border-white/30 hover:shadow-lg hover:shadow-blue-400/20` : 'bg-gradient-to-br from-gray-600/30 to-gray-800/30 border-gray-500/50'}`}>
                     <CardContent className="p-2 h-full flex flex-col items-center justify-center relative">
                       {/* Background Effects */}
-                      {isSpecial && !isClaimed && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 to-orange-500/10 animate-pulse"></div>
-                      )}
+                      {isSpecial && !isClaimed && <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 to-orange-500/10 animate-pulse"></div>}
                       
                       {/* Ticket Content */}
-                      {isClaimed ? (
-                        <motion.div 
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="text-3xl"
-                        >
+                      {isClaimed ? <motion.div initial={{
+                    scale: 0
+                  }} animate={{
+                    scale: 1
+                  }} className="text-3xl">
                           ✅
-                        </motion.div>
-                      ) : (
-                        <div className="relative">
-                          <img 
-                            src="/lovable-uploads/eaa0be57-0436-47a4-9d76-025c98468ebc.png" 
-                            alt="Space Ticket"
-                            className={`w-full h-full object-contain transition-all duration-300 ${
-                              isUnlocked ? 'brightness-100' : 'brightness-50'
-                            }`}
-                          />
-                          {isSpecial && isUnlocked && (
-                            <motion.div 
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                              className="absolute -top-1 -right-1"
-                            >
+                        </motion.div> : <div className="relative">
+                          <img src="/lovable-uploads/eaa0be57-0436-47a4-9d76-025c98468ebc.png" alt="Space Ticket" className={`w-full h-full object-contain transition-all duration-300 ${isUnlocked ? 'brightness-100' : 'brightness-50'}`} />
+                          {isSpecial && isUnlocked && <motion.div animate={{
+                      rotate: 360
+                    }} transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "linear"
+                    }} className="absolute -top-1 -right-1">
                               <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                            </motion.div>
-                          )}
-                        </div>
-                      )}
+                            </motion.div>}
+                        </div>}
 
                       {/* Ticket Number */}
-                      <div className={`absolute bottom-0 left-0 right-0 text-xs font-bold text-center py-1 ${
-                        isClaimed 
-                          ? 'bg-green-600/80 text-white' 
-                          : isSpecial && isUnlocked
-                            ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-black'
-                            : 'bg-black/70 text-white'
-                      }`}>
+                      <div className={`absolute bottom-0 left-0 right-0 text-xs font-bold text-center py-1 ${isClaimed ? 'bg-green-600/80 text-white' : isSpecial && isUnlocked ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-black' : 'bg-black/70 text-white'}`}>
                         #{ticket.number}
-                        {isSpecial && (
-                          <div className="text-xs opacity-75">MEGA</div>
-                        )}
+                        {isSpecial && <div className="text-xs opacity-75">MEGA</div>}
                       </div>
 
                       {/* Cost Badge */}
-                      {ticket.type === 'paid' && !isClaimed && isUnlocked && (
-                        <motion.div 
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="absolute top-0 right-0 bg-orange-500 text-white text-xs px-2 py-1 rounded-bl-lg font-bold shadow-lg"
-                        >
+                      {ticket.type === 'paid' && !isClaimed && isUnlocked && <motion.div initial={{
+                    scale: 0
+                  }} animate={{
+                    scale: 1
+                  }} className="absolute top-0 right-0 bg-orange-500 text-white text-xs px-2 py-1 rounded-bl-lg font-bold shadow-lg">
                           {ticket.cost} TON
-                        </motion.div>
-                      )}
+                        </motion.div>}
 
                       {/* Reward Preview on Hover */}
-                      {isUnlocked && !isClaimed && (
-                        <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      {isUnlocked && !isClaimed && <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                           <div className="text-center">
                             <div className="text-yellow-400 text-xs font-bold">
                               +{ticket.reward.toLocaleString()}
                             </div>
                             <div className="text-white text-xs">$SPACE</div>
                           </div>
-                        </div>
-                      )}
+                        </div>}
                     </CardContent>
                   </Card>
                 </motion.div>
-              </motion.div>
-            );
-          })}
+              </motion.div>;
+        })}
         </div>
 
         {/* Navigation Hint */}
-        {event.tickets.length > 15 && (
-          <div className="text-center text-gray-400 text-sm">
+        {event.tickets.length > 15 && <div className="text-center text-gray-400 text-sm">
             <Info className="w-4 h-4 inline mr-1" />
             Showing current section • Complete tickets to unlock more
-          </div>
-        )}
-      </div>
-    );
+          </div>}
+      </div>;
   };
-
   const SurpriseBonusModal = () => <AnimatePresence>
       {showSurpriseBonus && <motion.div initial={{
       opacity: 0
@@ -324,7 +275,6 @@ const DailyRushPage = () => {
           </motion.div>
         </motion.div>}
     </AnimatePresence>;
-
   return <div className="min-h-screen p-4 pb-24 relative overflow-hidden" style={{
     backgroundImage: `linear-gradient(135deg, ${theme.backgroundGradient.replace('from-', '').replace('via-', ', ').replace('to-', ', ')})`
   }}>
@@ -373,28 +323,21 @@ const DailyRushPage = () => {
 
         {/* Current Ticket Action */}
         <Card className="mb-6 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-400/30">
-          <CardContent className="p-4">
+          <CardContent className="p-4 py-0 px-[74px]">
             {(() => {
             const currentTicket = event.tickets.find(t => t.number === userProgress.currentTicket);
             if (!currentTicket) return null;
             return <div className="text-center">
-                  <div className="mb-4 flex justify-center">
-                    <motion.div
-                      animate={{ 
-                        scale: [1, 1.05, 1],
-                        rotate: [0, 2, -2, 0]
-                      }}
-                      transition={{ 
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    >
-                      <img 
-                        src="/lovable-uploads/eaa0be57-0436-47a4-9d76-025c98468ebc.png" 
-                        alt="Space Ticket"
-                        className="w-20 h-20 object-contain"
-                      />
+                  <div className="mb-4 flex justify-center py-0">
+                    <motion.div animate={{
+                  scale: [1, 1.05, 1],
+                  rotate: [0, 2, -2, 0]
+                }} transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}>
+                      <img src="/lovable-uploads/eaa0be57-0436-47a4-9d76-025c98468ebc.png" alt="Space Ticket" className="w-20 h-20 object-contain" />
                     </motion.div>
                   </div>
                   <h3 className="text-white text-lg font-bold mb-2">
@@ -423,5 +366,4 @@ const DailyRushPage = () => {
       <SurpriseBonusModal />
     </div>;
 };
-
 export default DailyRushPage;
