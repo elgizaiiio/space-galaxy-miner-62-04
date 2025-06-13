@@ -124,15 +124,15 @@ const DailyRushPage = () => {
     const visibleTickets = event.tickets.slice(startIndex, endIndex);
     return <div className="space-y-6">
         {/* Progress Overview */}
-        <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl p-4 border border-blue-400/30">
+        <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl p-4 border border-blue-400/30 py-0 px-[8px]">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Trophy className="w-5 h-5 text-yellow-400" />
               <span className="text-white font-semibold">Collection Progress</span>
             </div>
-            <div className="flex items-center gap-1 text-gray-300 text-sm">
+            <div className="flex items-center gap-1 text-gray-300 text-sm py-0 px-[3px] mx-0">
               <Sparkles className="w-4 h-4" />
-              <span>{userProgress.ticketsClaimed.length}/50 Collected</span>
+              <span className="text-sm font-bold">{userProgress.ticketsClaimed.length}/50 Collected</span>
             </div>
           </div>
           
