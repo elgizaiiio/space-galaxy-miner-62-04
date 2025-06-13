@@ -138,7 +138,7 @@ const DailyRushPage = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-20 animate-pulse"></div>
           </div>
           
-          <p className="text-center text-yellow-400 text-sm font-medium">
+          <p className="text-center text-yellow-400 font-medium text-xs">
             {dailyRushService.getMotivationalMessage()}
           </p>
         </div>
