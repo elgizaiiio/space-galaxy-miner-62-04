@@ -13,9 +13,10 @@ import ReferralPage from './components/ReferralPage';
 import StorePage from './components/StorePage';
 import CoursesPage from './components/CoursesPage';
 import TaskAdminPage from './components/TaskAdminPage';
+import DailyRushPage from './components/DailyRushPage';
 import UsernameModal from './components/UsernameModal';
 import { Button } from '@/components/ui/button';
-import { Home, CheckSquare, Wallet, Users, Settings, ShoppingBag, GraduationCap } from 'lucide-react';
+import { Home, CheckSquare, Wallet, Users, Settings, ShoppingBag, GraduationCap, Crown } from 'lucide-react';
 import { getTranslation } from './utils/language';
 
 const queryClient = new QueryClient();
