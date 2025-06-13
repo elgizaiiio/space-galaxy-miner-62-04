@@ -20,7 +20,7 @@ import { Home, CheckSquare, Wallet, Users, Settings, ShoppingBag, GraduationCap,
 import { getTranslation } from './utils/language';
 
 const queryClient = new QueryClient();
-type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'store' | 'courses' | 'admin';
+type Page = 'mining' | 'tasks' | 'wallet' | 'referral' | 'store' | 'courses' | 'admin' | 'daily-rush';
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -126,6 +126,10 @@ const App = () => {
     label: getTranslation('tasks'),
     icon: CheckSquare
   }, {
+    id: 'daily-rush',
+    label: 'Daily Rush',
+    icon: Crown
+  }, {
     id: 'courses',
     label: 'Courses',
     icon: GraduationCap
@@ -157,6 +161,8 @@ const App = () => {
         return <MiningPage />;
       case 'tasks':
         return <TasksPage />;
+      case 'daily-rush':
+        return <DailyRushPage />;
       case 'courses':
         return <CoursesPage />;
       case 'store':
@@ -207,7 +213,7 @@ const App = () => {
 
             <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/20 p-2 z-50">
               <div className="max-w-md mx-auto">
-                <div className={`grid gap-1 ${showAdminAccess ? 'grid-cols-7' : 'grid-cols-6'}`}>
+                <div className={`grid gap-1 ${showAdminAccess ? 'grid-cols-8' : 'grid-cols-7'}`}>
                   {navigationItems.map(item => {
                     const Icon = item.icon;
                     return (
