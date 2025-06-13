@@ -246,38 +246,7 @@ const DailyRushPage = () => {
       </div>;
   };
   const SurpriseBonusModal = () => <AnimatePresence>
-      {showSurpriseBonus && <motion.div initial={{
-      opacity: 0
-    }} animate={{
-      opacity: 1
-    }} exit={{
-      opacity: 0
-    }} className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowSurpriseBonus(null)}>
-          <motion.div initial={{
-        scale: 0.5,
-        rotate: -10
-      }} animate={{
-        scale: 1,
-        rotate: 0
-      }} exit={{
-        scale: 0.5,
-        rotate: 10
-      }} className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl" onClick={e => e.stopPropagation()}>
-            <motion.div animate={{
-          rotate: [0, 10, -10, 0]
-        }} transition={{
-          duration: 0.5,
-          repeat: 2
-        }} className="text-6xl mb-4">
-              {showSurpriseBonus.emoji}
-            </motion.div>
-            <h3 className="text-2xl font-bold text-black mb-2">Surprise Bonus!</h3>
-            <p className="text-black/80 mb-4">{showSurpriseBonus.message}</p>
-            <Button onClick={() => setShowSurpriseBonus(null)} className="bg-black text-white hover:bg-gray-800">
-              Awesome!
-            </Button>
-          </motion.div>
-        </motion.div>}
+      {showSurpriseBonus}
     </AnimatePresence>;
   return <div className="min-h-screen p-3 pb-20 relative overflow-hidden" style={{
     backgroundImage: `linear-gradient(135deg, ${theme.backgroundGradient.replace('from-', '').replace('via-', ', ').replace('to-', ', ')})`
