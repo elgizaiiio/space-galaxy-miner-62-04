@@ -287,15 +287,7 @@ const DailyRushPage = () => {
       <div className="max-w-sm mx-auto relative z-10">
         {/* Enhanced Mobile Header */}
         <div className="text-center mb-4">
-          <motion.h1 initial={{
-          y: -20,
-          opacity: 0
-        }} animate={{
-          y: 0,
-          opacity: 1
-        }} className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent mb-1">
-            {theme.emoji} Daily Rush {theme.emoji}
-          </motion.h1>
+          
           <p className="text-gray-300 text-xs">Collect tickets • Win prizes • Earn TON!</p>
         </div>
 
@@ -382,24 +374,7 @@ const DailyRushPage = () => {
         </Card>
 
         {/* Mobile-Optimized Bottom Navigation */}
-        <div className="fixed bottom-16 left-0 right-0 bg-gradient-to-r from-purple-900/90 to-blue-900/90 backdrop-blur-lg border-t border-purple-400/30 p-2 z-40">
-          <div className="max-w-sm mx-auto">
-            <div className="grid grid-cols-3 gap-2">
-              <Button variant="ghost" onClick={() => setShowLeaderboard(!showLeaderboard)} className="flex flex-col items-center gap-1 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/10">
-                <Trophy className="w-4 h-4" />
-                <span>Leaderboard</span>
-              </Button>
-              <Button variant="ghost" onClick={() => setShowRules(!showRules)} className="flex flex-col items-center gap-1 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/10">
-                <Info className="w-4 h-4" />
-                <span>Rules</span>
-              </Button>
-              <Button variant="ghost" className="flex flex-col items-center gap-1 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/10">
-                <Users className="w-4 h-4" />
-                <span>Invite</span>
-              </Button>
-            </div>
-          </div>
-        </div>
+        
       </div>
 
       <SurpriseBonusModal />
