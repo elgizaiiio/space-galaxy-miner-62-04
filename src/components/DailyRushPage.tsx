@@ -10,7 +10,6 @@ import { dailyRushService } from '../services/dailyRushService';
 import { TON_PAYMENT_ADDRESS } from '../utils/ton';
 import type { DailyRushEvent, UserDailyProgress, SurpriseBonus } from '../types/dailyRush';
 import { Crown, Clock, Gift, Zap, Star, Trophy, Users, Info, Sparkles, Coins, Ticket } from 'lucide-react';
-
 const DailyRushPage = () => {
   const [event, setEvent] = useState<DailyRushEvent>(dailyRushService.getCurrentEvent());
   const [userProgress, setUserProgress] = useState<UserDailyProgress>(dailyRushService.getUserProgress('current_user'));
@@ -123,9 +122,7 @@ const DailyRushPage = () => {
     const startIndex = Math.max(0, userProgress.currentTicket - 6);
     const endIndex = Math.min(event.tickets.length, userProgress.currentTicket + 9);
     const visibleTickets = event.tickets.slice(startIndex, endIndex);
-    
-    return (
-      <div className="space-y-4">
+    return <div className="space-y-4">
         {/* Enhanced Progress Overview */}
         <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 rounded-xl p-4 border border-purple-500/30 backdrop-blur-sm">
           <div className="flex items-center justify-between mb-3">
@@ -139,10 +136,7 @@ const DailyRushPage = () => {
           </div>
           
           <div className="relative mb-3">
-            <Progress 
-              value={dailyRushService.getProgressPercentage()} 
-              className="h-2 bg-gray-800/50 rounded-full overflow-hidden"
-            />
+            <Progress value={dailyRushService.getProgressPercentage()} className="h-2 bg-gray-800/50 rounded-full overflow-hidden" />
             <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full opacity-30 animate-pulse"></div>
           </div>
           
@@ -165,100 +159,69 @@ const DailyRushPage = () => {
         {/* Mobile-Optimized Ticket Grid - 3 columns for better mobile view */}
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {visibleTickets.map((ticket, index) => {
-            const isClaimed = ticket.claimed;
-            const isUnlocked = ticket.unlocked;
-            const isCurrent = ticket.number === userProgress.currentTicket;
-            const isSpecial = [25, 40, 50].includes(ticket.number);
-            
-            return (
-              <motion.div
-                key={ticket.number}
-                initial={{ scale: 0.8, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.03 }}
-                className={`relative group ${
-                  isClaimed ? 'opacity-80' : isUnlocked ? 'opacity-100' : 'opacity-50'
-                }`}
-              >
-                <motion.div
-                  whileHover={isUnlocked && !isClaimed ? { scale: 1.02, y: -1 } : {}}
-                  whileTap={isUnlocked && !isClaimed ? { scale: 0.98 } : {}}
-                  className={`relative aspect-square cursor-pointer transition-all duration-300 ${
-                    isCurrent ? 'ring-2 ring-yellow-400 ring-offset-1 ring-offset-black' : ''
-                  }`}
-                  onClick={() => isUnlocked && !isClaimed && handleClaimTicket(ticket.number)}
-                >
-                  <Card className={`h-full w-full relative overflow-hidden transition-all duration-300 ${
-                    isClaimed
-                      ? 'bg-gradient-to-br from-green-600/40 to-green-800/40 border-green-400/60'
-                      : isUnlocked
-                      ? isSpecial
-                        ? 'bg-gradient-to-br from-yellow-500/40 to-orange-600/40 border-yellow-400/60 shadow-lg shadow-yellow-400/20'
-                        : 'bg-gradient-to-br from-blue-600/40 to-purple-600/40 border-blue-400/60'
-                      : 'bg-gradient-to-br from-gray-700/40 to-gray-900/40 border-gray-500/40'
-                  }`}>
+          const isClaimed = ticket.claimed;
+          const isUnlocked = ticket.unlocked;
+          const isCurrent = ticket.number === userProgress.currentTicket;
+          const isSpecial = [25, 40, 50].includes(ticket.number);
+          return <motion.div key={ticket.number} initial={{
+            scale: 0.8,
+            opacity: 0,
+            y: 20
+          }} animate={{
+            scale: 1,
+            opacity: 1,
+            y: 0
+          }} transition={{
+            delay: index * 0.03
+          }} className={`relative group ${isClaimed ? 'opacity-80' : isUnlocked ? 'opacity-100' : 'opacity-50'}`}>
+                <motion.div whileHover={isUnlocked && !isClaimed ? {
+              scale: 1.02,
+              y: -1
+            } : {}} whileTap={isUnlocked && !isClaimed ? {
+              scale: 0.98
+            } : {}} className={`relative aspect-square cursor-pointer transition-all duration-300 ${isCurrent ? 'ring-2 ring-yellow-400 ring-offset-1 ring-offset-black' : ''}`} onClick={() => isUnlocked && !isClaimed && handleClaimTicket(ticket.number)}>
+                  <Card className={`h-full w-full relative overflow-hidden transition-all duration-300 ${isClaimed ? 'bg-gradient-to-br from-green-600/40 to-green-800/40 border-green-400/60' : isUnlocked ? isSpecial ? 'bg-gradient-to-br from-yellow-500/40 to-orange-600/40 border-yellow-400/60 shadow-lg shadow-yellow-400/20' : 'bg-gradient-to-br from-blue-600/40 to-purple-600/40 border-blue-400/60' : 'bg-gradient-to-br from-gray-700/40 to-gray-900/40 border-gray-500/40'}`}>
                     <CardContent className="p-2 h-full flex flex-col items-center justify-center relative">
                       {/* Background Effects */}
-                      {isSpecial && !isClaimed && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 to-orange-500/20 animate-pulse"></div>
-                      )}
+                      {isSpecial && !isClaimed && <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 to-orange-500/20 animate-pulse"></div>}
                       
                       {/* Ticket Content */}
-                      {isClaimed ? (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="text-2xl"
-                        >
+                      {isClaimed ? <motion.div initial={{
+                    scale: 0
+                  }} animate={{
+                    scale: 1
+                  }} className="text-2xl">
                           ✅
-                        </motion.div>
-                      ) : (
-                        <div className="relative w-full h-full flex items-center justify-center">
-                          <img
-                            src="/lovable-uploads/eaa0be57-0436-47a4-9d76-025c98468ebc.png"
-                            alt="Space Ticket"
-                            className={`w-8 h-8 sm:w-10 sm:h-10 object-contain transition-all duration-300 ${
-                              isUnlocked ? 'brightness-100' : 'brightness-50'
-                            }`}
-                          />
-                          {isSpecial && isUnlocked && (
-                            <motion.div
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                              className="absolute -top-1 -right-1"
-                            >
+                        </motion.div> : <div className="relative w-full h-full flex items-center justify-center">
+                          <img src="/lovable-uploads/eaa0be57-0436-47a4-9d76-025c98468ebc.png" alt="Space Ticket" className="object-scale-down" />
+                          {isSpecial && isUnlocked && <motion.div animate={{
+                      rotate: 360
+                    }} transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "linear"
+                    }} className="absolute -top-1 -right-1">
                               <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                            </motion.div>
-                          )}
-                        </div>
-                      )}
+                            </motion.div>}
+                        </div>}
 
                       {/* Ticket Number */}
-                      <div className={`absolute bottom-0 left-0 right-0 text-xs font-bold text-center py-0.5 ${
-                        isClaimed
-                          ? 'bg-green-600/90 text-white'
-                          : isSpecial && isUnlocked
-                          ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-black'
-                          : 'bg-black/80 text-white'
-                      }`}>
+                      <div className={`absolute bottom-0 left-0 right-0 text-xs font-bold text-center py-0.5 ${isClaimed ? 'bg-green-600/90 text-white' : isSpecial && isUnlocked ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-black' : 'bg-black/80 text-white'}`}>
                         #{ticket.number}
                         {isSpecial && <div className="text-xs opacity-75">MEGA</div>}
                       </div>
 
                       {/* Cost Badge */}
-                      {ticket.type === 'paid' && !isClaimed && isUnlocked && (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="absolute top-0 right-0 bg-orange-500 text-white text-xs px-1 py-0.5 rounded-bl font-bold shadow-lg"
-                        >
+                      {ticket.type === 'paid' && !isClaimed && isUnlocked && <motion.div initial={{
+                    scale: 0
+                  }} animate={{
+                    scale: 1
+                  }} className="absolute top-0 right-0 bg-orange-500 text-white text-xs px-1 py-0.5 rounded-bl font-bold shadow-lg">
                           {ticket.cost} TON
-                        </motion.div>
-                      )}
+                        </motion.div>}
 
                       {/* Mobile-Optimized Reward Preview */}
-                      {isUnlocked && !isClaimed && (
-                        <div className="absolute inset-0 bg-black/90 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-center">
+                      {isUnlocked && !isClaimed && <div className="absolute inset-0 bg-black/90 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-center">
                           <div className="flex items-center gap-1 mb-1">
                             <Coins className="w-3 h-3 text-yellow-400" />
                             <span className="text-yellow-400 text-xs font-bold">
@@ -266,26 +229,21 @@ const DailyRushPage = () => {
                             </span>
                           </div>
                           <div className="text-white text-xs">$SPACE</div>
-                        </div>
-                      )}
+                        </div>}
                     </CardContent>
                   </Card>
                 </motion.div>
-              </motion.div>
-            );
-          })}
+              </motion.div>;
+        })}
         </div>
 
         {/* Navigation Hint for Mobile */}
-        {event.tickets.length > 15 && (
-          <div className="text-center">
+        {event.tickets.length > 15 && <div className="text-center">
             <p className="text-gray-400 text-xs">
               Swipe or complete tickets to see more
             </p>
-          </div>
-        )}
-      </div>
-    );
+          </div>}
+      </div>;
   };
   const SurpriseBonusModal = () => <AnimatePresence>
       {showSurpriseBonus && <motion.div initial={{
@@ -321,23 +279,21 @@ const DailyRushPage = () => {
           </motion.div>
         </motion.div>}
     </AnimatePresence>;
-  return (
-    <div 
-      className="min-h-screen p-3 pb-20 relative overflow-hidden"
-      style={{
-        backgroundImage: `linear-gradient(135deg, ${theme.backgroundGradient.replace('from-', '').replace('via-', ', ').replace('to-', ', ')})`
-      }}
-    >
+  return <div className="min-h-screen p-3 pb-20 relative overflow-hidden" style={{
+    backgroundImage: `linear-gradient(135deg, ${theme.backgroundGradient.replace('from-', '').replace('via-', ', ').replace('to-', ', ')})`
+  }}>
       <div className="absolute inset-0 bg-black/50"></div>
       
       <div className="max-w-sm mx-auto relative z-10">
         {/* Enhanced Mobile Header */}
         <div className="text-center mb-4">
-          <motion.h1
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent mb-1"
-          >
+          <motion.h1 initial={{
+          y: -20,
+          opacity: 0
+        }} animate={{
+          y: 0,
+          opacity: 1
+        }} className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent mb-1">
             {theme.emoji} Daily Rush {theme.emoji}
           </motion.h1>
           <p className="text-gray-300 text-xs">Collect tickets • Win prizes • Earn TON!</p>
@@ -375,28 +331,19 @@ const DailyRushPage = () => {
         <Card className="mb-4 bg-gradient-to-r from-blue-500/25 to-purple-500/25 border-blue-400/40 backdrop-blur-sm">
           <CardContent className="p-4">
             {(() => {
-              const currentTicket = event.tickets.find(t => t.number === userProgress.currentTicket);
-              if (!currentTicket) return null;
-              
-              return (
-                <div className="text-center">
+            const currentTicket = event.tickets.find(t => t.number === userProgress.currentTicket);
+            if (!currentTicket) return null;
+            return <div className="text-center">
                   <div className="mb-3 flex justify-center">
-                    <motion.div
-                      animate={{
-                        scale: [1, 1.05, 1],
-                        rotate: [0, 2, -2, 0]
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    >
-                      <img
-                        src="/lovable-uploads/eaa0be57-0436-47a4-9d76-025c98468ebc.png"
-                        alt="Space Ticket"
-                        className="w-16 h-16 object-contain"
-                      />
+                    <motion.div animate={{
+                  scale: [1, 1.05, 1],
+                  rotate: [0, 2, -2, 0]
+                }} transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}>
+                      <img src="/lovable-uploads/eaa0be57-0436-47a4-9d76-025c98468ebc.png" alt="Space Ticket" className="w-16 h-16 object-contain" />
                     </motion.div>
                   </div>
                   <h3 className="text-white text-lg font-bold mb-2">
@@ -406,7 +353,7 @@ const DailyRushPage = () => {
                   {/* Enhanced Reward Display */}
                   <div className="flex items-center justify-center gap-3 mb-3">
                     <div className="flex items-center gap-1 bg-yellow-500/20 px-3 py-1 rounded-lg">
-                      <Coins className="w-4 h-4 text-yellow-400" />
+                      
                       <span className="text-yellow-400 font-bold text-sm">
                         +{currentTicket.reward.toLocaleString()}
                       </span>
@@ -419,27 +366,11 @@ const DailyRushPage = () => {
                     </div>
                   </div>
                   
-                  <Button
-                    onClick={() => handleClaimTicket(currentTicket.number)}
-                    disabled={isProcessing || currentTicket.claimed}
-                    className={`w-full py-3 font-bold text-sm ${
-                      currentTicket.type === 'free'
-                        ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
-                        : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700'
-                    } shadow-lg`}
-                  >
-                    {isProcessing
-                      ? 'Processing...'
-                      : currentTicket.claimed
-                      ? 'Claimed ✅'
-                      : currentTicket.type === 'free'
-                      ? 'Get Free Ticket'
-                      : `Buy Ticket (${currentTicket.cost} TON)`
-                    }
+                  <Button onClick={() => handleClaimTicket(currentTicket.number)} disabled={isProcessing || currentTicket.claimed} className={`w-full py-3 font-bold text-sm ${currentTicket.type === 'free' ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700'} shadow-lg`}>
+                    {isProcessing ? 'Processing...' : currentTicket.claimed ? 'Claimed ✅' : currentTicket.type === 'free' ? 'Get Free Ticket' : `Buy Ticket (${currentTicket.cost} TON)`}
                   </Button>
-                </div>
-              );
-            })()}
+                </div>;
+          })()}
           </CardContent>
         </Card>
 
@@ -454,26 +385,15 @@ const DailyRushPage = () => {
         <div className="fixed bottom-16 left-0 right-0 bg-gradient-to-r from-purple-900/90 to-blue-900/90 backdrop-blur-lg border-t border-purple-400/30 p-2 z-40">
           <div className="max-w-sm mx-auto">
             <div className="grid grid-cols-3 gap-2">
-              <Button
-                variant="ghost"
-                onClick={() => setShowLeaderboard(!showLeaderboard)}
-                className="flex flex-col items-center gap-1 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/10"
-              >
+              <Button variant="ghost" onClick={() => setShowLeaderboard(!showLeaderboard)} className="flex flex-col items-center gap-1 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/10">
                 <Trophy className="w-4 h-4" />
                 <span>Leaderboard</span>
               </Button>
-              <Button
-                variant="ghost"
-                onClick={() => setShowRules(!showRules)}
-                className="flex flex-col items-center gap-1 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/10"
-              >
+              <Button variant="ghost" onClick={() => setShowRules(!showRules)} className="flex flex-col items-center gap-1 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/10">
                 <Info className="w-4 h-4" />
                 <span>Rules</span>
               </Button>
-              <Button
-                variant="ghost"
-                className="flex flex-col items-center gap-1 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/10"
-              >
+              <Button variant="ghost" className="flex flex-col items-center gap-1 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/10">
                 <Users className="w-4 h-4" />
                 <span>Invite</span>
               </Button>
@@ -483,8 +403,6 @@ const DailyRushPage = () => {
       </div>
 
       <SurpriseBonusModal />
-    </div>
-  );
+    </div>;
 };
-
 export default DailyRushPage;
