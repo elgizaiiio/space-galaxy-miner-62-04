@@ -1,13 +1,14 @@
-
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Play } from 'lucide-react';
 import { useSpaceCoins } from '../hooks/useSpaceCoins';
-
 const MiningPage = () => {
-  const { spaceCoins, addCoins } = useSpaceCoins();
+  const {
+    spaceCoins,
+    addCoins
+  } = useSpaceCoins();
   const [miningSpeed, setMiningSpeed] = useState(1);
   const [coinsPerSecond, setCoinsPerSecond] = useState(0.1);
   const [miningActive, setMiningActive] = useState(false);
@@ -26,7 +27,6 @@ const MiningPage = () => {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
-    
     return () => {
       document.body.style.overflow = 'auto';
       document.documentElement.style.overflow = 'auto';
@@ -37,7 +37,6 @@ const MiningPage = () => {
   useEffect(() => {
     if (initializedRef.current) return;
     initializedRef.current = true;
-
     console.log('Initializing mining page...');
 
     // Load username
@@ -55,32 +54,28 @@ const MiningPage = () => {
     // Restore mining state
     restoreMiningState(currentMiningSpeed);
   }, []);
-
   const restoreMiningState = (currentMiningSpeed: number) => {
     const miningStartTime = localStorage.getItem('miningStartTime');
     const miningDuration = localStorage.getItem('miningDuration');
     const wasMiningActive = localStorage.getItem('miningActive') === 'true';
     const lastProcessedTime = localStorage.getItem('lastProcessedTime');
-    
     console.log('Restoring mining state:', {
       wasMiningActive,
       miningStartTime,
       miningDuration,
       lastProcessedTime
     });
-    
     if (wasMiningActive && miningStartTime && miningDuration) {
       const startTime = parseInt(miningStartTime);
       const duration = parseInt(miningDuration);
       const currentTime = Date.now();
       const elapsedTimeMs = currentTime - startTime;
       const elapsedTimeSeconds = Math.floor(elapsedTimeMs / 1000);
-      
+
       // Get the last processed time to avoid duplicate calculations
       const lastProcessed = lastProcessedTime ? parseInt(lastProcessedTime) : startTime;
       const unprocessedTimeMs = currentTime - lastProcessed;
       const unprocessedTimeSeconds = Math.floor(unprocessedTimeMs / 1000);
-      
       console.log('Mining restoration details:', {
         startTime: new Date(startTime).toLocaleString(),
         currentTime: new Date(currentTime).toLocaleString(),
@@ -89,55 +84,47 @@ const MiningPage = () => {
         unprocessedTimeSeconds,
         duration
       });
-      
       if (elapsedTimeSeconds < duration && elapsedTimeSeconds >= 0) {
         // Mining is still active
         const newRemainingTime = Math.max(0, duration - elapsedTimeSeconds);
         setMiningActive(true);
         setRemainingTime(newRemainingTime);
-        
+
         // Calculate coins earned only for unprocessed time
         const baseCoinsPerSecond = 0.1;
         const coinsEarned = Math.round(Math.max(0, unprocessedTimeSeconds) * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
-        
         console.log('Adding offline mining coins for unprocessed time:', coinsEarned);
-        
         if (coinsEarned > 0) {
           addCoinsStable(coinsEarned);
         }
-        
+
         // Update last processed time
         localStorage.setItem('lastProcessedTime', currentTime.toString());
         lastProcessedTimeRef.current = currentTime;
       } else if (elapsedTimeSeconds >= duration) {
         // Mining session completed while away
         console.log('Mining session completed while offline');
-        completeMiningSession(duration, currentMiningSpeed, lastProcessed, startTime + (duration * 1000));
+        completeMiningSession(duration, currentMiningSpeed, lastProcessed, startTime + duration * 1000);
       } else {
         // Invalid state, reset
         resetMiningState();
       }
     }
   };
-
   const completeMiningSession = (duration: number, currentMiningSpeed: number, lastProcessed: number, sessionEndTime: number) => {
     setMiningActive(false);
     setRemainingTime(28800);
-    
+
     // Calculate coins only for the remaining unprocessed time until session end
     const unprocessedTime = Math.max(0, Math.floor((sessionEndTime - lastProcessed) / 1000));
     const baseCoinsPerSecond = 0.1;
     const totalCoinsEarned = Math.round(unprocessedTime * (baseCoinsPerSecond * currentMiningSpeed) * 100) / 100;
-    
     console.log('Adding coins from completed session (unprocessed time only):', totalCoinsEarned);
-    
     if (totalCoinsEarned > 0) {
       addCoinsStable(totalCoinsEarned);
     }
-    
     resetMiningState();
   };
-
   const resetMiningState = () => {
     localStorage.removeItem('miningStartTime');
     localStorage.removeItem('miningDuration');
@@ -157,20 +144,16 @@ const MiningPage = () => {
     // Only start interval if mining is active and there's time remaining
     if (miningActive && remainingTime > 0) {
       console.log('Starting mining interval');
-      
       intervalRef.current = setInterval(() => {
         const currentTime = Date.now();
-        
-        setRemainingTime((prevTime) => {
+        setRemainingTime(prevTime => {
           const newTime = Math.max(0, prevTime - 1);
-          
           if (newTime <= 0) {
             console.log('Mining session completed');
             setMiningActive(false);
             resetMiningState();
             return 0;
           }
-          
           return newTime;
         });
 
@@ -179,7 +162,7 @@ const MiningPage = () => {
         if (coinsToAdd > 0) {
           addCoinsStable(coinsToAdd);
         }
-        
+
         // Update last processed time every second
         localStorage.setItem('lastProcessedTime', currentTime.toString());
         lastProcessedTimeRef.current = currentTime;
@@ -207,29 +190,26 @@ const MiningPage = () => {
   useEffect(() => {
     localStorage.setItem('miningActive', miningActive.toString());
   }, [miningActive]);
-
   const handleStartMining = () => {
     if (!miningActive && remainingTime > 0) {
       const currentTime = Date.now();
       const duration = 28800; // 8 hours in seconds
-      
+
       console.log('Starting mining session');
-      
+
       // Save mining state
       localStorage.setItem('miningStartTime', currentTime.toString());
       localStorage.setItem('miningDuration', duration.toString());
       localStorage.setItem('lastProcessedTime', currentTime.toString());
       localStorage.setItem('miningActive', 'true');
-      
       setMiningActive(true);
       setRemainingTime(duration);
       lastProcessedTimeRef.current = currentTime;
     }
   };
-
   const formatTime = (timeInSeconds: number): string => {
     const hours = Math.floor(timeInSeconds / 3600);
-    const minutes = Math.floor((timeInSeconds % 3600) / 60);
+    const minutes = Math.floor(timeInSeconds % 3600 / 60);
     const seconds = timeInSeconds % 60;
     return `${hours}h ${minutes}m ${seconds}s`;
   };
@@ -245,52 +225,40 @@ const MiningPage = () => {
         console.log('Saving mining state when page hidden');
       }
     };
-
     const handleBeforeUnload = () => {
       if (miningActive) {
         const currentTime = Date.now();
         localStorage.setItem('lastProcessedTime', currentTime.toString());
       }
     };
-
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('beforeunload', handleBeforeUnload);
-    
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [miningActive]);
-
-  return (
-    <div className="fixed inset-0 overflow-hidden">
+  return <div className="fixed inset-0 overflow-hidden">
       {/* Background Image - Full Screen Coverage */}
-      <div 
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url('/lovable-uploads/836a3d93-ee4f-4c26-9fd4-cf95f416631c.png')`
-        }}
-      />
+      <div className="fixed inset-0 bg-cover bg-center bg-no-repeat" style={{
+      backgroundImage: `url('/lovable-uploads/836a3d93-ee4f-4c26-9fd4-cf95f416631c.png')`
+    }} />
       
       {/* Content positioned at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 z-10 p-6 pb-20 flex flex-col items-center">
+      <div className="fixed bottom-0 left-0 right-0 z-10 p-6 pb-20 flex flex-col items-center py-[50px]">
         {/* Username with Matrix-style font */}
-        {username && (
-          <div className="text-center mb-4">
-            <p className="text-white text-2xl font-bold font-mono" style={{ fontVariantNumeric: 'tabular-nums' }}>
+        {username && <div className="text-center mb-4">
+            <p className="text-white text-2xl font-bold font-mono" style={{
+          fontVariantNumeric: 'tabular-nums'
+        }}>
               {username}
             </p>
-          </div>
-        )}
+          </div>}
 
         {/* Balance */}
         <div className="flex items-center justify-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
-            <img 
-              src="/lovable-uploads/46b9f7e6-4f32-4240-9fc4-16d1bcdec0d0.png" 
-              alt="Space Coin"
-              className="w-full h-full object-cover"
-            />
+            <img src="/lovable-uploads/46b9f7e6-4f32-4240-9fc4-16d1bcdec0d0.png" alt="Space Coin" className="w-full h-full object-cover" />
           </div>
           <span className="text-white text-3xl font-bold">
             {Math.floor(spaceCoins).toLocaleString()}
@@ -298,50 +266,36 @@ const MiningPage = () => {
         </div>
 
         {/* Mining Rate Display */}
-        {miningActive && (
-          <div className="text-center mb-2">
+        {miningActive && <div className="text-center mb-2">
             <p className="text-green-400 text-sm">
               Mining: {(coinsPerSecond * 3600).toFixed(2)} coins/hour
             </p>
-          </div>
-        )}
+          </div>}
 
         {/* Mining Time Display - Only show when mining is active */}
-        {miningActive && (
-          <div className="text-center mb-4">
+        {miningActive && <div className="text-center mb-4">
             <p className="text-white text-lg">Mining time remaining:</p>
             <p className="text-white text-xl font-bold">{formatTime(remainingTime)}</p>
-          </div>
-        )}
+          </div>}
 
         {/* Mining Button - Only show Start Mining button when not mining */}
-        {!miningActive && (
-          <div className="flex justify-center">
-            <Button
-              onClick={handleStartMining}
-              disabled={remainingTime <= 0}
-              className="py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+        {!miningActive && <div className="flex justify-center">
+            <Button onClick={handleStartMining} disabled={remainingTime <= 0} className="py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed">
               <div className="flex items-center justify-center gap-2">
                 <Play className="w-5 h-5" />
                 <span>Start Mining</span>
               </div>
             </Button>
-          </div>
-        )}
+          </div>}
 
         {/* Debug info (will be removed in production) */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="text-white text-xs mt-4 text-center opacity-50">
-            <p>Mining Status: {miningActive ? 'Active' : 'Inactive'}</p>
-            <p>Remaining Time: {remainingTime}s</p>
-            <p>Mining Speed: {miningSpeed}x</p>
-            <p>Last Processed: {lastProcessedTimeRef.current > 0 ? new Date(lastProcessedTimeRef.current).toLocaleTimeString() : 'Never'}</p>
-          </div>
-        )}
+        {process.env.NODE_ENV === 'development' && <div className="text-white text-xs mt-4 text-center opacity-50">
+            
+            
+            
+            
+          </div>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default MiningPage;
