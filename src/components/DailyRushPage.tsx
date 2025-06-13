@@ -140,7 +140,7 @@ const DailyRushPage = () => {
         {/* Current Section Header */}
         <div className="text-center">
           <h3 className="text-xl font-bold text-white mb-2">🎫 Active Tickets</h3>
-          <div className="text-gray-400 text-sm">
+          <div className="text-gray-400 text-sm bg-transparent">
             Showing tickets {startIndex + 1} - {endIndex}
           </div>
         </div>
@@ -226,10 +226,7 @@ const DailyRushPage = () => {
         </div>
 
         {/* Navigation Hint */}
-        {event.tickets.length > 15 && <div className="text-center text-gray-400 text-sm">
-            <Info className="w-4 h-4 inline mr-1" />
-            Showing current section • Complete tickets to unlock more
-          </div>}
+        {event.tickets.length > 15}
       </div>;
   };
   const SurpriseBonusModal = () => <AnimatePresence>
@@ -314,7 +311,7 @@ const DailyRushPage = () => {
 
         {/* Current Ticket Action */}
         <Card className="mb-6 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-400/30">
-          <CardContent className="p-4 py-0 px-[74px]">
+          <CardContent className="p-4 px-[74px] py-[8px]">
             {(() => {
             const currentTicket = event.tickets.find(t => t.number === userProgress.currentTicket);
             if (!currentTicket) return null;
