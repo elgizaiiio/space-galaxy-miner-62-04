@@ -157,7 +157,7 @@ const DailyRushPage = () => {
         </div>
 
         {/* Mobile-Optimized Ticket Grid - 3 columns for better mobile view */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 mx-[14px]">
           {visibleTickets.map((ticket, index) => {
           const isClaimed = ticket.claimed;
           const isUnlocked = ticket.unlocked;
@@ -181,7 +181,7 @@ const DailyRushPage = () => {
               scale: 0.98
             } : {}} className={`relative aspect-square cursor-pointer transition-all duration-300 ${isCurrent ? 'ring-2 ring-yellow-400 ring-offset-1 ring-offset-black' : ''}`} onClick={() => isUnlocked && !isClaimed && handleClaimTicket(ticket.number)}>
                   <Card className={`h-full w-full relative overflow-hidden transition-all duration-300 ${isClaimed ? 'bg-gradient-to-br from-green-600/40 to-green-800/40 border-green-400/60' : isUnlocked ? isSpecial ? 'bg-gradient-to-br from-yellow-500/40 to-orange-600/40 border-yellow-400/60 shadow-lg shadow-yellow-400/20' : 'bg-gradient-to-br from-blue-600/40 to-purple-600/40 border-blue-400/60' : 'bg-gradient-to-br from-gray-700/40 to-gray-900/40 border-gray-500/40'}`}>
-                    <CardContent className="p-2 h-full flex flex-col items-center justify-center relative">
+                    <CardContent className="p-2 h-full flex flex-col items-center justify-center relative py-[5px] px-[4px] my-0 mx-[6px]">
                       {/* Background Effects */}
                       {isSpecial && !isClaimed && <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 to-orange-500/20 animate-pulse"></div>}
                       
