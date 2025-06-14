@@ -275,11 +275,11 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
       {/* Top Navigation Buttons */}
       <div className="fixed top-4 left-0 right-0 z-20 px-4">
         <div className="flex justify-center space-x-6">
-          {/* 100,000th User Event Button */}
+          {/* 100,000th User Event Button - Removed animation */}
           <div className="flex flex-col items-center">
             <Button 
               onClick={handle100kUserEvent}
-              className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 via-gold-500 to-yellow-600 hover:from-yellow-500 hover:via-gold-600 hover:to-yellow-700 shadow-lg border-2 border-yellow-300/60 hover:scale-105 transition-all duration-300 p-0 animate-pulse"
+              className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 via-gold-500 to-yellow-600 hover:from-yellow-500 hover:via-gold-600 hover:to-yellow-700 shadow-lg border-2 border-yellow-300/60 hover:scale-105 transition-all duration-300 p-0"
               title="100,000th User Event"
             >
               <Award className="w-6 h-6 text-white drop-shadow-md" />
@@ -287,7 +287,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
             <span className="text-white text-xs font-medium mt-1 drop-shadow-lg">100k Event</span>
           </div>
 
-          {/* Daily Rush Button */}
+          {/* Daily Rush Button - Removed animation */}
           <div className="flex flex-col items-center">
             <Button 
               onClick={() => handleQuickNavigation('daily-rush')}
