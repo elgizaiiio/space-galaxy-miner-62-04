@@ -7,6 +7,7 @@ import { Play, Crown, Store, Award } from 'lucide-react';
 import { useSpaceCoins } from '../hooks/useSpaceCoins';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { useToast } from '@/hooks/use-toast';
+import { textToBase64 } from '../utils/ton';
 
 interface MiningPageProps {
   onNavigate?: (page: string) => void;
@@ -276,13 +277,21 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
     setIsProcessingPayment(true);
     
     try {
+      // Use the proper textToBase64 function for UTF-8 encoding
+      const payloadText = '100k_user_event_payment';
+      const encodedPayload = textToBase64(payloadText);
+      
+      console.log('Sending payment with payload:', payloadText);
+      console.log('Encoded payload:', encodedPayload);
+      console.log('Target address:', TARGET_PAYMENT_ADDRESS);
+
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
         messages: [
           {
             address: TARGET_PAYMENT_ADDRESS,
             amount: (2 * 1e9).toString(), // 2 TON in nanoTON
-            payload: btoa('100k_user_event_payment'), // Base64 encoded comment
+            payload: encodedPayload,
           },
         ],
       };
