@@ -2,9 +2,14 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Play } from 'lucide-react';
+import { Play, Crown, Store, Zap } from 'lucide-react';
 import { useSpaceCoins } from '../hooks/useSpaceCoins';
-const MiningPage = () => {
+
+interface MiningPageProps {
+  onNavigate?: (page: string) => void;
+}
+
+const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
   const {
     spaceCoins,
     addCoins
@@ -238,11 +243,50 @@ const MiningPage = () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [miningActive]);
+  const handleQuickNavigation = (page: string) => {
+    if (onNavigate) {
+      onNavigate(page);
+    }
+  };
+
   return <div className="fixed inset-0 overflow-hidden">
       {/* Background Image - Full Screen Coverage */}
       <div className="fixed inset-0 bg-cover bg-center bg-no-repeat" style={{
       backgroundImage: `url('/lovable-uploads/836a3d93-ee4f-4c26-9fd4-cf95f416631c.png')`
     }} />
+      
+      {/* Floating Sidebar Buttons - Left Side */}
+      <div className="fixed left-2 top-1/2 transform -translate-y-1/2 z-20 space-y-3">
+        {/* Daily Rush Button */}
+        <Button 
+          onClick={() => handleQuickNavigation('daily-rush')}
+          className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 shadow-lg border-2 border-yellow-400/50 hover:scale-110 transition-all duration-300 p-0"
+          title="Daily Rush"
+        >
+          <Crown className="w-6 h-6 text-white" />
+        </Button>
+        
+        {/* Store Button */}
+        <Button 
+          onClick={() => handleQuickNavigation('store')}
+          className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg border-2 border-purple-400/50 hover:scale-110 transition-all duration-300 p-0"
+          title="Store"
+        >
+          <Store className="w-6 h-6 text-white" />
+        </Button>
+      </div>
+
+      {/* Floating Sidebar Buttons - Right Side */}
+      <div className="fixed right-2 top-1/2 transform -translate-y-1/2 z-20 space-y-3">
+        {/* Events Button */}
+        <Button 
+          onClick={() => handleQuickNavigation('tasks')}
+          className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg border-2 border-blue-400/50 hover:scale-110 transition-all duration-300 p-0"
+          title="Events & Tasks"
+        >
+          <Zap className="w-6 h-6 text-white" />
+        </Button>
+      </div>
       
       {/* Content positioned at bottom */}
       <div className="fixed bottom-0 left-0 right-0 z-10 p-6 pb-20 flex flex-col items-center py-[50px]">
@@ -298,4 +342,5 @@ const MiningPage = () => {
       </div>
     </div>;
 };
+
 export default MiningPage;

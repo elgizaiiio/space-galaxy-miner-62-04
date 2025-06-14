@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -117,6 +116,11 @@ const App = () => {
     }
   };
 
+  // Navigation handler for sidebar buttons
+  const handleQuickNavigation = (page: string) => {
+    setCurrentPage(page as Page);
+  };
+
   const navigationItems = [{
     id: 'mining',
     label: getTranslation('mining'),
@@ -158,7 +162,7 @@ const App = () => {
   const renderCurrentPage = () => {
     switch (currentPage) {
       case 'mining':
-        return <MiningPage />;
+        return <MiningPage onNavigate={handleQuickNavigation} />;
       case 'tasks':
         return <TasksPage />;
       case 'daily-rush':
@@ -172,9 +176,9 @@ const App = () => {
       case 'referral':
         return <ReferralPage />;
       case 'admin':
-        return showAdminAccess ? <TaskAdminPage /> : <MiningPage />;
+        return showAdminAccess ? <TaskAdminPage /> : <MiningPage onNavigate={handleQuickNavigation} />;
       default:
-        return <MiningPage />;
+        return <MiningPage onNavigate={handleQuickNavigation} />;
     }
   };
 
