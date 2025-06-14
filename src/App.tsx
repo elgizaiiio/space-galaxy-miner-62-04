@@ -15,7 +15,7 @@ import TaskAdminPage from './components/TaskAdminPage';
 import DailyRushPage from './components/DailyRushPage';
 import UsernameModal from './components/UsernameModal';
 import { Button } from '@/components/ui/button';
-import { Home, CheckSquare, Wallet, Users, Settings, ShoppingBag, GraduationCap, Crown } from 'lucide-react';
+import { Home, CheckSquare, Wallet, Users, Settings, GraduationCap } from 'lucide-react';
 import { getTranslation } from './utils/language';
 
 const queryClient = new QueryClient();
@@ -31,13 +31,11 @@ const App = () => {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    // Always show splash screen on app load
     setShowSplash(true);
   }, []);
 
   useEffect(() => {
     if (!showSplash) {
-      // Check if username is already saved
       const savedUsername = localStorage.getItem('username');
       if (savedUsername) {
         setUsername(savedUsername);
@@ -79,7 +77,7 @@ const App = () => {
       const timer = setTimeout(() => {
         setTaskClickCount(0);
         setLastClickTime(0);
-      }, 2000); // Reset after 2 seconds of no clicks
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, [taskClickCount]);
@@ -92,7 +90,6 @@ const App = () => {
   const handleTaskButtonClick = () => {
     const currentTime = Date.now();
     
-    // If more than 500ms passed since last click, reset counter
     if (currentTime - lastClickTime > 500) {
       setTaskClickCount(1);
     } else {
@@ -110,13 +107,11 @@ const App = () => {
     
     setLastClickTime(currentTime);
     
-    // If less than 5 clicks, go to tasks page
     if (taskClickCount < 5) {
       setCurrentPage('tasks');
     }
   };
 
-  // Navigation handler for sidebar buttons
   const handleQuickNavigation = (page: string) => {
     setCurrentPage(page as Page);
   };
@@ -130,17 +125,9 @@ const App = () => {
     label: getTranslation('tasks'),
     icon: CheckSquare
   }, {
-    id: 'daily-rush',
-    label: 'Daily Rush',
-    icon: Crown
-  }, {
     id: 'courses',
     label: 'Courses',
     icon: GraduationCap
-  }, {
-    id: 'store',
-    label: 'Store',
-    icon: ShoppingBag
   }, {
     id: 'wallet',
     label: getTranslation('wallet'),
@@ -182,7 +169,6 @@ const App = () => {
     }
   };
 
-  // Show splash screen first
   if (showSplash) {
     return <SplashScreen onComplete={handleSplashComplete} />;
   }
@@ -217,7 +203,7 @@ const App = () => {
 
             <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/20 p-2 z-50">
               <div className="max-w-md mx-auto">
-                <div className={`grid gap-1 ${showAdminAccess ? 'grid-cols-8' : 'grid-cols-7'}`}>
+                <div className={`grid gap-1 ${showAdminAccess ? 'grid-cols-6' : 'grid-cols-5'}`}>
                   {navigationItems.map(item => {
                     const Icon = item.icon;
                     return (

