@@ -276,20 +276,22 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
     setIsProcessingPayment(true);
     
     try {
+      // Create a simple transaction without complex payload encoding
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
         messages: [
           {
             address: TARGET_PAYMENT_ADDRESS,
-            amount: (2 * 1e9).toString(), // 2 TON in nanoTON
-            payload: btoa('100k_user_event_payment'), // Base64 encoded comment
+            amount: (2 * 1000000000).toString(), // 2 TON in nanoTON (1e9)
+            // Remove complex payload to avoid encoding issues
           },
         ],
       };
 
+      console.log('Sending transaction:', transaction);
       const result = await tonConnectUI.sendTransaction(transaction);
       
-      console.log('Payment transaction sent:', result);
+      console.log('Payment transaction sent successfully:', result);
       
       toast({
         title: '✅ Payment Sent Successfully!',
@@ -307,10 +309,12 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
       let errorMessage = 'Failed to send transaction. Please try again.';
       
       if (error instanceof Error) {
-        if (error.message.includes('User declined')) {
+        if (error.message.includes('User declined') || error.message.includes('rejected')) {
           errorMessage = 'Transaction was cancelled by user.';
         } else if (error.message.includes('insufficient funds')) {
           errorMessage = 'Insufficient funds in wallet.';
+        } else if (error.message.includes('Invalid data format')) {
+          errorMessage = 'Transaction format error. Please try again.';
         }
       }
       
