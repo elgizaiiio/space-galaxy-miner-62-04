@@ -277,13 +277,9 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
     setIsProcessingPayment(true);
     
     try {
-      // Use the proper textToBase64 function for UTF-8 encoding
-      const payloadText = '100k_user_event_payment';
-      const encodedPayload = textToBase64(payloadText);
-      
-      console.log('Sending payment with payload:', payloadText);
-      console.log('Encoded payload:', encodedPayload);
+      console.log('Sending simple payment without payload');
       console.log('Target address:', TARGET_PAYMENT_ADDRESS);
+      console.log('Amount: 2 TON');
 
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 300, // 5 minutes
@@ -291,7 +287,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
           {
             address: TARGET_PAYMENT_ADDRESS,
             amount: (2 * 1e9).toString(), // 2 TON in nanoTON
-            payload: encodedPayload,
+            // Removed payload to avoid format issues
           },
         ],
       };
