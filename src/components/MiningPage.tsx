@@ -73,10 +73,14 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
     restoreMiningState(currentMiningSpeed);
   }, []);
 
-  // إظهار منشور 100k تلقائيًا عند الدخول لأول مرة
+  // إظهار منشور 100k تلقائيًا عند الدخول لأول مرة فقط
   useEffect(() => {
-    if (!closed100kRef.current) {
+    // نتحقق من وجود المتغير في localStorage
+    const hasSeen100kEvent = localStorage.getItem('hasSeen100kEvent');
+    if (!hasSeen100kEvent && !closed100kRef.current) {
       setShow100kModal(true);
+      // نضبط المتغير كي لا تظهر مرة أخرى
+      localStorage.setItem('hasSeen100kEvent', 'true');
     }
   }, []);
 
@@ -277,6 +281,8 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
   const handleClose100kModal = () => {
     setShow100kModal(false);
     closed100kRef.current = true;
+    // التأكيد على أن المتغير في localStorage مسجل
+    localStorage.setItem('hasSeen100kEvent', 'true');
   };
 
   const handlePayment = async () => {
