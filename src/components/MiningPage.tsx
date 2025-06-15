@@ -345,7 +345,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat" 
         style={{
-          backgroundImage: `url('/lovable-uploads/836a3d93-ee4f-4c26-9fd4-cf95f416631c.png')`
+          backgroundImage: `url('/lovable-uploads/11dc8eca-3a4d-45d6-ad16-c041037cbdec.png')`
         }} 
       />
       
