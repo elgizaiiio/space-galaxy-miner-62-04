@@ -352,11 +352,11 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
 
   return (
     <div className="fixed inset-0 overflow-hidden">
-      {/* Background Image - Full Screen Coverage */}
+      {/* Background Image - Updated to use new space image */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat" 
         style={{
-          backgroundImage: `url('/lovable-uploads/97d79fb7-a030-411d-bb62-2f32882e54d5.png')`
+          backgroundImage: `url('/lovable-uploads/af80e2de-8d4a-4e01-912b-fce62068956f.png')`
         }} 
       />
       
