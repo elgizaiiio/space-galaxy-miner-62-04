@@ -29,20 +29,14 @@ export const formatTON = (amount: number): string => {
   return amount.toFixed(2) + ' TON';
 };
 
-// Helper function to convert text to base64 for TON comment using proper encoding
+// Helper function to convert text to base64 for TON comment using browser-compatible encoding
 export const textToBase64 = (text: string): string => {
   try {
-    // Use Buffer for proper UTF-8 encoding instead of btoa
-    return Buffer.from(text, 'utf8').toString('base64');
+    // Use btoa with proper UTF-8 encoding for browser compatibility
+    return btoa(unescape(encodeURIComponent(text)));
   } catch (error) {
     console.error('Error encoding text to base64:', error);
-    // Fallback to btoa if Buffer is not available
-    try {
-      return btoa(unescape(encodeURIComponent(text)));
-    } catch (fallbackError) {
-      console.error('Fallback encoding also failed:', fallbackError);
-      return '';
-    }
+    return '';
   }
 };
 
