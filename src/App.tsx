@@ -15,7 +15,7 @@ import TaskAdminPage from './components/TaskAdminPage';
 import DailyRushPage from './components/DailyRushPage';
 import UsernameModal from './components/UsernameModal';
 import { Button } from '@/components/ui/button';
-import { Home, CheckSquare, Wallet, Users, Settings, GraduationCap } from 'lucide-react';
+import { Home, CheckSquare, Wallet, Users, Settings } from 'lucide-react';
 import { getTranslation } from './utils/language';
 
 const queryClient = new QueryClient();
@@ -116,6 +116,7 @@ const App = () => {
     setCurrentPage(page as Page);
   };
 
+  // Updated navigation items - removed courses from bottom navigation
   const navigationItems = [{
     id: 'mining',
     label: getTranslation('mining'),
@@ -124,10 +125,6 @@ const App = () => {
     id: 'tasks',
     label: getTranslation('tasks'),
     icon: CheckSquare
-  }, {
-    id: 'courses',
-    label: 'Courses',
-    icon: GraduationCap
   }, {
     id: 'wallet',
     label: getTranslation('wallet'),
@@ -203,7 +200,7 @@ const App = () => {
 
             <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-lg border-t border-white/20 p-2 z-50">
               <div className="max-w-md mx-auto">
-                <div className={`grid gap-1 ${showAdminAccess ? 'grid-cols-6' : 'grid-cols-5'}`}>
+                <div className={`grid gap-1 ${showAdminAccess ? 'grid-cols-5' : 'grid-cols-4'}`}>
                   {navigationItems.map(item => {
                     const Icon = item.icon;
                     return (

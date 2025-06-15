@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Play, Crown, Store, Award } from 'lucide-react';
+import { Play, Crown, Store, Award, GraduationCap } from 'lucide-react';
 import { useSpaceCoins } from '../hooks/useSpaceCoins';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { useToast } from '@/hooks/use-toast';
@@ -362,12 +362,12 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
       
       {/* Top Navigation Buttons */}
       <div className="fixed top-4 left-0 right-0 z-20 px-4">
-        <div className="flex justify-center space-x-6">
-          {/* 100,000th User Event Button - Removed animation */}
+        <div className="flex justify-center space-x-4">
+          {/* 100,000th User Event Button */}
           <div className="flex flex-col items-center">
             <Button 
               onClick={handle100kUserEvent}
-              className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 via-gold-500 to-yellow-600 hover:from-yellow-500 hover:via-gold-600 hover:to-yellow-700 shadow-lg border-2 border-yellow-300/60 hover:scale-105 transition-all duration-300 p-0"
+              className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 shadow-lg border-2 border-yellow-300/60 hover:scale-105 transition-all duration-300 p-0"
               title="100,000th User Event"
             >
               <Award className="w-6 h-6 text-white drop-shadow-md" />
@@ -375,14 +375,26 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
             <span className="text-white text-xs font-medium mt-1 drop-shadow-lg">100k Event</span>
           </div>
 
-          {/* Daily Rush Button - Removed animation */}
+          {/* Courses Button - NEW */}
+          <div className="flex flex-col items-center">
+            <Button 
+              onClick={() => handleQuickNavigation('courses')}
+              className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-lg border-2 border-blue-400/50 hover:scale-105 transition-all duration-300 p-0"
+              title="Courses"
+            >
+              <GraduationCap className="w-6 h-6 text-white drop-shadow-md" />
+            </Button>
+            <span className="text-white text-xs font-medium mt-1 drop-shadow-lg">Courses</span>
+          </div>
+
+          {/* Daily Rush Button */}
           <div className="flex flex-col items-center">
             <Button 
               onClick={() => handleQuickNavigation('daily-rush')}
-              className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 shadow-lg border-2 border-yellow-400/50 hover:scale-105 transition-all duration-300 p-0"
+              className="w-12 h-12 rounded-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg border-2 border-orange-400/50 hover:scale-105 transition-all duration-300 p-0"
               title="Daily Rush"
             >
-              <Crown className="w-6 h-6 text-white" />
+              <Crown className="w-6 h-6 text-white drop-shadow-md" />
             </Button>
             <span className="text-white text-xs font-medium mt-1 drop-shadow-lg">Daily Rush</span>
           </div>
@@ -394,7 +406,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
               className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg border-2 border-purple-400/50 hover:scale-105 transition-all duration-300 p-0"
               title="Store"
             >
-              <Store className="w-6 h-6 text-white" />
+              <Store className="w-6 h-6 text-white drop-shadow-md" />
             </Button>
             <span className="text-white text-xs font-medium mt-1 drop-shadow-lg">Store</span>
           </div>
