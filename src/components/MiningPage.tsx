@@ -26,6 +26,8 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
   const [remainingTime, setRemainingTime] = useState(28800); // 8 hours
   const [username, setUsername] = useState('');
   const [show100kModal, setShow100kModal] = useState(false);
+  // متغير لتذكر إذا أغلق المستخدم المنشور بهذا التاب
+  const closed100kRef = useRef(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const initializedRef = useRef(false);
@@ -69,6 +71,13 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
 
     // Restore mining state
     restoreMiningState(currentMiningSpeed);
+  }, []);
+
+  // إظهار منشور 100k تلقائيًا عند الدخول لأول مرة
+  useEffect(() => {
+    if (!closed100kRef.current) {
+      setShow100kModal(true);
+    }
   }, []);
 
   const restoreMiningState = (currentMiningSpeed: number) => {
@@ -264,6 +273,12 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
     setShow100kModal(true);
   };
 
+  // إغلاق المنشور وتأكيد عدم إعادة إظهاره في نفس الجلسة
+  const handleClose100kModal = () => {
+    setShow100kModal(false);
+    closed100kRef.current = true;
+  };
+
   const handlePayment = async () => {
     if (!tonConnectUI.wallet) {
       toast({
@@ -455,7 +470,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
       </div>
 
       {/* 100k User Event Modal - Updated with English text */}
-      <Dialog open={show100kModal} onOpenChange={setShow100kModal}>
+      <Dialog open={show100kModal} onOpenChange={(open) => { if (!open) handleClose100kModal(); }}>
         <DialogContent className="bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 border-2 border-gold-400 text-white max-w-sm mx-auto">
           <DialogHeader>
             <DialogTitle className="text-center text-lg font-bold text-gold-400 mb-2">
@@ -515,7 +530,7 @@ const MiningPage: React.FC<MiningPageProps> = ({ onNavigate }) => {
               </Button>
               
               <Button 
-                onClick={() => setShow100kModal(false)}
+                onClick={handleClose100kModal}
                 variant="outline"
                 className="w-full border-gray-400 text-gray-300 hover:bg-gray-800 text-sm py-2"
                 disabled={isProcessingPayment}
