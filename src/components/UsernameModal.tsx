@@ -34,9 +34,9 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
     // Save username to localStorage
     localStorage.setItem('username', username.trim());
     
-    // If new user, give them 20,000 free coins
+    // If new user, give them 200,000 free coins
     if (isNewUser) {
-      localStorage.setItem('spaceCoins', '20000');
+      localStorage.setItem('spaceCoins', '200000');
     }
     
     // Complete the process
@@ -90,3 +90,4 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onComplete }) => 
 };
 
 export default UsernameModal;
+
